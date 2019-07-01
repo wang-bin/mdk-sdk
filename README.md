@@ -20,13 +20,15 @@
 - C++ APIs: a header only thin wrapper for C APIs. No C++ ABI restriction. No user code change to switch between ABI level APIs and C++ APIs.
 
 ## TODO:
-- HDR support
-  - [x] windows 10 HDR apis (ANGLE GLES2/3)
-  - [ ] generic GLSL implementation
+- HDR support in GPU
+- [x] windows 10 HDR apis (ANGLE GLES2/3)
+- [x] color primaries convertion
+- [ ] tone mapping
+- [ ] hdr device
 - Encoding, transcoding and streaming
 - Subtitle
-- Vulkan, D3D
-- ppapi, nacl
+- Vulkan
+- D3D
 
 ## Open Source Modules and Examples
 - MFT decoder module: https://github.com/wang-bin/mdk-mft
@@ -38,3 +40,8 @@
 - C++ TLS: https://github.com/wang-bin/ThreadLocal
 - C++ compatibility layer: https://github.com/wang-bin/cppcompat
 - cmake: https://github.com/wang-bin/cmake-tools
+
+## License
+- Use for free: make sure your sdk is updated, otherwise you may see an QR image in the last frame. sdk will be released every month.
+- Free for GPL softwares: you can acquire a key from me.
+- Commercial license: a key for an app for a single platform or multiple platforms.
