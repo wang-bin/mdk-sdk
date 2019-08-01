@@ -23,12 +23,13 @@
 - HDR support in GPU
 - [x] windows 10 HDR apis (ANGLE GLES2/3)
 - [x] color primaries convertion
-- [ ] tone mapping
+- [x] tone mapping
 - [ ] hdr device
 - Encoding, transcoding and streaming
 - Subtitle
 - Vulkan
-- D3D
+- D3D, D2D
+- V4L2 codecs + 0-copy rendering(Raspberry pi)
 
 ## Open Source Modules and Examples
 - MFT decoder module: https://github.com/wang-bin/mdk-mft
