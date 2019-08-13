@@ -1,5 +1,8 @@
 [![Build Status](https://dev.azure.com/kb137035/mdk/_apis/build/status/mdk-CI-yaml?branchName=master)](https://dev.azure.com/kb137035/mdk/_build/latest?definitionId=2&branchName=master)
 
+[Nightly Build SDK](https://sourceforge.net/projects/mdk-sdk/files/nightly/)
+
+Install via [NuGet](https://www.nuget.org/packages/mdk) in Visual Studio
 
 ## Features
 - Simple and powerful API set
@@ -28,7 +31,7 @@
 - Encoding, transcoding and streaming
 - Subtitle
 - Vulkan
-- D3D, D2D
+- D3D
 - V4L2 codecs + 0-copy rendering(Raspberry pi)
 
 ## Open Source Modules and Examples
