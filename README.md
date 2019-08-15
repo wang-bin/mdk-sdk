@@ -7,7 +7,7 @@ Install via [NuGet](https://www.nuget.org/packages/mdk) in Visual Studio
 ## Features
 - Simple and powerful API set
 - Cross platform: Windows, UWP, Linux, macOS, Android, iOS, Raspberry Pi
-- Hardware accelerated decoding and 0-copy GPU rendering for all supported platforms
+- Hardware accelerated decoding and 0-copy GPU rendering for all platforms
 - OpenGL rendering w/ or w/o user provided context
 - Ingegrated with any gui toolkits via OpenGL (Qt, SDL, glfw, SFML etc.) easily
 - Seamless/Gapless media and bitrate switch for any media
@@ -29,7 +29,7 @@ Install via [NuGet](https://www.nuget.org/packages/mdk) in Visual Studio
 - [x] tone mapping
 - [ ] hdr device
 - Encoding, transcoding and streaming
-- Subtitle
+- Subtitle decoder and renderer
 - Vulkan
 - D3D
 - V4L2 codecs + 0-copy rendering(Raspberry pi)
