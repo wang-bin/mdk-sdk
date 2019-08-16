@@ -12,6 +12,7 @@ Install via [NuGet](https://www.nuget.org/packages/mdk) in Visual Studio
 - Ingegrated with any gui toolkits via OpenGL (Qt, SDL, glfw, SFML etc.) easily
 - Seamless/Gapless media and bitrate switch for any media
 - User configurable FFmpeg libraries at runtime
+- HDR support for all platforms
 
 ## MDK OpenGL v.s. MPV OpenGL CB
 - No additional initialization, simply call renderVideo()
@@ -23,7 +24,7 @@ Install via [NuGet](https://www.nuget.org/packages/mdk) in Visual Studio
 - C++ APIs: a header only thin wrapper for C APIs. No C++ ABI restriction. No user code change to switch between ABI level APIs and C++ APIs.
 
 ## TODO:
-- HDR support in GPU
+- HDR support
 - [x] windows 10 HDR apis (ANGLE GLES2/3)
 - [x] color primaries convertion
 - [x] tone mapping
