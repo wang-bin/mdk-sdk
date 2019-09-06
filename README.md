@@ -12,7 +12,14 @@ Install via [NuGet](https://www.nuget.org/packages/mdk) in Visual Studio
 - Ingegrated with any gui toolkits via OpenGL (Qt, SDL, glfw, SFML etc.) easily
 - Seamless/Gapless media and bitrate switch for any media
 - User configurable FFmpeg libraries at runtime
-- HDR support for all platforms
+- HDR rendering in GPU
+
+## FFmpeg Runtime Lookup
+FFmpeg modules can be specified via environment var AVUTIL_LIB, AVCODEC_LIB, AVFORMAT_LIB, AVFILTER_LIB, SWRESAMPLE_LIB, SWSCALE_LIB, or SetGlobalOption() with key avutil_lib, avcodec_lib, avformat_lib, swresample_lib, swscale_lib, avfilter_lib. For example `SetGlobalOption("avutil_lib", "/opt/lib/libavutil.so.56")`
+
+If ffmpeg any module is not set, it's searched in the following order
+- current module dir > framework dir(apple) > system default search dir
+- single ffmpeg library > ffmpeg modules w/ version > ffmpeg modules w/o version
 
 ## MDK OpenGL v.s. MPV OpenGL CB
 - No additional initialization, simply call renderVideo()
