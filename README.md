@@ -19,7 +19,7 @@ FFmpeg modules can be specified via environment var AVUTIL_LIB, AVCODEC_LIB, AVF
 
 If ffmpeg any module is not set, it's searched in the following order
 - current module dir > framework dir(apple) > system default search dir
-- single ffmpeg library > ffmpeg modules w/ version > ffmpeg modules w/o version
+- single ffmpeg library w/ version > single ffmpeg library w/o version > ffmpeg modules w/ version > ffmpeg modules w/o version
 
 ## MDK OpenGL v.s. MPV OpenGL CB
 - No additional initialization, simply call renderVideo()
@@ -40,6 +40,7 @@ If ffmpeg any module is not set, it's searched in the following order
 - Subtitle decoder and renderer
 - Vulkan
 - D3D
+- Metal
 - V4L2 codecs + 0-copy rendering(Raspberry pi)
 
 ## Open Source Modules and Examples
