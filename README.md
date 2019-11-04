@@ -31,17 +31,7 @@ If ffmpeg any module is not set, it's searched in the following order
 - C++ APIs: a header only thin wrapper for C APIs. No C++ ABI restriction. No user code change to switch between ABI level APIs and C++ APIs.
 
 ## TODO:
-- HDR support
-- [x] windows 10 HDR apis (ANGLE GLES2/3)
-- [x] color primaries convertion
-- [x] tone mapping
-- [ ] hdr device
-- Encoding, transcoding and streaming
-- Subtitle decoder and renderer
-- Vulkan
-- D3D
-- Metal
-- V4L2 codecs + 0-copy rendering(Raspberry pi)
+https://github.com/wang-bin/mdk-sdk/wiki/TODO
 
 ## Open Source Modules and Examples
 - MFT decoder module: https://github.com/wang-bin/mdk-mft
