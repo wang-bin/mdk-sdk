@@ -2,14 +2,16 @@
 
 [Nightly Build SDK](https://sourceforge.net/projects/mdk-sdk/files/nightly/)
 
-Install via [NuGet](https://www.nuget.org/packages/mdk) in Visual Studio
+Install via [NuGet](https://www.nuget.org/packages/mdk) in Visual Studio for both Windows desktop and UWP
+
+[Changelog](https://github.com/wang-bin/mdk-sdk/blob/master/Changelog.md)
 
 ## Features
 - Simple and powerful API set
 - Cross platform: Windows, UWP, Linux, macOS, Android, iOS, Raspberry Pi
 - Hardware accelerated decoding and 0-copy GPU rendering for all platforms
-- OpenGL rendering w/ or w/o user provided context
-- Ingegrated with any gui toolkits via OpenGL (Qt, SDL, glfw, SFML etc.) easily
+- OpenGL and D3D11 rendering w/ or w/o user provided context
+- Ingegrated with any gui toolkits or apps via OpenGL and D3D11 (OBS, Qt, SDL, glfw, SFML etc.) easily
 - Seamless/Gapless media and bitrate switch for any media
 - User configurable FFmpeg libraries at runtime
 - HDR rendering in GPU
@@ -35,6 +37,7 @@ https://github.com/wang-bin/mdk-sdk/wiki/TODO
 
 ## Open Source Modules and Examples
 - MFT decoder module: https://github.com/wang-bin/mdk-mft
+- obs plugin: https://github.com/wang-bin/obs-mdk
 - examples for different platforms and gui toolkits: https://github.com/wang-bin/mdk-examples
 - as a qtmultimedia plugin: https://github.com/wang-bin/qtmultimedia-plugins-mdk
 - GFX surface: https://github.com/wang-bin/ugs
