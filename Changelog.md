@@ -1,5 +1,16 @@
 Change log:
 
+0.6.1 - 2020-01-05
+
+- Improve D3D11 renderer, more pixel formats
+- Player.snapshot() supports saving to file
+- Support QSV decoder via DXVA2, and 0-copy rendering
+- Subtitle WIP.
+- Encoder WIP.
+- Fix endless wait in loop mode
+- Environment var name change: GL_MMAL_FORMAT=>MMAL_GL_FORMAT, GL_VAAPI=>VAAPI_GL, GL_VDPAU=>VDPAU_GL
+
+
 0.6.0 - 2019-12-02
 
 - D3D11 Renderer: now has almost the same features as OpenGL renderer

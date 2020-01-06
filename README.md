@@ -28,7 +28,7 @@ If ffmpeg any module is not set, it's searched in the following order
 
 
 ## [API Levels](https://github.com/wang-bin/mdk-sdk/wiki/%E9%80%9A%E7%94%A8ABI%E7%9A%84CPP%E5%BA%93API%E8%AE%BE%E8%AE%A1)
-- ABI level APIs: the implementation, in abi namespace. depends on c++ abi. build and runtime abi must be matched.
+- ABI level APIs(not public): the implementation, in abi namespace. depends on c++ abi. build and runtime abi must be matched.
 - C APIs: No C++ ABI restriction.
 - C++ APIs: a header only thin wrapper for C APIs. No C++ ABI restriction. No user code change to switch between ABI level APIs and C++ APIs.
 
