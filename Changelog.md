@@ -1,5 +1,49 @@
 Change log:
 
+0.7.0 - 2020-02-17
+
+- API:
+    - add `Player.setProperty()`
+    - add `VideoFrame` class
+    - add `Player.onFrame()` to get decoded frame, can be used by custom filters
+    - support `MediaStatus::Seeking`
+    - add snapshot [MediaEvent](https://github.com/wang-bin/mdk-sdk/wiki/Types#class-mediaevent)
+    - `seek()` callback parameter is -2 if seek request is ignored
+- ABI: no break
+- `setBackgroundColor()`: if alpha is 0(default), you have to call `glClearColor`(or d3d11 api) manually.
+- Add FindMDK.cmake in sdk lib/cmake dir, support multiple target architectures.
+- Fix multiple D3D11 renderer crash
+- Fix crash if audio device is not available
+- Fix music with cover buffering progress error
+- Fix last frames not rendered if prepare() from a position closed to end of stream.
+- Player.setVideoSurfaceSize(-1, -1) can remove the renderer
+- prepare() starts from 0 if requested start position > stream duration or duration is unknown
+- Improve A-B loop if B is closed to or larger than end of file
+- Fix block if A-B loop restarts when previous seeking is not finished
+- Music with cover art: fix png not rendered. fix block if stop by user.
+- Seek:
+    - Fix SeekFromNow
+    - Fix audio file read error after seek
+    - When end of stream decoded and in paused state
+    - Fix seek never work if previous seek failed
+    - position() never change after a seek error or a frequent seek request
+- snapshot: fix msvc crash
+- OpenGL:
+    - Save and restore blend states
+    - Skip loading EGL if context is not created by mdk
+- FFmpeg:
+    - support avfilter complex filters via Player property ["video.avfilter" and "audio.avfilter"](https://github.com/wang-bin/mdk-sdk/wiki/Player-APIs#void-setpropertyconst-stdstring-key-const-stdstring-value)
+    - Optimize audio filter if in/out parameters are the same
+    - Improve video encoder
+- VT decoder:
+    - Fix the last frame not rendered
+    - Support AnnexB streams
+- Reduce exported classes
+- Fix crashes, memory leaks in stress tests.
+- Metal renderer: WIP
+- Audio encoder: WIP
+
+
 0.6.1 - 2020-01-05
 
 - Improve D3D11 renderer, more pixel formats

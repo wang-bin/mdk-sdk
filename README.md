@@ -11,21 +11,13 @@ Install via [NuGet](https://www.nuget.org/packages/mdk) in Visual Studio for bot
 - Cross platform: Windows, UWP, Linux, macOS, Android, iOS, Raspberry Pi
 - Hardware accelerated decoding and 0-copy GPU rendering for all platforms
 - OpenGL and D3D11 rendering w/ or w/o user provided context
-- Ingegrated with any gui toolkits or apps via OpenGL and D3D11 (OBS, Qt, SDL, glfw, SFML etc.) easily
+- Integrated with any gui toolkits or apps via OpenGL and D3D11 (OBS, Qt, SDL, glfw, SFML etc.) easily
 - Seamless/Gapless media and bitrate switch for any media
 - User configurable FFmpeg libraries at runtime
 - HDR rendering in GPU
 
-## FFmpeg Runtime Lookup
-FFmpeg modules can be specified via environment var AVUTIL_LIB, AVCODEC_LIB, AVFORMAT_LIB, AVFILTER_LIB, SWRESAMPLE_LIB, SWSCALE_LIB, or SetGlobalOption() with key avutil_lib, avcodec_lib, avformat_lib, swresample_lib, swscale_lib, avfilter_lib. For example `SetGlobalOption("avutil_lib", "/opt/lib/libavutil.so.56")`
-
-If ffmpeg any module is not set, it's searched in the following order
-- current module dir > framework dir(apple) > system default search dir
-- single ffmpeg library w/ version > single ffmpeg library w/o version > ffmpeg modules w/ version > ffmpeg modules w/o version
-
-## MDK OpenGL v.s. MPV OpenGL CB
-- No additional initialization, simply call renderVideo()
-
+## FFmpeg Runtime
+See https://github.com/wang-bin/mdk-sdk/wiki/FFmpeg-Runtime
 
 ## [API Levels](https://github.com/wang-bin/mdk-sdk/wiki/%E9%80%9A%E7%94%A8ABI%E7%9A%84CPP%E5%BA%93API%E8%AE%BE%E8%AE%A1)
 - ABI level APIs(not public): the implementation, in abi namespace. depends on c++ abi. build and runtime abi must be matched.
