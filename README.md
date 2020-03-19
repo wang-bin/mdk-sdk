@@ -41,5 +41,5 @@ https://github.com/wang-bin/mdk-sdk/wiki/TODO
 
 ## License
 - Use for free: make sure your sdk is updated, otherwise you may see an QR image in the last frame. sdk will be released every month.
-- Free for GPL softwares: you can acquire a key from me.
+- Free for GPL softwares, opensource projects, QtAV donors and contributors, no commercial softwares: you can acquire a key from me.
 - Commercial license: a key for an app for a single platform or multiple platforms.

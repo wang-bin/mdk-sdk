@@ -1,5 +1,28 @@
 Change log:
 
+0.8.0 - 2020-03-18
+
+- API:
+    - Add Player.mapPoint() to map coordinates between video frame and viewport
+    - Aspect ratio change: negative is scale and crop, positive is scale without crop
+    - Add Player.onSync() to support sync to user provided clock. Currently only video can sync to it
+- D3D11 renderer:
+    - Supports 16bit be formats
+    - Convert to rgb by cpu if format is not supported
+- Linux multi arch cross build. Less platform specific code
+- Add V4L2M2M decoder
+- Improve EGL
+- Fix a crash on macOS when destroying player
+- `setBackgroundColor()`: always draw background if color is valid. Fix regression since 0.7.0.
+- Fix playback speed is too fast if resume after paused seek. Regression since v0.5.0
+- Fix video only stream clock sync if change playback rate
+- Fix wrong position when seeking (if media 1st pts > 0)
+- GLX is not linked
+- Use clang-8 for rpi to fix invalid armv6 so
+- Fix undefined symbol for sunxi
+- Enable cf guard for windows
+
+
 0.7.0 - 2020-02-17
 
 - API:
