@@ -24,6 +24,14 @@ See https://github.com/wang-bin/mdk-sdk/wiki/FFmpeg-Runtime
 - C APIs: No C++ ABI restriction.
 - C++ APIs: a header only thin wrapper for C APIs. No C++ ABI restriction. No user code change to switch between ABI level APIs and C++ APIs.
 
+## How to Use
+
+### CMake
+```
+	include(mdk-sdk-dir/lib/cmake/FindMDK.cmake)
+	target_link_libraries(your_target PRIVATE mdk)
+```
+
 ## TODO:
 https://github.com/wang-bin/mdk-sdk/wiki/TODO
 
