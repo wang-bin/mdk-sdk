@@ -1,5 +1,19 @@
 Change log:
 
+0.8.1 - 2020-04-30
+
+- API:
+    - Player.onSync() default interval is 10
+    - Add options for creating D3D11RenderAPI
+- CUDA: supports decoding yuv444 formats and 0-copy rendering
+- Support rendering gray formats
+- Fix MFT:d3d=11 texture leak
+- Fix Player.setMute()
+- Player.setState(State::Stopped) is much faster
+- Fix seek error after setPlaybackRate() if sync to audio
+- Apple: enable arc
+
+
 0.8.0 - 2020-03-18
 
 - API:
