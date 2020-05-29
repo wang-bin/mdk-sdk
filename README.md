@@ -10,8 +10,8 @@ Install via [NuGet](https://www.nuget.org/packages/mdk) in Visual Studio for bot
 - Simple and powerful API set
 - Cross platform: Windows, UWP, Linux, macOS, Android, iOS, Raspberry Pi
 - Hardware accelerated decoding and 0-copy GPU rendering for all platforms
-- OpenGL and D3D11 rendering w/ or w/o user provided context
-- Integrated with any gui toolkits or apps via OpenGL and D3D11 (OBS, Qt, SDL, glfw, SFML etc.) easily
+- OpenGL, D3D11 and Metal rendering w/ or w/o user provided context
+- Integrated with any gui toolkits or apps via OpenGL, D3D11 and Metal (OBS, Qt, SDL, glfw, SFML etc.) easily
 - Seamless/Gapless media and bitrate switch for any media
 - User configurable FFmpeg libraries at runtime
 - HDR rendering in GPU
