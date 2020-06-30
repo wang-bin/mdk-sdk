@@ -15,6 +15,8 @@ Install via [NuGet](https://www.nuget.org/packages/mdk) in Visual Studio for bot
 - Seamless/Gapless media and bitrate switch for any media
 - User configurable FFmpeg libraries at runtime
 - HDR rendering in GPU
+- Optimized Continuous seeking. As fast as mpv, but much lower cpu, memory and gpu load. Suitable for timeline preview
+
 
 ## FFmpeg Runtime
 See https://github.com/wang-bin/mdk-sdk/wiki/FFmpeg-Runtime
@@ -37,6 +39,7 @@ https://github.com/wang-bin/mdk-sdk/wiki/TODO
 
 ## Open Source Modules and Examples
 - MFT decoder module: https://github.com/wang-bin/mdk-mft
+- sunxi decoder + renderer: https://github.com/wang-bin/mdk-sunxi
 - obs plugin: https://github.com/wang-bin/obs-mdk
 - examples for different platforms and gui toolkits: https://github.com/wang-bin/mdk-examples
 - as a qtmultimedia plugin: https://github.com/wang-bin/qtmultimedia-plugins-mdk

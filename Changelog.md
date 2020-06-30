@@ -1,5 +1,58 @@
 Change log:
 
+0.9.1 - 2020-06-30
+- API:
+    - D3D11RenderAPI.rtv can be a texture to reduce platform dependent user code, context is optional if rtv is set
+    - Add GLRenderAPI.fbo, so no need to bind & restore fbo in user code
+    - Add MDK_strdup(). Fix potential crashes if msvc build configuration(Debug) != SDK(Release)
+- HDR:
+    - BT.2390 is the default tone map curve. Controlled by env GPU_TONE_MAP=2390/hable
+    - All decoder and renderer combinations has almost the same result
+- MFT:
+    - Read HDR metadata
+    - Support AV1 decoder, need to install av1 extension from store: https://www.microsoft.com/en-us/p/av1-video-extension/9mvzqvxjbq9v
+- Clear background on stop can be disabled by SetGlobalOption("videoout.clear_on_stop", 0)
+- Default log level is Info. Must manually set to Debug to see more. playback progress log only appears in LogLevel::All
+- Seek: ensure the last request will be executed. Useful for timeline preview
+- Fix D3D11 backbuffer resize error
+- Fix A-B range loop endless waiting if stop playback by user
+- Fix change decoder error and wait forever near EOF
+- Fix D3D11/Metal renderer crash if change from GPU decoder to CPU decoder
+- Fix D3D11RenderAPI.feature_level
+- Fix mute crash (avfilter)
+- Fix crash if a chapter tile is empty
+- Fix failed to save snapshot as png
+- Fix win64 cmake search dir
+- Deploy: requires vcruntime140_1.dll by win64
+- WIP: vulkan
+
+
+0.9.0 - 2020-05-28
+- API: Add GLRenderAPI and MetalRenderAPI
+- Support Metal on macOS and iOS. Lower CPU and GPU load.
+- Windows:
+    - Fix com initialization may affect cef
+    - D3D11 support decode in 1 gpu and render in another (poor performance).
+    - D3D11 upport some 16bit pixel formats if R16 is not supported
+    - Add D3D11 debug mode for MFT decoder("MFT:debug=1") and D3D11 renderer
+- Android:
+    - Fix EGL load
+    - Fix decoding EOS frame in sync and async mode
+- Apple
+    - Add debug symbol
+    - (macOS) weak link to standard ffmpeg dylibs so no need to dlopen by user. see https://github.com/wang-bin/mdk-sdk/wiki/FFmpeg-Runtime#macos
+    - Support software decoder direct rendering, decode to CVPixelBuffer via decoder "FFmpeg:pool=CVPixelBuffer". Less memory use.
+    - VT decoder supports ProRes, decode into P010 frames
+- FFmpeg:
+    - Print ffmpeg logs in log mdk log handler. Fix multi-lines logs not print completely
+    - Support reload via library handle
+    - Custom frame pool
+    - Add "sw_fallback" property
+- Examples:
+    - Modified apple official metal example: https://github.com/wang-bin/HelloTriangle/tree/master
+    - QtQuick RHI example. supports d3d11, metal and opengl: https://github.com/wang-bin/mdk-examples/tree/master/Qt/qmlrhi
+
+
 0.8.1 - 2020-04-30
 
 - API:
