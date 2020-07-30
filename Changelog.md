@@ -1,6 +1,25 @@
 Change log:
 
+
+0.9.2 - 2020-07-29
+
+- API:
+    - Add version()
+    - Add `Player.set(VideoEffect effect, const float& values, void* vo_opaque)` to set brightness, constrast, hue, saturation
+- Metal: Fix viewport resize if create from user provided view
+- D3D11/Metal: Fix stop playback does not clear background
+- Fix XAudio2 crash on win7, fix leak
+- HDR:
+    - support HLG transfer function
+    - use primaries from decoder(maybe wrong values) iff env "USE_METADATA_PRIMARIES" is 1
+    - tone mapping improves
+- Add AV1 for android "AMediaCodec" decoder
+- Fix another A-B range loop endless waiting
+- Vulkan WIP: apple, swapchain, debug, queue, apis, clear background render pass etc.
+
+
 0.9.1 - 2020-06-30
+
 - API:
     - D3D11RenderAPI.rtv can be a texture to reduce platform dependent user code, context is optional if rtv is set
     - Add GLRenderAPI.fbo, so no need to bind & restore fbo in user code
@@ -28,6 +47,7 @@ Change log:
 
 
 0.9.0 - 2020-05-28
+
 - API: Add GLRenderAPI and MetalRenderAPI
 - Support Metal on macOS and iOS. Lower CPU and GPU load.
 - Windows:
