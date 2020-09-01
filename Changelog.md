@@ -1,6 +1,22 @@
 Change log:
 
 
+0.10.0 - 2020-09-01
+
+- API:
+    - Add VulkanRenderAPI
+- Support Vulkan: win32, macOS, android(buggy). Everything works except hardware decoder 0-copy rendering, only software decoders and hardware decoder with ":copy=1" are supported.
+- Correct HDR trc if obviously wrong from decoder(mediacodec vp9)
+- AMediaCodec:
+    - Improve async mode
+    - Fix blocks on some devices
+- No need to call setLogHandler(nullptr) manually
+- Remove redundant gpu color primaries convertion
+- Fix D3D11 hevc decoder wrong result because of ignoring profile/level
+- Fix D3D11 decoder + D3D11 0-copy rendering wrong result on RTX2060
+- Partialy upport mac catalyst build
+
+
 0.9.2 - 2020-07-29
 
 - API:
