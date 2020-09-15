@@ -1,3 +1,5 @@
+[![Build status github](https://github.com/wang-bin/mdk-ci/workflows/Build/badge.svg)](https://github.com/wang-bin/mdk-ci/actions)
+
 [![Build Status](https://dev.azure.com/kb137035/mdk/_apis/build/status/mdk-CI-yaml?branchName=master)](https://dev.azure.com/kb137035/mdk/_build/latest?definitionId=2&branchName=master)
 
 [Nightly Build SDK](https://sourceforge.net/projects/mdk-sdk/files/nightly/)
