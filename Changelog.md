@@ -1,6 +1,16 @@
 Change log:
 
 
+0.10.1 - 2020-10-05
+
+- Vulkan: support Player.snapshot()
+- GLRenderAPI.egl/opengl/opengles combinations
+- Fix Player.setProperty("audio.avfilter")
+- D3D11 supports shared nt handle 0-copy rendering via decoder "D3D11:nthandle=1"
+- Simplify ffmpeg runtime loading
+- Fix some crashes and endless waits
+
+
 0.10.0 - 2020-09-01
 
 - API:
