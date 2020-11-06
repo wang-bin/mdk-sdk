@@ -69,7 +69,7 @@ jobs:
       working-directory: mdk
       run: |
         ./tools/ci-after-build.sh
-        mv mdk-sdk*.tar.xz ..
+        mv mdk-sdk*.tar.xz mdk-sdk*.zip ..
     - name: Archieve SDK
       uses: actions/upload-artifact@v2
       with:
@@ -78,7 +78,9 @@ jobs:
     - name: Upload to SourceForge
       if: ${{ matrix.config == 'RelWithDebInfo' }}
       shell: bash
-      run: sshpass -p ${SF_PW} scp -o StrictHostKeyChecking=no mdk-sdk-${TARGET_OS}.tar.xz ${SF_USER}@frs.sourceforge.net:/home/frs/project/mdk-sdk/nightly/
+      run: |
+        sshpass -p ${SF_PW} scp -o StrictHostKeyChecking=no mdk-sdk-${TARGET_OS}.tar.xz ${SF_USER}@frs.sourceforge.net:/home/frs/project/mdk-sdk/nightly/
+        sshpass -p ${SF_PW} scp -o StrictHostKeyChecking=no mdk-sdk-${TARGET_OS}.zip ${SF_USER}@frs.sourceforge.net:/home/frs/project/mdk-sdk/nightly/
 
 
   iOS:
