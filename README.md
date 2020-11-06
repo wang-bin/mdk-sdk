@@ -4,8 +4,6 @@
 
 [Nightly Build SDK](https://sourceforge.net/projects/mdk-sdk/files/nightly/)
 
-Install via [NuGet](https://www.nuget.org/packages/mdk) in Visual Studio for both Windows desktop and UWP
-
 [Changelog](https://github.com/wang-bin/mdk-sdk/blob/master/Changelog.md)
 
 ## Features
@@ -15,20 +13,18 @@ Install via [NuGet](https://www.nuget.org/packages/mdk) in Visual Studio for bot
 - OpenGL, D3D11, Vulkan and Metal rendering w/ or w/o user provided context
 - Integrated with any gui toolkits or apps via OpenGL, D3D11, Vulkan and Metal (OBS, Qt, SDL, glfw, SFML etc.) easily
 - Seamless/Gapless media and bitrate switch for any media
-- User configurable FFmpeg libraries at runtime
 - HDR rendering in GPU
 - Optimized Continuous seeking. As fast as mpv, but much lower cpu, memory and gpu load. Suitable for timeline preview
-
-
-## FFmpeg Runtime
-See https://github.com/wang-bin/mdk-sdk/wiki/FFmpeg-Runtime
+- Smart FFmpeg runtime. See https://github.com/wang-bin/mdk-sdk/wiki/FFmpeg-Runtime
 
 ## [API Levels](https://github.com/wang-bin/mdk-sdk/wiki/%E9%80%9A%E7%94%A8ABI%E7%9A%84CPP%E5%BA%93API%E8%AE%BE%E8%AE%A1)
 - ABI level APIs(not public): the implementation, in abi namespace. depends on c++ abi. build and runtime abi must be matched.
 - C APIs: No C++ ABI restriction.
 - C++ APIs: a header only thin wrapper for C APIs. No C++ ABI restriction. No user code change to switch between ABI level APIs and C++ APIs.
 
-## How to Use
+
+
+## Install
 
 ### CMake
 ```
@@ -36,8 +32,30 @@ See https://github.com/wang-bin/mdk-sdk/wiki/FFmpeg-Runtime
 	target_link_libraries(your_target PRIVATE mdk)
 ```
 
+### CocoaPods
+
+> macOS only for now
+
+` pod 'mdk'`
+
+### Nuget
+
+Install via [NuGet](https://www.nuget.org/packages/mdk) in Visual Studio for both Windows desktop and UWP
+
+
+
+# Documents
+
+- [wiki](https://github.com/wang-bin/mdk-sdk/wiki)
+- sdk headers
+
+
+
 ## TODO:
+
 https://github.com/wang-bin/mdk-sdk/wiki/TODO
+
+
 
 ## Open Source Modules and Examples
 - MFT decoder module: https://github.com/wang-bin/mdk-mft

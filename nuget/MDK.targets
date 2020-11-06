@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <mdk-DeviceType Condition="'$(TargetPlatformIdentifier)' == 'UAP'">UAP</mdk-DeviceType>
+    <mdk-BinPath>$(MSBuildThisFileDirectory)..\..\bin\$(mdk-DeviceType)\$(PlatformTarget)\</mdk-BinPath>
+    <mdk-LibPath>$(MSBuildThisFileDirectory)..\..\lib\$(mdk-DeviceType)\$(PlatformTarget)\</mdk-LibPath>
+    <mdk-IncPath>$(MSBuildThisFileDirectory)..\..\include\</mdk-IncPath>
+  </PropertyGroup>
+
+  <ItemDefinitionGroup>
+    <Link>
+      <AdditionalLibraryDirectories>$(mdk-LibPath);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>mdk.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <AdditionalIncludeDirectories>$(mdk-IncPath);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+  </ItemDefinitionGroup>
+
+  <ItemGroup Label="MDK Redists">
+    <PackagingOutputs Include="$(mdk-BinPath)\*.dll">
+      <OutputGroup>MdkBinaries</OutputGroup>
+      <ProjectName>$(ProjectName)</ProjectName>
+      <TargetPath>%(Filename)%(Extension)</TargetPath>
+      <Visible>True</Visible>
+    </PackagingOutputs>
+    <!--
+    <Content Include="$(mdk-BinPath)\*.dll">
+      <Link>%(FileName)%(Extension)</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    -->
+  </ItemGroup>
+  <ItemGroup Label="MDK Headers">
+    <ClInclude Include="$(mdk-IncPath)\mdk\global.h" />
+    <ClInclude Include="$(mdk-IncPath)\mdk\MediaInfo.h" />
+    <ClInclude Include="$(mdk-IncPath)\mdk\Player.h" />
+  </ItemGroup>
+
+  <!-- Copy dll redistributable -->
+  <Target Name="MdkCopyDllRedist" AfterTargets="AfterBuild">
+    <Copy SourceFiles="$(mdk-BinPath)\mdk.dll" DestinationFolder="$(TargetDir)" SkipUnchangedFiles="true" />
+    <Copy SourceFiles="$(mdk-BinPath)\mdk-avglue.dll" DestinationFolder="$(TargetDir)" SkipUnchangedFiles="true"  Condition="Exists('$(mdk-BinPath)\mdk-avglue.dll')" />
+    <Copy SourceFiles="$(mdk-BinPath)\ffmpeg.dll" DestinationFolder="$(TargetDir)" SkipUnchangedFiles="true"  Condition="Exists('$(mdk-BinPath)\ffmpeg.dll')" />
+    <Copy SourceFiles="$(mdk-BinPath)\ffmpeg-4.dll" DestinationFolder="$(TargetDir)" SkipUnchangedFiles="true"  Condition="Exists('$(mdk-BinPath)\ffmpeg-4.dll')" />
+    <Copy SourceFiles="$(mdk-BinPath)\libEGL.dll" DestinationFolder="$(TargetDir)" SkipUnchangedFiles="true"  Condition="Exists('$(mdk-BinPath)\libEGL.dll')" />
+    <Copy SourceFiles="$(mdk-BinPath)\libGLESv2.dll" DestinationFolder="$(TargetDir)" SkipUnchangedFiles="true" Condition="Exists('$(mdk-BinPath)\libGLESv2.dll')" />
+    <Copy SourceFiles="$(mdk-BinPath)\OpenAL32.dll" DestinationFolder="$(TargetDir)" SkipUnchangedFiles="true" Condition="Exists('$(mdk-BinPath)\OpenAL32.dll')" />
+    <Copy SourceFiles="$(mdk-BinPath)\ass.dll" DestinationFolder="$(TargetDir)" SkipUnchangedFiles="true" Condition="Exists('$(mdk-BinPath)\ass.dll')" />
+  </Target>
+</Project>

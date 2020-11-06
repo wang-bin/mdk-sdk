@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+  <metadata>
+    <id>mdk</id>
+    <version>0.10.1.0</version>
+    <title>MDK</title>
+    <authors>Wang Bin</authors>
+    <owners>Wang Bin</owners>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <license type="expression">MIT</license><!--<license type="file">build\native\docs\LICENSE.md</license>-->
+	<!--<licenseUrl>https://aka.ms/deprecateLicenseUrl</licenseUrl>-->
+    <projectUrl>https://github.com/wang-bin/mdk-sdk</projectUrl>
+    <!--<iconUrl></iconUrl>-->
+    <description>C/C++ Multimedia Development Kit</description>
+    <summary>Cross platform multimedia development kit in C/C++</summary>
+    <releaseNotes>https://github.com/wang-bin/mdk-sdk/releases</releaseNotes>
+    <copyright>Copyright 2020</copyright>
+    <tags>Multimedia MediaPlayer VideoPlayer Video Player Playback SDK HDR FFmpeg native CrossPlatform UWP Win32 cross-platform OpenGL OpenGLES D3D11</tags>
+  </metadata>
+  <files>
+    <file src="README.md" target="" />
+	<file src="build\**" target="build" />
+	<file src="bin\**" target="bin" />
+	<file src="include\**" target="include" />
+	<file src="lib\**" target="lib" />
+  </files>
+</package>
