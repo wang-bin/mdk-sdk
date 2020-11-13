@@ -23,7 +23,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        config: [MinSizeRel,RelWithDebInfo]
+        config: [RelWithDebInfo]
     steps:
     - uses: actions/checkout@v2
     - name: Checkout source
@@ -131,6 +131,51 @@ jobs:
       if: ${{ matrix.config == 'RelWithDebInfo' }}
       shell: bash
       run: sshpass -p ${SF_PW} scp -o StrictHostKeyChecking=no mdk-sdk-${TARGET_OS}.tar.xz ${SF_USER}@frs.sourceforge.net:/home/frs/project/mdk-sdk/nightly/
+
+
+  Apple:
+    runs-on: macos-latest
+    needs: [macOS, iOS]
+    steps:
+    - name: Download macOS sdk
+      uses: actions/download-artifact@v2
+      with:
+        name: mdk-sdk-macOS-RelWithDebInfo
+    - name: Download iOS sdk
+      uses: actions/download-artifact@v2
+      with:
+        name: mdk-sdk-iOS-RelWithDebInfo
+    - name: Install tools
+      shell: bash
+      run: brew install p7zip hudochenkov/sshpass/sshpass
+    - name: make XCFramework and SDK
+      shell: bash
+      run: |
+        export XZ_OPT="-9e --threads=`getconf _NPROCESSORS_ONLN`"
+        mkdir -p macOS iOS mdk-sdk/lib
+        tar Jxf mdk-sdk-macOS.tar.xz -C macOS
+        tar Jxf mdk-sdk-iOS.tar.xz -C iOS
+        find .
+        mv macOS/mdk-sdk/lib/libffmpeg*.dylib macOS/mdk-sdk/lib/cmake mdk-sdk/lib/
+        mv macOS/mdk-sdk/{bin,doc,include,*.sh} mdk-sdk
+        mv macOS/mdk-sdk/README.md mdk-sdk/README-macOS.md
+        mv iOS/mdk-sdk/README.md mdk-sdk/README-iOS.md
+        # https://developer.apple.com/forums/thread/655768 (error: the path does not point to a valid debug symbols file: macOS/mdk-sdk/lib/mdk.framework.dSYM)
+        xcodebuild -create-xcframework -framework macOS/mdk-sdk/lib/mdk.framework -debug-symbols $PWD/macOS/mdk-sdk/lib/mdk.framework.dSYM -framework iOS/mdk-sdk/lib/mdk.framework -output mdk-sdk/lib/mdk.xcframework
+        binfw=`find mdk-sdk/lib/mdk.xcframework/ -name "macos-*" -depth 1`
+        ln -sf ${binfw/mdk-sdk/..}/mdk.framework mdk-sdk/bin
+        tar Jcvf mdk-sdk-apple.tar.xz mdk-sdk
+        7z a mdk-sdk-apple.zip mdk-sdk
+    - name: Archieve SDK
+      uses: actions/upload-artifact@v2
+      with:
+        name: mdk-sdk-apple
+        path: mdk-sdk-apple.tar.xz
+    - name: Upload to SourceForge
+      shell: bash
+      run: |
+        sshpass -p ${SF_PW} scp -o StrictHostKeyChecking=no mdk-sdk-apple.tar.xz ${SF_USER}@frs.sourceforge.net:/home/frs/project/mdk-sdk/nightly/
+        sshpass -p ${SF_PW} scp -o StrictHostKeyChecking=no mdk-sdk-apple.zip ${SF_USER}@frs.sourceforge.net:/home/frs/project/mdk-sdk/nightly/
 
 
   RaspberryPi_libcxx:
@@ -412,6 +457,7 @@ jobs:
       shell: bash
       run: sshpass -p ${SF_PW} scp -o StrictHostKeyChecking=no mdk-sdk-${TARGET_OS}.7z ${SF_USER}@frs.sourceforge.net:/home/frs/project/mdk-sdk/nightly/
 
+# TODO: nuget
 
   Linux_libcxx:
     runs-on: ubuntu-latest
