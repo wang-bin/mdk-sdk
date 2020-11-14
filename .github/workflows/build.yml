@@ -17,13 +17,15 @@ env:
 jobs:
   macOS:
     # See: https://docs.github.com/en/actions/configuring-and-managing-workflows/configuring-a-workflow#configuring-a-build-matrix
-    runs-on: macos-latest
+    runs-on: macos-11.0
     env:
       TARGET_OS: 'macOS'
+      TARGET_ARCH: ${{ matrix.arch }}
     strategy:
       fail-fast: false
       matrix:
         config: [RelWithDebInfo]
+        arch: [x86_64, arm64]
     steps:
     - uses: actions/checkout@v2
     - name: Checkout source
@@ -34,6 +36,8 @@ jobs:
         fetch-depth: 1
         token: ${{ secrets.CLONE_PAT }}
         submodules: 'recursive'
+    - name: Setup Xcode
+      run: sudo xcode-select -s /Applications/Xcode_12.2.app
     - name: 'Restore External Dep cache'
       id: external-dep-cache
       uses: actions/cache@v2
@@ -53,6 +57,7 @@ jobs:
       run: ./tools/ci-before-build.sh
 
     - name: Configure CMake
+      if: ${{ matrix.arch == 'x86_64' }}
       # Use a bash shell so we can use the same syntax for environment variable
       # access regardless of the host operating system
       shell: bash
@@ -60,6 +65,12 @@ jobs:
       run: |
         pwd
         cmake -GNinja -DCMAKE_OSX_DEPLOYMENT_TARGET=10.9 -H. -Bbuild/${TARGET_OS} -DCMAKE_VERBOSE_MAKEFILE=1 -DCMAKE_BUILD_TYPE=${{ matrix.config }} -DCMAKE_INSTALL_PREFIX=$PWD/mdk-sdk # no dSYM for lto, dsymutil: no debug symbols in executable (-arch x86_64)
+    - name: Configure CMake
+      if: ${{ startsWith(matrix.arch, 'arm64') }} # arm64, arm64e
+      shell: bash
+      working-directory: mdk
+      run: |
+        cmake -GNinja -DCMAKE_OSX_ARCHITECTURES=${{ matrix.arch }} -DCMAKE_OSX_DEPLOYMENT_TARGET=11.0 -H. -Bbuild/${TARGET_OS} -DCMAKE_VERBOSE_MAKEFILE=1 -DCMAKE_BUILD_TYPE=${{ matrix.config }} -DCMAKE_INSTALL_PREFIX=$PWD/mdk-sdk # no dSYM for lto, dsymutil: no debug symbols in executable (-arch x86_64)
     - name: Build
       shell: bash
       working-directory: mdk
@@ -69,18 +80,17 @@ jobs:
       working-directory: mdk
       run: |
         ./tools/ci-after-build.sh
-        mv mdk-sdk*.tar.xz mdk-sdk*.zip ..
+        mv mdk-sdk*.tar.xz ../mdk-sdk-${{ env.TARGET_OS }}-${{ matrix.arch }}.tar.xz
     - name: Archieve SDK
       uses: actions/upload-artifact@v2
       with:
-        name: mdk-sdk-${{ env.TARGET_OS }}-${{ matrix.config }}
-        path: mdk-sdk-${{ env.TARGET_OS }}.tar.xz
+        name: mdk-sdk-${{ env.TARGET_OS }}-${{ matrix.arch}}-${{ matrix.config }}
+        path: mdk-sdk-${{ env.TARGET_OS }}-${{ matrix.arch}}.tar.xz
     - name: Upload to SourceForge
-      if: ${{ matrix.config == 'RelWithDebInfo' }}
+      if: ${{ matrix.config == 'RelWithDebInfo' && matrix.arch == 'x86_64' }}
       shell: bash
       run: |
-        sshpass -p ${SF_PW} scp -o StrictHostKeyChecking=no mdk-sdk-${TARGET_OS}.tar.xz ${SF_USER}@frs.sourceforge.net:/home/frs/project/mdk-sdk/nightly/
-        sshpass -p ${SF_PW} scp -o StrictHostKeyChecking=no mdk-sdk-${TARGET_OS}.zip ${SF_USER}@frs.sourceforge.net:/home/frs/project/mdk-sdk/nightly/
+        sshpass -p ${SF_PW} scp -o StrictHostKeyChecking=no mdk-sdk-${TARGET_OS}-${{ matrix.arch }}.tar.xz ${SF_USER}@frs.sourceforge.net:/home/frs/project/mdk-sdk/nightly/
 
 
   iOS:
@@ -109,7 +119,7 @@ jobs:
     - name: Configure CMake
       shell: bash
       working-directory: mdk
-      run: cmake -GNinja -DCMAKE_TOOLCHAIN_FILE=$PWD/cmake/tools/ios.cmake -DIOS_DEPLOYMENT_TARGET=6.0 -DIOS_ARCH="arm64;armv7" -DIOS_BITCODE=1 -DIOS_BITCODE_MARKER=1 -H. -Bbuild/${TARGET_OS} -DCMAKE_BUILD_TYPE=${{ matrix.config }} -DCMAKE_INSTALL_PREFIX=$PWD/mdk-sdk -DCMAKE_VERBOSE_MAKEFILE=1
+      run: cmake -GNinja -DCMAKE_TOOLCHAIN_FILE=$PWD/cmake/tools/ios.cmake -DIOS_DEPLOYMENT_TARGET=6.0 -DIOS_ARCH="arm64;armv7" -DIOS_BITCODE=1 -DIOS_BITCODE_MARKER=1 -H. -Bbuild/${TARGET_OS} -DCMAKE_BUILD_TYPE=${{ matrix.config }} -DCMAKE_INSTALL_PREFIX=$PWD/mdk-sdk -DCMAKE_VERBOSE_MAKEFILE=1 -DFFMPEG_EMBED=0 # FFMPEG_EMBED=0 to copy libffmpeg.4.dylib
     - name: Build
       shell: bash
       working-directory: mdk
@@ -140,7 +150,11 @@ jobs:
     - name: Download macOS sdk
       uses: actions/download-artifact@v2
       with:
-        name: mdk-sdk-macOS-RelWithDebInfo
+        name: mdk-sdk-macOS-x86_64-RelWithDebInfo
+    - name: Download macOS sdk
+      uses: actions/download-artifact@v2
+      with:
+        name: mdk-sdk-macOS-arm64-RelWithDebInfo
     - name: Download iOS sdk
       uses: actions/download-artifact@v2
       with:
@@ -152,10 +166,18 @@ jobs:
       shell: bash
       run: |
         export XZ_OPT="-9e --threads=`getconf _NPROCESSORS_ONLN`"
-        mkdir -p macOS iOS mdk-sdk/lib
-        tar Jxf mdk-sdk-macOS.tar.xz -C macOS
+        mkdir -p macOS iOS mdk-sdk/lib macOS-arm64 macOS-x86_64
+        tar Jxf mdk-sdk-macOS-x86_64.tar.xz -C macOS-x86_64
+        tar Jxf mdk-sdk-macOS-arm64.tar.xz -C macOS-arm64
         tar Jxf mdk-sdk-iOS.tar.xz -C iOS
         find .
+        cp -af macOS-x86_64/mdk-sdk macOS/ # libffmpeg is already fat
+        lipo -create macOS-{arm,x86_}64/mdk-sdk/lib/mdk.framework/mdk -output macOS/mdk-sdk/lib/mdk.framework/Versions/Current/mdk
+        lipo -create macOS-{arm,x86_}64/mdk-sdk/lib/mdk.framework.dSYM/Contents/Resources/DWARF/mdk -output macOS/mdk-sdk/lib/mdk.framework.dSYM/Contents/Resources/DWARF/mdk
+        cp -fRv macOS/mdk-sdk/lib/mdk.framework/Versions/{Current,A}  # codesign may requires version A
+        for b in `ls macOS-arm64/mdk-sdk/bin`; do # exes exist in both archs
+          lipo -create macOS-{arm,x86_}64/mdk-sdk/bin/$b -output macOS/mdk-sdk/bin/$b
+        done
         mv macOS/mdk-sdk/lib/libffmpeg*.dylib macOS/mdk-sdk/lib/cmake mdk-sdk/lib/
         mv macOS/mdk-sdk/{bin,doc,include,*.sh} mdk-sdk
         mv macOS/mdk-sdk/README.md mdk-sdk/README-macOS.md
@@ -166,7 +188,15 @@ jobs:
         ln -sf ${binfw/mdk-sdk/..}/mdk.framework mdk-sdk/bin
         tar Jcvf mdk-sdk-apple.tar.xz mdk-sdk
         7z a mdk-sdk-apple.zip mdk-sdk
-    - name: Archieve SDK
+        tar Jcvf mdk-sdk-macOS.tar.xz -C macOS .
+        cd macOS
+        7z a ../mdk-sdk-macOS.zip mdk-sdk
+    - name: Archieve XCFramework SDK
+      uses: actions/upload-artifact@v2
+      with:
+        name: mdk-sdk-apple
+        path: mdk-sdk-apple.tar.xz
+    - name: Archieve macOS SDK
       uses: actions/upload-artifact@v2
       with:
         name: mdk-sdk-apple
@@ -176,6 +206,8 @@ jobs:
       run: |
         sshpass -p ${SF_PW} scp -o StrictHostKeyChecking=no mdk-sdk-apple.tar.xz ${SF_USER}@frs.sourceforge.net:/home/frs/project/mdk-sdk/nightly/
         sshpass -p ${SF_PW} scp -o StrictHostKeyChecking=no mdk-sdk-apple.zip ${SF_USER}@frs.sourceforge.net:/home/frs/project/mdk-sdk/nightly/
+        sshpass -p ${SF_PW} scp -o StrictHostKeyChecking=no mdk-sdk-macOS.tar.xz ${SF_USER}@frs.sourceforge.net:/home/frs/project/mdk-sdk/nightly/
+        sshpass -p ${SF_PW} scp -o StrictHostKeyChecking=no mdk-sdk-macOS.zip ${SF_USER}@frs.sourceforge.net:/home/frs/project/mdk-sdk/nightly/
 
 
   RaspberryPi_libcxx:
