@@ -1,6 +1,21 @@
 Change log:
 
 
+0.10.2 - 2020-11-18
+
+- Support apple sillicon(not tested on real device)
+- Support swift language
+- Support cocoapods for macOS via `pod 'mdk'`
+- Add xcframework, including both macOS and iOS frameworks
+- Add av1 support for CUDA decoder
+- check pixel format support for mmal to fix yuv444p error
+- mmal decoder: force copy if no 0-copy support
+- Add ACES HDR tone map, via env `GPU_TONE_MAP=aces`
+- Metal, d3d11, vulkan renderer support alpha blending if video has alpha channel
+- Metal: fix crash if frame is invalid
+- Fix a/v sync regression after seek since v0.10.1
+
+
 0.10.1 - 2020-10-05
 
 - Vulkan: support Player.snapshot()
