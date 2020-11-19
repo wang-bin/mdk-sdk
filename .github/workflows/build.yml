@@ -119,7 +119,7 @@ jobs:
     - name: Configure CMake
       shell: bash
       working-directory: mdk
-      run: cmake -GNinja -DCMAKE_TOOLCHAIN_FILE=$PWD/cmake/tools/ios.cmake -DIOS_DEPLOYMENT_TARGET=8.0 -DIOS_ARCH="arm64" -DIOS_BITCODE=1 -DIOS_BITCODE_MARKER=1 -H. -Bbuild/${TARGET_OS} -DCMAKE_BUILD_TYPE=${{ matrix.config }} -DCMAKE_INSTALL_PREFIX=$PWD/mdk-sdk -DCMAKE_VERBOSE_MAKEFILE=1 -DFFMPEG_EMBED=0 # FFMPEG_EMBED=0 to copy libffmpeg.4.dylib
+      run: cmake -GNinja -DCMAKE_TOOLCHAIN_FILE=$PWD/cmake/tools/ios.cmake -DIOS_DEPLOYMENT_TARGET=8.0 -DIOS_ARCH="arm64" -DIOS_BITCODE=1 -DIOS_BITCODE_MARKER=1 -H. -Bbuild/${TARGET_OS} -DCMAKE_BUILD_TYPE=${{ matrix.config }} -DCMAKE_INSTALL_PREFIX=$PWD/mdk-sdk -DCMAKE_VERBOSE_MAKEFILE=1 -DFFMPEG_EMBED=1 # FFMPEG_EMBED=0 to copy libffmpeg.4.dylib
     - name: Build
       shell: bash
       working-directory: mdk
@@ -130,7 +130,10 @@ jobs:
       run: |
         cmake -P build/${TARGET_OS}/cmake_install.cmake
         tools/mksdk.sh mdk-sdk || echo done
-        lipo -thin arm64 mdk-sdk/lib/libffmpeg.4.dylib -output mdk-sdk/lib/libffmpeg.4.dylib
+        libffmpeg=mdk-sdk/lib/mdk.framework/Versions/Current/libffmpeg.4.dylib
+        if [ -f "$libffmpeg" ]; then
+          lipo -thin arm64 mdk-sdk/lib/libffmpeg.4.dylib -output "$libffmpeg"
+        fi
         tar Jcfv mdk-sdk-$TARGET_OS.tar.xz mdk-sdk
         mv mdk-sdk*.tar.xz ..
     - name: Archieve SDK
@@ -148,6 +151,7 @@ jobs:
     runs-on: macos-latest
     needs: [macOS, iOS]
     steps:
+    - uses: actions/checkout@v2
     - name: Download macOS sdk
       uses: actions/download-artifact@v2
       with:
@@ -175,7 +179,6 @@ jobs:
         cp -af macOS-x86_64/mdk-sdk macOS/ # libffmpeg is already fat
         lipo -create macOS-{arm,x86_}64/mdk-sdk/lib/mdk.framework/mdk -output macOS/mdk-sdk/lib/mdk.framework/Versions/Current/mdk
         lipo -create macOS-{arm,x86_}64/mdk-sdk/lib/mdk.framework.dSYM/Contents/Resources/DWARF/mdk -output macOS/mdk-sdk/lib/mdk.framework.dSYM/Contents/Resources/DWARF/mdk
-        cp -fRv macOS/mdk-sdk/lib/mdk.framework/Versions/{Current,A}  # codesign may requires version A
         for b in `ls macOS-arm64/mdk-sdk/bin`; do # exes exist in both archs
           lipo -create macOS-{arm,x86_}64/mdk-sdk/bin/$b -output macOS/mdk-sdk/bin/$b
         done
@@ -184,12 +187,9 @@ jobs:
         cp -af iOS/mdk-sdk/README.md mdk-sdk/README-iOS.md
         # https://developer.apple.com/forums/thread/655768 (error: the path does not point to a valid debug symbols file: macOS/mdk-sdk/lib/mdk.framework.dSYM)
         xcodebuild -create-xcframework -framework macOS/mdk-sdk/lib/mdk.framework -debug-symbols $PWD/macOS/mdk-sdk/lib/mdk.framework.dSYM -framework iOS/mdk-sdk/lib/mdk.framework -output mdk-sdk/lib/mdk.xcframework
-        xcodebuild -create-xcframework -library macOS/mdk-sdk/lib/libffmpeg*.dylib -library iOS/mdk-sdk/lib/libffmpeg*.dylib -output mdk-sdk/lib/FFmpeg.xcframework
         mdkfw=`find mdk-sdk/lib/mdk.xcframework -name "macos-*" -depth 1`
-        avfw=`find mdk-sdk/lib/FFmpeg.xcframework -name "macos-*" -depth 1`
         # ensure bin/* can Find mdk and ffmpeg
         ln -sf ${mdkfw/mdk-sdk/..}/mdk.framework mdk-sdk/Frameworks
-        ln -sf ${avfw/mdk-sdk/..}/libffmpeg.4.dylib mdk-sdk/Frameworks
         tar Jcvf mdk-sdk-apple.tar.xz mdk-sdk
         7z a mdk-sdk-apple.zip mdk-sdk
         tar Jcvf mdk-sdk-macOS.tar.xz -C macOS .
@@ -208,10 +208,7 @@ jobs:
     - name: Upload to SourceForge
       shell: bash
       run: |
-        sshpass -p ${SF_PW} scp -o StrictHostKeyChecking=no mdk-sdk-apple.tar.xz ${SF_USER}@frs.sourceforge.net:/home/frs/project/mdk-sdk/nightly/
-        sshpass -p ${SF_PW} scp -o StrictHostKeyChecking=no mdk-sdk-apple.zip ${SF_USER}@frs.sourceforge.net:/home/frs/project/mdk-sdk/nightly/
-        sshpass -p ${SF_PW} scp -o StrictHostKeyChecking=no mdk-sdk-macOS.tar.xz ${SF_USER}@frs.sourceforge.net:/home/frs/project/mdk-sdk/nightly/
-        sshpass -p ${SF_PW} scp -o StrictHostKeyChecking=no mdk-sdk-macOS.zip ${SF_USER}@frs.sourceforge.net:/home/frs/project/mdk-sdk/nightly/
+        make -f upload.mk
 
 
   RaspberryPi_libcxx:
