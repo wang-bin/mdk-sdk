@@ -54,7 +54,7 @@ jobs:
         DEVTOOLS_CACHE_HIT: ${{ steps.devtools-cache.outputs.cache-hit }}
         EXTERNAL_DEP_CACHE_HIT: ${{ steps.external-dep-cache.outputs.cache-hit }}
       working-directory: mdk
-      run: ./tools/ci-before-build.sh
+      run: ../ci-before-build.sh
 
     - name: Configure CMake
       if: ${{ matrix.arch == 'x86_64' }}
@@ -79,7 +79,7 @@ jobs:
       shell: bash
       working-directory: mdk
       run: |
-        ./tools/ci-after-build.sh
+        ../ci-after-build.sh
         mv mdk-sdk*.tar.xz ../mdk-sdk-${{ env.TARGET_OS }}-${{ matrix.arch }}.tar.xz
     - name: Archieve SDK
       uses: actions/upload-artifact@v2
@@ -111,11 +111,23 @@ jobs:
         fetch-depth: 1
         token: ${{ secrets.CLONE_PAT }}
         submodules: 'recursive'
+    - name: 'Restore External Dep cache'
+      id: external-dep-cache
+      uses: actions/cache@v2
+      with:
+        path: |
+          ./mdk/external
+          !./mdk/external/lib/macOS/libvulkan.tbd
+        key: external-dep-${{ env.TARGET_OS }}-ffmpeg-${{ env.FF_VER }}-${{ secrets.FF_SDK_ID }}
+# why may failed to cache/restore /usr/local/bin/sshpass?
+# no build cache because build dir content changes but key should not, then no cache save.
     - name: Create Build Environment
       shell: bash
+      env:
+        DEVTOOLS_CACHE_HIT: ${{ steps.devtools-cache.outputs.cache-hit }}
+        EXTERNAL_DEP_CACHE_HIT: ${{ steps.external-dep-cache.outputs.cache-hit }}
       working-directory: mdk
-      run:  |
-        brew install ninja hudochenkov/sshpass/sshpass xz
+      run: ../ci-before-build.sh
     - name: Configure CMake
       shell: bash
       working-directory: mdk
@@ -129,10 +141,10 @@ jobs:
       working-directory: mdk
       run: |
         cmake -P build/${TARGET_OS}/cmake_install.cmake
-        tools/mksdk.sh mdk-sdk || echo done
-        libffmpeg=mdk-sdk/lib/mdk.framework/Versions/Current/libffmpeg.4.dylib
+        ../mksdk.sh mdk-sdk || echo done
+        libffmpeg=$(find mdk-sdk/lib/mdk.framework -name "libffmpeg*.dylib")
         if [ -f "$libffmpeg" ]; then
-          lipo -thin arm64 mdk-sdk/lib/libffmpeg.4.dylib -output "$libffmpeg"
+          lipo -thin arm64 "$libffmpeg" -output "$libffmpeg"
         fi
         tar Jcfv mdk-sdk-$TARGET_OS.tar.xz mdk-sdk
         mv mdk-sdk*.tar.xz ..
@@ -146,10 +158,70 @@ jobs:
       shell: bash
       run: sshpass -p ${SF_PW} scp -o StrictHostKeyChecking=no mdk-sdk-${TARGET_OS}.tar.xz ${SF_USER}@frs.sourceforge.net:/home/frs/project/mdk-sdk/nightly/
 
+  iOSSimulator:
+    runs-on: macos-latest
+    env:
+      TARGET_OS: iOSSimulator
+    strategy:
+      fail-fast: false
+      matrix:
+        config: [MinSizeRel]
+    steps:
+    - uses: actions/checkout@v2
+    - name: Checkout source
+      uses: actions/checkout@v2
+      with:
+        repository: wang-bin/mdk
+        path: mdk
+        fetch-depth: 1
+        token: ${{ secrets.CLONE_PAT }}
+        submodules: 'recursive'
+    - name: 'Restore External Dep cache'
+      id: external-dep-cache
+      uses: actions/cache@v2
+      with:
+        path: |
+          ./mdk/external
+          !./mdk/external/lib/macOS/libvulkan.tbd
+        key: external-dep-${{ env.TARGET_OS }}-ffmpeg-${{ env.FF_VER }}-${{ secrets.FF_SDK_ID }}
+# why may failed to cache/restore /usr/local/bin/sshpass?
+# no build cache because build dir content changes but key should not, then no cache save.
+    - name: Create Build Environment
+      shell: bash
+      env:
+        DEVTOOLS_CACHE_HIT: ${{ steps.devtools-cache.outputs.cache-hit }}
+        EXTERNAL_DEP_CACHE_HIT: ${{ steps.external-dep-cache.outputs.cache-hit }}
+      working-directory: mdk
+      run: ../ci-before-build.sh
+    - name: Configure CMake
+      shell: bash
+      working-directory: mdk
+      run: cmake -GNinja -DCMAKE_SYSTEM_NAME=iOS -DCMAKE_OSX_ARCHITECTURES="i386;x86_64" -DCMAKE_OSX_DEPLOYMENT_TARGET=8.0 -DCMAKE_XCODE_ATTRIBUTE_ONLY_ACTIVE_ARCH=NO -DCMAKE_IOS_INSTALL_COMBINED=YES -DCMAKE_OSX_SYSROOT=iphonesimulator -H. -Bbuild/${TARGET_OS} -DCMAKE_BUILD_TYPE=${{ matrix.config }} -DCMAKE_INSTALL_PREFIX=$PWD/mdk-sdk -DCMAKE_VERBOSE_MAKEFILE=1 -DFFMPEG_EMBED=1 # FFMPEG_EMBED=0 to copy libffmpeg.4.dylib
+    - name: Build
+      shell: bash
+      working-directory: mdk
+      run: cmake --build build/${TARGET_OS}
+    - name: Make SDK
+      shell: bash
+      working-directory: mdk
+      run: |
+        cmake -P build/${TARGET_OS}/cmake_install.cmake
+        ../mksdk.sh mdk-sdk || echo done
+        libffmpeg=$(find mdk-sdk/lib/mdk.framework -name "libffmpeg*.dylib")
+        if [ -f "$libffmpeg" ]; then
+          lipo -thin x86_64 "$libffmpeg" -output "$libffmpeg"
+        fi
+        tar Jcfv mdk-sdk-$TARGET_OS.tar.xz mdk-sdk
+        mv mdk-sdk*.tar.xz ..
+    - name: Archieve SDK
+      uses: actions/upload-artifact@v2
+      with:
+        name: mdk-sdk-${{ env.TARGET_OS }}-${{ matrix.config }}
+        path: mdk-sdk-${{ env.TARGET_OS }}.tar.xz
 
   Apple:
     runs-on: macos-latest
-    needs: [macOS, iOS]
+    needs: [macOS, iOS, iOSSimulator]
     steps:
     - uses: actions/checkout@v2
     - name: Download macOS sdk
@@ -164,6 +236,10 @@ jobs:
       uses: actions/download-artifact@v2
       with:
         name: mdk-sdk-iOS-MinSizeRel
+    - name: Download iOSSimulator sdk
+      uses: actions/download-artifact@v2
+      with:
+        name: mdk-sdk-iOSSimulator-MinSizeRel
     - name: Install tools
       shell: bash
       run: brew install p7zip hudochenkov/sshpass/sshpass
@@ -171,10 +247,11 @@ jobs:
       shell: bash
       run: |
         export XZ_OPT="-9e --threads=`getconf _NPROCESSORS_ONLN`"
-        mkdir -p macOS iOS mdk-sdk/{Frameworks,lib} macOS-arm64 macOS-x86_64
+        mkdir -p macOS iOS iOSSimulator mdk-sdk/{Frameworks,lib} macOS-arm64 macOS-x86_64
         tar Jxf mdk-sdk-macOS-x86_64.tar.xz -C macOS-x86_64
         tar Jxf mdk-sdk-macOS-arm64.tar.xz -C macOS-arm64
         tar Jxf mdk-sdk-iOS.tar.xz -C iOS
+        tar Jxf mdk-sdk-iOSSimulator.tar.xz -C iOSSimulator
         find .
         cp -af macOS-x86_64/mdk-sdk macOS/ # libffmpeg is already fat
         lipo -create macOS-{arm,x86_}64/mdk-sdk/lib/mdk.framework/mdk -output macOS/mdk-sdk/lib/mdk.framework/Versions/Current/mdk
@@ -186,7 +263,7 @@ jobs:
         cp -af macOS/mdk-sdk/README.md mdk-sdk/README-macOS.md
         cp -af iOS/mdk-sdk/README.md mdk-sdk/README-iOS.md
         # https://developer.apple.com/forums/thread/655768 (error: the path does not point to a valid debug symbols file: macOS/mdk-sdk/lib/mdk.framework.dSYM)
-        xcodebuild -create-xcframework -framework macOS/mdk-sdk/lib/mdk.framework -debug-symbols $PWD/macOS/mdk-sdk/lib/mdk.framework.dSYM -framework iOS/mdk-sdk/lib/mdk.framework -output mdk-sdk/lib/mdk.xcframework
+        xcodebuild -create-xcframework -framework macOS/mdk-sdk/lib/mdk.framework -debug-symbols $PWD/macOS/mdk-sdk/lib/mdk.framework.dSYM -framework iOS/mdk-sdk/lib/mdk.framework -framework iOSSimulator/mdk-sdk/lib/mdk.framework -output mdk-sdk/lib/mdk.xcframework
         mdkfw=`find mdk-sdk/lib/mdk.xcframework -name "macos-*" -depth 1`
         # ensure bin/* can Find mdk and ffmpeg
         ln -sf ${mdkfw/mdk-sdk/..}/mdk.framework mdk-sdk/Frameworks
@@ -250,7 +327,7 @@ jobs:
         SYSROOT_CACHE_HIT: ${{ steps.sysroot-cache.outputs.cache-hit }}
         EXTERNAL_DEP_CACHE_HIT: ${{ steps.external-dep-cache.outputs.cache-hit }}
       working-directory: mdk
-      run: ./tools/ci-before-build.sh
+      run: ../ci-before-build.sh
     - name: Configure CMake
       shell: bash
       working-directory: mdk
@@ -265,7 +342,7 @@ jobs:
       shell: bash
       working-directory: mdk
       run: |
-        ./tools/ci-after-build.sh
+        ../ci-after-build.sh
         mv mdk-sdk*.tar.xz ..
     - name: Archieve SDK
       uses: actions/upload-artifact@v2
@@ -320,7 +397,7 @@ jobs:
         SYSROOT_CACHE_HIT: ${{ steps.sysroot-cache.outputs.cache-hit }}
         EXTERNAL_DEP_CACHE_HIT: ${{ steps.external-dep-cache.outputs.cache-hit }}
       working-directory: mdk
-      run: ./tools/ci-before-build.sh
+      run: ../ci-before-build.sh
     - name: Configure for win arm64
       shell: bash
       env:
@@ -364,7 +441,7 @@ jobs:
       shell: bash
       working-directory: mdk
       run: |
-        ./tools/ci-after-build.sh
+        ../ci-after-build.sh
         mv mdk-sdk-*.7z ..
     - name: Archieve SDK
       uses: actions/upload-artifact@v2
@@ -418,7 +495,7 @@ jobs:
         SYSROOT_CACHE_HIT: ${{ steps.sysroot-cache.outputs.cache-hit }}
         EXTERNAL_DEP_CACHE_HIT: ${{ steps.external-dep-cache.outputs.cache-hit }}
       working-directory: mdk
-      run: ./tools/ci-before-build.sh
+      run: ../ci-before-build.sh
     - name: Configure for UWP arm
       if: ${{ matrix.config == 'MinSizeRel' }}
       shell: bash
@@ -448,19 +525,6 @@ jobs:
       shell: bash
       working-directory: mdk
       run: cmake --build build/${TARGET_OS}-arm64
-    - name: Configure for win x86
-      shell: bash
-      env:
-        ARCH: x86
-      working-directory: mdk
-      run: |
-        export WindowsSdkDir=${WINDOWSSDKDIR}
-        export WindowsSDKVersion=$(cat ${WINDOWSSDKDIR}/.version)
-        cmake  -DUWP=1 -DCMAKE_SYSTEM_PROCESSOR=${ARCH} -DCMAKE_TOOLCHAIN_FILE=$PWD/cmake/tools/windows.clang.cmake -GNinja -H$PWD -B$PWD/build/${TARGET_OS}-${ARCH} -DCMAKE_BUILD_TYPE=${{ matrix.config }} -DCMAKE_INSTALL_PREFIX=$PWD/mdk-sdk-${ARCH} -DCMAKE_VERBOSE_MAKEFILE=1
-    - name: Build for UWP x86
-      shell: bash
-      working-directory: mdk
-      run: cmake --build build/${TARGET_OS}-x86
     - name: Configure for UWP x64
       shell: bash
       env:
@@ -478,7 +542,7 @@ jobs:
       shell: bash
       working-directory: mdk
       run: |
-        ./tools/ci-after-build.sh
+        ../ci-after-build.sh
         mv mdk-sdk-*.7z ..
     - name: Archieve SDK
       uses: actions/upload-artifact@v2
@@ -530,7 +594,7 @@ jobs:
         SYSROOT_CACHE_HIT: ${{ steps.sysroot-cache.outputs.cache-hit }}
         EXTERNAL_DEP_CACHE_HIT: ${{ steps.external-dep-cache.outputs.cache-hit }}
       working-directory: mdk
-      run: ./tools/ci-before-build.sh
+      run: ../ci-before-build.sh
     - name: Configure for x64
       env:
         ARCH: amd64
@@ -565,7 +629,7 @@ jobs:
       shell: bash
       working-directory: mdk
       run: |
-        ./tools/ci-after-build.sh
+        ../ci-after-build.sh
         mv mdk-sdk*.tar.xz ..
     - name: Archieve SDK
       uses: actions/upload-artifact@v2
@@ -611,7 +675,7 @@ jobs:
 #        SYSROOT_CACHE_HIT: ${{ steps.sysroot-cache.outputs.cache-hit }}
         EXTERNAL_DEP_CACHE_HIT: ${{ steps.external-dep-cache.outputs.cache-hit }}
       working-directory: mdk
-      run: ./tools/ci-before-build.sh
+      run: ../ci-before-build.sh
     - name: Configure for armeabi-v7a
       env:
         ARCH: armeabi-v7a
@@ -649,7 +713,7 @@ jobs:
       shell: bash
       working-directory: mdk
       run: |
-        ./tools/ci-after-build.sh
+        ../ci-after-build.sh
         mv mdk-sdk-*.7z ..
     - name: Archieve SDK
       uses: actions/upload-artifact@v2

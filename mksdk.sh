@@ -12,19 +12,14 @@ TMP=`mktemp -d`
 tar cf $TMP/cmake.tar $SDK_DIR/lib/cmake/FindMDK.cmake
 if [ -d $SDK_DIR/lib/mdk.framework ]; then
   tar cf $TMP/h.tar $SDK_DIR/lib/mdk.framework
-  ls -lh $SDK_DIR/lib/libffmpeg.?.dylib
-  cp -avfL $SDK_DIR/lib/libffmpeg.?.dylib $TMP/
   rm -rf $SDK_DIR/lib/*
   tar xf $TMP/h.tar
   [ -d $SDK_INCLUDE ] && rm -rf $SDK_INCLUDE
   [ -L $SDK_INCLUDE ] && rm -f $SDK_INCLUDE
   ln -sfv ../lib/mdk.framework/Headers $SDK_INCLUDE #gln -rsfv $SDK_DIR/lib/mdk.framework/Headers $SDK_INCLUDE
-  cp -af $TMP/libffmpeg.?.dylib $SDK_DIR/lib/
   mv $SDK_DIR/lib/mdk.framework/Versions/Current/mdk.dSYM $SDK_DIR/lib/mdk.framework.dSYM
   rm -rf $SDK_DIR/lib/mdk.framework/mdk.dSYM # iOS
-  cd $SDK_DIR/lib/mdk.framework/Versions/Current
-  ln -sf ../../../libffmpeg.?.dylib .
-  cd -
+  [ -f $SDK_DIR/lib/mdk.framework/Versions/Current/libffmpeg.4.dylib ] && ln -sf mdk.framework/Versions/Current/libffmpeg.4.dylib $SDK_DIR/lib/
 else
   tar cf $TMP/h.tar $SDK_DIR/include/mdk
   rm -rf $SDK_DIR/include/*
@@ -53,7 +48,7 @@ else
   mv $TMP/*mdk*.{dll,pdb} $TMP/*ffmpeg-?.dll $SDK_DIR_OUT/bin/$ARCH
 
   mkdir -p $SDK_DIR_OUT/lib/$ARCH
-  mv -v $TMP/libmdk* $TMP/mdk.lib $TMP/libffmpeg.so* $TMP/libffmpeg.?.dylib $TMP/libc++.so.1 $SDK_DIR_OUT/lib/$ARCH
+  mv -v $TMP/libmdk* $TMP/mdk.lib $TMP/libffmpeg.so* $TMP/libc++.so.1 $SDK_DIR_OUT/lib/$ARCH
 fi
 tar xf $TMP/cmake.tar
 
