@@ -100,7 +100,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        config: [MinSizeRel]
+        config: [MinSizeRel,RelWithDebInfo]
     steps:
     - uses: actions/checkout@v2
     - name: Checkout source
@@ -131,7 +131,7 @@ jobs:
     - name: Configure CMake
       shell: bash
       working-directory: mdk
-      run: cmake -GNinja -DCMAKE_TOOLCHAIN_FILE=$PWD/cmake/tools/ios.cmake -DIOS_DEPLOYMENT_TARGET=8.0 -DIOS_ARCH="arm64" -DIOS_BITCODE=1 -DIOS_BITCODE_MARKER=1 -H. -Bbuild/${TARGET_OS} -DCMAKE_BUILD_TYPE=${{ matrix.config }} -DCMAKE_INSTALL_PREFIX=$PWD/mdk-sdk -DCMAKE_VERBOSE_MAKEFILE=1 -DFFMPEG_EMBED=1 # FFMPEG_EMBED=0 to copy libffmpeg.4.dylib
+      run: cmake -GNinja -DUSE_LTO=thin -DCMAKE_TOOLCHAIN_FILE=$PWD/cmake/tools/ios.cmake -DIOS_DEPLOYMENT_TARGET=8.0 -DIOS_ARCH="arm64" -DIOS_BITCODE=1 -DIOS_BITCODE_MARKER=1 -H. -Bbuild/${TARGET_OS} -DCMAKE_BUILD_TYPE=${{ matrix.config }} -DCMAKE_INSTALL_PREFIX=$PWD/mdk-sdk -DCMAKE_VERBOSE_MAKEFILE=1 -DFFMPEG_EMBED=1 # FFMPEG_EMBED=0 to copy libffmpeg.4.dylib
     - name: Build
       shell: bash
       working-directory: mdk
@@ -196,7 +196,7 @@ jobs:
     - name: Configure CMake
       shell: bash
       working-directory: mdk
-      run: cmake -GNinja -DCMAKE_SYSTEM_NAME=iOS -DCMAKE_OSX_ARCHITECTURES="i386;x86_64" -DCMAKE_OSX_DEPLOYMENT_TARGET=8.0 -DCMAKE_XCODE_ATTRIBUTE_ONLY_ACTIVE_ARCH=NO -DCMAKE_IOS_INSTALL_COMBINED=YES -DCMAKE_OSX_SYSROOT=iphonesimulator -H. -Bbuild/${TARGET_OS} -DCMAKE_BUILD_TYPE=${{ matrix.config }} -DCMAKE_INSTALL_PREFIX=$PWD/mdk-sdk -DCMAKE_VERBOSE_MAKEFILE=1 -DFFMPEG_EMBED=1 # FFMPEG_EMBED=0 to copy libffmpeg.4.dylib
+      run: cmake -GNinja -DUSE_LTO=thin -DCMAKE_SYSTEM_NAME=iOS -DCMAKE_OSX_ARCHITECTURES="x86_64" -DCMAKE_OSX_DEPLOYMENT_TARGET=8.0 -DCMAKE_XCODE_ATTRIBUTE_ONLY_ACTIVE_ARCH=NO -DCMAKE_IOS_INSTALL_COMBINED=YES -DCMAKE_OSX_SYSROOT=iphonesimulator -H. -Bbuild/${TARGET_OS} -DCMAKE_BUILD_TYPE=${{ matrix.config }} -DCMAKE_INSTALL_PREFIX=$PWD/mdk-sdk -DCMAKE_VERBOSE_MAKEFILE=1 -DFFMPEG_EMBED=1 # FFMPEG_EMBED=0 to copy libffmpeg.4.dylib
     - name: Build
       shell: bash
       working-directory: mdk

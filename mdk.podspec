@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
     s.name              = 'mdk'
-    s.version           = '0.10.2.0'
+    s.version           = '0.10.2.2'
     s.summary           = 'Multimedia Development Kit'
     s.homepage          = 'https://github.com/wang-bin/mdk-sdk'
 
@@ -13,9 +13,18 @@ Pod::Spec.new do |s|
   LICENSE
         }
 
-    s.platform          = :osx
-    s.source            = { :http => 'https://sourceforge.net/projects/mdk-sdk/files/nightly/mdk-sdk-macOS.zip' }
+    s.platform          = :osx, :ios
+    s.source            = { :http => 'https://sourceforge.net/projects/mdk-sdk/files/nightly/mdk-sdk-apple.zip' }
     s.osx.deployment_target = '10.9'
-    s.osx.vendored_frameworks = 'mdk-sdk/lib/mdk.framework'
-    s.osx.vendored_libraries = 'mdk-sdk/lib/libffmpeg.4.dylib'
+    s.osx.vendored_frameworks = 'mdk-sdk/lib/mdk.xcframework'
+#    s.osx.vendored_libraries = 'mdk-sdk/lib/FFmpeg.xcframework/macos-arm64_x86_64/libffmpeg.4.dylib'
+    s.ios.deployment_target = '9.0'
+    s.ios.vendored_frameworks = 'mdk-sdk/lib/mdk.xcframework/ios-arm64/mdk.framework'
+    #s.ios.vendored_libraries = 'mdk-sdk/lib/FFmpeg.xcframework/ios-arm64/libffmpeg.4.dylib'
+    s.pod_target_xcconfig = { 'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'i386 arm64'}
+    s.user_target_xcconfig = { 'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'i386 arm64', 'OTHER_CODE_SIGN_FLAGS' => '$(inherited) --deep'}
+#    s.user_target_xcconfig = { 'VALID_ARCHS[sdk=iphonesimulator*]' => '' }
+#    s.pod_target_xcconfig = { 'VALID_ARCHS[sdk=iphonesimulator*]' => '' } # VALID_ARCHS is removed in xcode12.0
+    #s.pod_target_xcconfig = { 'VALID_ARCHS' => 'arm64' }
+    #s.pod_target_xcconfig = { 'ARCHS[sdk=iphonesimulator*]' => '$(ARCHS_STANDARD_64_BIT)' }
 end
