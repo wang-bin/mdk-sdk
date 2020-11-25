@@ -9,7 +9,7 @@ on:
 env:
   FF_VER: master
   LLVM_VER: 11
-  NDK_VERSION: r21d
+  NDK_VERSION: r22-beta1
   NINJA_STATUS: '[%f/%t %e %r]'
   SF_PW: ${{ secrets.SF_PW }}
   SF_USER: ${{ secrets.SF_USER }}
@@ -24,7 +24,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        config: [RelWithDebInfo]
+        config: [MinSizeRel]
         arch: [x86_64, arm64]
     steps:
     - uses: actions/checkout@v2
@@ -87,7 +87,7 @@ jobs:
         name: mdk-sdk-${{ env.TARGET_OS }}-${{ matrix.arch}}-${{ matrix.config }}
         path: mdk-sdk-${{ env.TARGET_OS }}-${{ matrix.arch}}.tar.xz
     - name: Upload to SourceForge
-      if: ${{ matrix.config == 'RelWithDebInfo' && matrix.arch == 'x86_64' }}
+      if: ${{ matrix.config == 'MinSizeRel' && matrix.arch == 'x86_64' }}
       shell: bash
       run: |
         sshpass -p ${SF_PW} scp -o StrictHostKeyChecking=no mdk-sdk-${TARGET_OS}-${{ matrix.arch }}.tar.xz ${SF_USER}@frs.sourceforge.net:/home/frs/project/mdk-sdk/nightly/
@@ -100,7 +100,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        config: [MinSizeRel,RelWithDebInfo]
+        config: [MinSizeRel]
     steps:
     - uses: actions/checkout@v2
     - name: Checkout source
@@ -131,7 +131,7 @@ jobs:
     - name: Configure CMake
       shell: bash
       working-directory: mdk
-      run: cmake -GNinja -DUSE_LTO=thin -DCMAKE_TOOLCHAIN_FILE=$PWD/cmake/tools/ios.cmake -DIOS_DEPLOYMENT_TARGET=8.0 -DIOS_ARCH="arm64" -DIOS_BITCODE=1 -DIOS_BITCODE_MARKER=1 -H. -Bbuild/${TARGET_OS} -DCMAKE_BUILD_TYPE=${{ matrix.config }} -DCMAKE_INSTALL_PREFIX=$PWD/mdk-sdk -DCMAKE_VERBOSE_MAKEFILE=1 -DFFMPEG_EMBED=1 # FFMPEG_EMBED=0 to copy libffmpeg.4.dylib
+      run: cmake -GNinja -DWITH_DEB_INFO=0 -DUSE_LTO=thin -DCMAKE_TOOLCHAIN_FILE=$PWD/cmake/tools/ios.cmake -DIOS_DEPLOYMENT_TARGET=8.0 -DIOS_ARCH="arm64" -DIOS_BITCODE=1 -DIOS_BITCODE_MARKER=1 -H. -Bbuild/${TARGET_OS} -DCMAKE_BUILD_TYPE=${{ matrix.config }} -DCMAKE_INSTALL_PREFIX=$PWD/mdk-sdk -DCMAKE_VERBOSE_MAKEFILE=1 -DFFMPEG_EMBED=1 # FFMPEG_EMBED=0 to copy libffmpeg.4.dylib
     - name: Build
       shell: bash
       working-directory: mdk
@@ -154,7 +154,7 @@ jobs:
         name: mdk-sdk-${{ env.TARGET_OS }}-${{ matrix.config }}
         path: mdk-sdk-${{ env.TARGET_OS }}.tar.xz
     - name: Upload to SourceForge
-      if: ${{ matrix.config == 'RelWithDebInfo' }}
+      if: ${{ matrix.config == 'MinSizeRel' }}
       shell: bash
       run: sshpass -p ${SF_PW} scp -o StrictHostKeyChecking=no mdk-sdk-${TARGET_OS}.tar.xz ${SF_USER}@frs.sourceforge.net:/home/frs/project/mdk-sdk/nightly/
 
@@ -227,11 +227,11 @@ jobs:
     - name: Download macOS sdk
       uses: actions/download-artifact@v2
       with:
-        name: mdk-sdk-macOS-x86_64-RelWithDebInfo
+        name: mdk-sdk-macOS-x86_64-MinSizeRel
     - name: Download macOS sdk
       uses: actions/download-artifact@v2
       with:
-        name: mdk-sdk-macOS-arm64-RelWithDebInfo
+        name: mdk-sdk-macOS-arm64-MinSizeRel
     - name: Download iOS sdk
       uses: actions/download-artifact@v2
       with:
@@ -297,7 +297,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        config: [MinSizeRel,RelWithDebInfo]
+        config: [MinSizeRel]
     steps:
     - uses: actions/checkout@v2
     - name: Checkout source
@@ -350,7 +350,7 @@ jobs:
         name: mdk-sdk-${{ env.TARGET_OS }}-${{ matrix.config }}
         path: mdk-sdk-${{ env.TARGET_OS }}.tar.xz
     - name: Upload to SourceForge
-      if: ${{ matrix.config == 'RelWithDebInfo' }}
+      if: ${{ matrix.config == 'MinSizeRel' }}
       shell: bash
       run: sshpass -p ${SF_PW} scp -o StrictHostKeyChecking=no mdk-sdk-${TARGET_OS}.tar.xz ${SF_USER}@frs.sourceforge.net:/home/frs/project/mdk-sdk/nightly/
 
@@ -366,7 +366,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        config: [MinSizeRel,RelWithDebInfo]
+        config: [MinSizeRel]
     steps:
     - uses: actions/checkout@v2
     - name: Checkout source
@@ -449,7 +449,7 @@ jobs:
         name: mdk-sdk-${{ env.TARGET_OS }}-${{ matrix.config }}
         path: mdk-sdk-${{ env.TARGET_OS }}.7z
     - name: Upload to SourceForge
-      if: ${{ matrix.config == 'RelWithDebInfo' }}
+      if: ${{ matrix.config == 'MinSizeRel' }}
       shell: bash
       run: sshpass -p ${SF_PW} scp -o StrictHostKeyChecking=no mdk-sdk-${TARGET_OS}.7z ${SF_USER}@frs.sourceforge.net:/home/frs/project/mdk-sdk/nightly/
 
@@ -459,7 +459,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        config: [MinSizeRel,RelWithDebInfo]
+        config: [MinSizeRel]
     env:
       TARGET_OS: windows-store
       VCDIR: '/tmp/winsysroot/msvcrt-dev'
@@ -497,7 +497,7 @@ jobs:
       working-directory: mdk
       run: ../ci-before-build.sh
     - name: Configure for UWP arm
-      if: ${{ matrix.config == 'MinSizeRel' }}
+      if: ${{ matrix.config == 'Release' }}
       shell: bash
       env:
         ARCH: arm
@@ -505,10 +505,10 @@ jobs:
       run: |
         export WindowsSdkDir=${WINDOWSSDKDIR}
         export WindowsSDKVersion=$(cat ${WINDOWSSDKDIR}/.version)
-        # MinSizeRel instead of RelWithDebInfo because win arm debug is not supported in clang
+        # MinSizeRel/Release instead of RelWithDebInfo because win arm debug is not supported in clang
         cmake  -DUWP=1 -DCMAKE_SYSTEM_PROCESSOR=${ARCH} -DCMAKE_TOOLCHAIN_FILE=$PWD/cmake/tools/windows.clang.cmake -GNinja -H$PWD -B$PWD/build/${TARGET_OS}-${ARCH} -DCMAKE_BUILD_TYPE=${{ matrix.config }} -DCMAKE_INSTALL_PREFIX=$PWD/mdk-sdk-${ARCH} -DCMAKE_VERBOSE_MAKEFILE=1
     - name: Build for UWP arm
-      if: ${{ matrix.config == 'MinSizeRel' }}
+      if: ${{ matrix.config == 'Release' }}
       shell: bash
       working-directory: mdk
       run: cmake --build build/${TARGET_OS}-arm
@@ -550,7 +550,7 @@ jobs:
         name: mdk-sdk-${{ env.TARGET_OS }}-${{ matrix.config }}
         path: mdk-sdk-${{ env.TARGET_OS }}.7z
     - name: Upload to SourceForge
-      if: ${{ matrix.config == 'RelWithDebInfo' }}
+      if: ${{ matrix.config == 'MinSizeRel' }}
       shell: bash
       run: sshpass -p ${SF_PW} scp -o StrictHostKeyChecking=no mdk-sdk-${TARGET_OS}.7z ${SF_USER}@frs.sourceforge.net:/home/frs/project/mdk-sdk/nightly/
 
@@ -564,7 +564,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        config: [MinSizeRel,RelWithDebInfo]
+        config: [MinSizeRel]
     steps:
     - uses: actions/checkout@v2
     - name: Checkout source
@@ -637,7 +637,7 @@ jobs:
         name: mdk-sdk-${{ env.TARGET_OS }}-${{ matrix.config }}
         path: mdk-sdk-${{ env.TARGET_OS }}.tar.xz
     - name: Upload to SourceForge
-      if: ${{ matrix.config == 'RelWithDebInfo' }}
+      if: ${{ matrix.config == 'MinSizeRel' }}
       shell: bash
       run: sshpass -p ${SF_PW} scp -o StrictHostKeyChecking=no mdk-sdk-${TARGET_OS}.tar.xz ${SF_USER}@frs.sourceforge.net:/home/frs/project/mdk-sdk/nightly/
 
@@ -651,7 +651,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        config: [RelWithDebInfo] # https://github.com/android/ndk/issues/721
+        config: [MinSizeRel] # https://github.com/android/ndk/issues/721
     steps:
     - uses: actions/checkout@v2
     - name: Checkout source
@@ -721,6 +721,6 @@ jobs:
         name: mdk-sdk-${{ env.TARGET_OS }}-${{ matrix.config }}
         path: mdk-sdk-${{ env.TARGET_OS }}.7z
     - name: Upload to SourceForge
-      if: ${{ matrix.config == 'RelWithDebInfo' }}
+      if: ${{ matrix.config == 'MinSizeRel' }}
       shell: bash
       run: sshpass -p ${SF_PW} scp -o StrictHostKeyChecking=no mdk-sdk-${TARGET_OS}.7z ${SF_USER}@frs.sourceforge.net:/home/frs/project/mdk-sdk/nightly/
