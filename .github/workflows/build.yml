@@ -37,7 +37,7 @@ jobs:
         token: ${{ secrets.CLONE_PAT }}
         submodules: 'recursive'
     - name: Setup Xcode
-      run: sudo xcode-select -s /Applications/Xcode_12.2.app
+      run: sudo xcode-select -s /Applications/Xcode_12.3.app
     - name: 'Restore External Dep cache'
       id: external-dep-cache
       uses: actions/cache@v2
@@ -247,7 +247,7 @@ jobs:
       shell: bash
       run: |
         export XZ_OPT="-9e --threads=`getconf _NPROCESSORS_ONLN`"
-        mkdir -p macOS iOS iOSSimulator mdk-sdk/{Frameworks,lib} macOS-arm64 macOS-x86_64
+        mkdir -p macOS iOS iOSSimulator mdk-sdk/{Frameworks,include,lib} macOS-arm64 macOS-x86_64
         tar Jxf mdk-sdk-macOS-x86_64.tar.xz -C macOS-x86_64
         tar Jxf mdk-sdk-macOS-arm64.tar.xz -C macOS-arm64
         tar Jxf mdk-sdk-iOS.tar.xz -C iOS
@@ -259,14 +259,16 @@ jobs:
         for b in `ls macOS-arm64/mdk-sdk/bin`; do # exes exist in both archs
           lipo -create macOS-{arm,x86_}64/mdk-sdk/bin/$b -output macOS/mdk-sdk/bin/$b
         done
-        cp -af macOS/mdk-sdk/{bin,doc,include,*.sh} mdk-sdk
+        cp -af macOS/mdk-sdk/{bin,doc,*.sh} mdk-sdk
         cp -af macOS/mdk-sdk/README.md mdk-sdk/README-macOS.md
+        cp -af macOS/mdk-sdk/lib/cmake mdk-sdk/lib/
         cp -af iOS/mdk-sdk/README.md mdk-sdk/README-iOS.md
         # https://developer.apple.com/forums/thread/655768 (error: the path does not point to a valid debug symbols file: macOS/mdk-sdk/lib/mdk.framework.dSYM)
         xcodebuild -create-xcframework -framework macOS/mdk-sdk/lib/mdk.framework -debug-symbols $PWD/macOS/mdk-sdk/lib/mdk.framework.dSYM -framework iOS/mdk-sdk/lib/mdk.framework -framework iOSSimulator/mdk-sdk/lib/mdk.framework -output mdk-sdk/lib/mdk.xcframework
         mdkfw=`find mdk-sdk/lib/mdk.xcframework -name "macos-*" -depth 1`
         # ensure bin/* can Find mdk and ffmpeg
         ln -sf ${mdkfw/mdk-sdk/..}/mdk.framework mdk-sdk/Frameworks
+        ln -sf ../Frameworks/mdk.framework/Headers mdk-sdk/include/mdk
         tar Jcvf mdk-sdk-apple.tar.xz mdk-sdk
         7z a mdk-sdk-apple.zip mdk-sdk
         tar Jcvf mdk-sdk-macOS.tar.xz -C macOS .
@@ -497,7 +499,7 @@ jobs:
       working-directory: mdk
       run: ../ci-before-build.sh
     - name: Configure for UWP arm
-      if: ${{ matrix.config == 'Release' }}
+      if: ${{ matrix.config == 'Release' || matrix.config == 'MinSizeRel' }}
       shell: bash
       env:
         ARCH: arm
@@ -506,9 +508,9 @@ jobs:
         export WindowsSdkDir=${WINDOWSSDKDIR}
         export WindowsSDKVersion=$(cat ${WINDOWSSDKDIR}/.version)
         # MinSizeRel/Release instead of RelWithDebInfo because win arm debug is not supported in clang
-        cmake  -DUWP=1 -DCMAKE_SYSTEM_PROCESSOR=${ARCH} -DCMAKE_TOOLCHAIN_FILE=$PWD/cmake/tools/windows.clang.cmake -GNinja -H$PWD -B$PWD/build/${TARGET_OS}-${ARCH} -DCMAKE_BUILD_TYPE=${{ matrix.config }} -DCMAKE_INSTALL_PREFIX=$PWD/mdk-sdk-${ARCH} -DCMAKE_VERBOSE_MAKEFILE=1
+        cmake -DWITH_DEB_INFO=0 -DUWP=1 -DCMAKE_SYSTEM_PROCESSOR=${ARCH} -DCMAKE_TOOLCHAIN_FILE=$PWD/cmake/tools/windows.clang.cmake -GNinja -H$PWD -B$PWD/build/${TARGET_OS}-${ARCH} -DCMAKE_BUILD_TYPE=${{ matrix.config }} -DCMAKE_INSTALL_PREFIX=$PWD/mdk-sdk-${ARCH} -DCMAKE_VERBOSE_MAKEFILE=1
     - name: Build for UWP arm
-      if: ${{ matrix.config == 'Release' }}
+      if: ${{ matrix.config == 'Release' || matrix.config == 'MinSizeRel' }}
       shell: bash
       working-directory: mdk
       run: cmake --build build/${TARGET_OS}-arm
@@ -692,9 +694,9 @@ jobs:
       shell: bash
       working-directory: mdk
       run: |
-        MIN_API_ARM64=21
-        [ $MIN_API -gt 21 ] && MIN_API_ARM64=$MIN_API
-        cmake -DUSE_LTO=thin -DANDROID_LD=lld -DANDROID_ABI=${ARCH} -DANDROID_PLATFORM=android-${MIN_API_ARM64} -DANDROID_TOOLCHAIN=clang -DANDROID_STL=c++_shared -DANDROID_PIE=ON -DCMAKE_TOOLCHAIN_FILE=$ANDROID_NDK/build/cmake/android.toolchain.cmake -GNinja -H$PWD -B$PWD/build/${TARGET_OS}-${ARCH} -DCMAKE_BUILD_TYPE=${{ matrix.config }} -DCMAKE_INSTALL_PREFIX=$PWD/mdk-sdk-${ARCH} -DCMAKE_VERBOSE_MAKEFILE=1
+        MIN_API_64=21
+        [ $MIN_API -gt 21 ] && MIN_API_64=$MIN_API
+        cmake -DUSE_LTO=thin -DANDROID_LD=lld -DANDROID_ABI=${ARCH} -DANDROID_PLATFORM=android-${MIN_API_64} -DANDROID_TOOLCHAIN=clang -DANDROID_STL=c++_shared -DANDROID_PIE=ON -DCMAKE_TOOLCHAIN_FILE=$ANDROID_NDK/build/cmake/android.toolchain.cmake -GNinja -H$PWD -B$PWD/build/${TARGET_OS}-${ARCH} -DCMAKE_BUILD_TYPE=${{ matrix.config }} -DCMAKE_INSTALL_PREFIX=$PWD/mdk-sdk-${ARCH} -DCMAKE_VERBOSE_MAKEFILE=1
     - name: Build for arm64-v8a
       shell: bash
       working-directory: mdk
@@ -709,6 +711,19 @@ jobs:
       shell: bash
       working-directory: mdk
       run: cmake --build build/${TARGET_OS}-x86
+    - name: Configure for x86_64
+      env:
+        ARCH: x86_64
+      shell: bash
+      working-directory: mdk
+      run: |
+        MIN_API_64=21
+        [ $MIN_API -gt 21 ] && MIN_API_64=$MIN_API
+        cmake -DUSE_LTO=thin -DANDROID_LD=lld -DANDROID_ABI=${ARCH} -DANDROID_PLATFORM=android-${MIN_API_64} -DANDROID_TOOLCHAIN=clang -DANDROID_STL=c++_shared -DANDROID_PIE=ON -DCMAKE_TOOLCHAIN_FILE=$ANDROID_NDK/build/cmake/android.toolchain.cmake -GNinja -H$PWD -B$PWD/build/${TARGET_OS}-${ARCH} -DCMAKE_BUILD_TYPE=${{ matrix.config }} -DCMAKE_INSTALL_PREFIX=$PWD/mdk-sdk-${ARCH} -DCMAKE_VERBOSE_MAKEFILE=1
+    - name: Build for x86_64
+      shell: bash
+      working-directory: mdk
+      run: cmake --build build/${TARGET_OS}-x86_64
     - name: Make SDK
       shell: bash
       working-directory: mdk
