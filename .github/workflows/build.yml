@@ -9,7 +9,7 @@ on:
 env:
   FF_VER: master
   LLVM_VER: 11
-  NDK_VERSION: r22-beta1
+  NDK_VERSION: r22
   NINJA_STATUS: '[%f/%t %e %r]'
   SF_PW: ${{ secrets.SF_PW }}
   SF_USER: ${{ secrets.SF_USER }}

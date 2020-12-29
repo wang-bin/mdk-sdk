@@ -73,6 +73,7 @@ if [[ "$EXTERNAL_DEP_CACHE_HIT" != "true" ]]; then
       cp -af glfw-${GLFW_VER}.bin.WIN64/include/GLFW external/include/
       cp glfw-${GLFW_VER}.bin.WIN32/lib-vc2019/glfw3.lib external/lib/windows/x86
       cp glfw-${GLFW_VER}.bin.WIN64/lib-vc2019/glfw3.lib external/lib/windows/x64
+      # TODO: download in cmake(if check_include_files failed)
       wget https://github.com/KhronosGroup/Vulkan-Headers/archive/master.zip -O vk.zip
       7z x vk.zip
       cp -af Vulkan-Headers-master/include/vulkan external/include/
@@ -107,8 +108,8 @@ if [[ "$SYSROOT_CACHE_HIT" != "true" ]]; then
   fi
 
   if [ "$TARGET_OS" == "android" ]; then
-    wget https://dl.google.com/android/repository/android-ndk-${NDK_VERSION:-r21d}-${NDK_HOST}-x86_64.zip -O ndk.zip
+    wget https://dl.google.com/android/repository/android-ndk-${NDK_VERSION:-r22}-${NDK_HOST}-x86_64.zip -O ndk.zip
     7z x ndk.zip -o/tmp &>/dev/null
-    mv /tmp/android-ndk-${NDK_VERSION:-r21d} ${ANDROID_NDK:-/tmp/android-ndk}
+    mv /tmp/android-ndk-${NDK_VERSION:-r22} ${ANDROID_NDK:-/tmp/android-ndk}
   fi
 fi
