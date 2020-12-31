@@ -19,8 +19,11 @@ If ffmpeg any module is not set, it's searched in the following order
 - single ffmpeg library > ffmpeg modules w/ version > ffmpeg modules w/o version
 
 
+## Swift
+https://github.com/wang-bin/swiftMDK
+
 ## About SDK for macOS
-SDK is built by Xcode 12.2 with
+SDK is built by Xcode 12.3 with
 - ffmpeg: https://sourceforge.net/projects/avbuild/files/macOS/ffmpeg-master-macOS-lite.tar.xz/download
 
 SDK can be used by any C or C++11 compiler, e.g. g++, clang

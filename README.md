@@ -58,6 +58,8 @@ https://github.com/wang-bin/mdk-sdk/wiki/TODO
 
 
 ## Open Source Modules and Examples
+- swift: https://github.com/wang-bin/swiftMDK
+- Android java wrapper and example: https://github.com/wang-bin/mdk-android
 - MFT decoder module: https://github.com/wang-bin/mdk-mft
 - sunxi decoder + renderer: https://github.com/wang-bin/mdk-sunxi
 - obs plugin: https://github.com/wang-bin/obs-mdk

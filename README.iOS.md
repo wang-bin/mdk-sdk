@@ -19,8 +19,11 @@ If ffmpeg any module is not set, it's searched in the following order
 - single ffmpeg library > ffmpeg modules w/ version > ffmpeg modules w/o version
 
 
+## Swift
+https://github.com/wang-bin/swiftMDK
+
 ## About SDK for iOS
-SDK is built by Xcode 12.2 with
+SDK is built by Xcode 12.3 with
 - ffmpeg: https://sourceforge.net/projects/avbuild/files/iOS/ffmpeg-master-iOS-lite.tar.xz/download
 - Minimal system: iOS 8.0
 - Support Metal renderer

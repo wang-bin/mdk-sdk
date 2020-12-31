@@ -22,7 +22,7 @@ If ffmpeg any module is not set, it's searched in the following order
 ## About SDK for Android
 SDK is built with
 - ffmpeg: https://sourceforge.net/projects/avbuild/files/android/ffmpeg-master-android-clang-lite.tar.xz/download
-- ndk r21d, libc++_shared
+- ndk r22, libc++_shared
 
 SDK can be used by any C or C++11 compiler, e.g. g++, clang
 
@@ -56,6 +56,7 @@ MediaCodec/AMediaCodec decoder will not be destroyed if app go to background, an
 ```
 
 ## Source code:
+- Android java wrapper and example: https://github.com/wang-bin/mdk-android
 - some examples using mdk sdk: https://github.com/wang-bin/mdk-examples
 - OBS Studio plugin: https://github.com/wang-bin/obs-mdk
 - QtMultimedia plugin: https://github.com/wang-bin/qtmultimedia-plugins-mdk

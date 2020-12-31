@@ -1,5 +1,29 @@
 Change log:
 
+0.10.3 - 2020-12-31
+
+- Player.setMedia() will stop previous media
+- Default buffer range changes to 1000~2000ms
+- Deprecate `foreignGLContextDestroyed()`, does nothing now. Use `setVideoSurfaceSize(-1, -1)` instead
+- Support key-frame only decoding via env "KEY_FRAMES_ONLY=1" (per player option will be better)
+- Support play/seek dynamic duration streams, e.g. recording mpeg ts
+- Support 'x444'/p410 pixel format
+- OpenGL:
+    - smart resources release, no leak even if no context destroyed
+    - fix external image in essl3 may crash on android
+- VT decoder:
+    - force nv12 for mpeg?video
+    - support hevc yuv444p10le decoded format 'x444'
+- Change macOS framework struct to support codesign better
+- AMediaCodec decoder: use baseline as fallback of CBP(constrainted baseline) to fix decoder open error
+- Fix crash when destroying player if use native surface
+- Fix unable to seek if EOS is decoded
+- FindMDK.cmake:
+    - support xcframework
+    - support android studio
+- New swift binding: https://github.com/wang-bin/swiftMDK
+- New android java wrapper and example: https://github.com/wang-bin/mdk-android
+
 
 0.10.2 - 2020-11-18
 
