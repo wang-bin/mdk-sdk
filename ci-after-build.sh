@@ -25,7 +25,7 @@ find mdk-sdk* -name "*.a" -delete
 [ "$TARGET_OS" == "macOS" ] && STRIP=strip
 which $STRIP && find mdk-sdk*/bin -executable -type f -exec $STRIP {} \;
 export XZ_OPT="--threads=`getconf _NPROCESSORS_ONLN`" # -9e. -8/9 will disable mt?
-if [[ "$TARGET_OS" == "windows"* || "$TARGET_OS" == "android" ]]; then
+if [[ "$TARGET_OS" == "win"* || "$TARGET_OS" == "uwp"* || "$TARGET_OS" == "android" ]]; then
   7z a -ssc -m0=lzma2 -mx=9 -ms=on -mf=off mdk-sdk-${TARGET_OS}.7z mdk-sdk
   ls -lh mdk-sdk-${TARGET_OS}.7z
 else

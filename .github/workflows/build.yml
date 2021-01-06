@@ -463,7 +463,7 @@ jobs:
       matrix:
         config: [MinSizeRel]
     env:
-      TARGET_OS: windows-store
+      TARGET_OS: uwp
       VCDIR: '/tmp/winsysroot/msvcrt-dev'
       WINDOWSSDKDIR: '/tmp/winsysroot/winsdk'
       VCVER: '14.27.29110'

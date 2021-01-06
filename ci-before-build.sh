@@ -47,6 +47,7 @@ fi
 
 OS=${TARGET_OS/r*pi/rpi}
 OS=${OS/*store/WinRT}
+OS=${OS/*uwp*/WinRT}
 OS=${OS%%-*}
 OS=${OS/Simulator/}
 [ "$TARGET_OS" == "linux" ] && OS=Linux
@@ -79,7 +80,7 @@ if [[ "$EXTERNAL_DEP_CACHE_HIT" != "true" ]]; then
       cp -af Vulkan-Headers-master/include/vulkan external/include/
   fi
 
-  if [[ "$TARGET_OS" == "windows"* || "$TARGET_OS" == macOS ]]; then
+  if [[ "$TARGET_OS" == "win"* || "$TARGET_OS" == "uwp"* || "$TARGET_OS" == macOS ]]; then
     mkdir -p external/include/{EGL,GLES{2,3},KHR}
     for h in GLES2/gl2.h GLES2/gl2ext.h GLES2/gl2platform.h GLES3/gl3.h GLES3/gl3platform.h; do
       wget https://www.khronos.org/registry/OpenGL/api/${h} -O external/include/${h}
@@ -91,7 +92,7 @@ if [[ "$EXTERNAL_DEP_CACHE_HIT" != "true" ]]; then
 fi
 
 if [[ "$SYSROOT_CACHE_HIT" != "true" ]]; then
-  if [[ "$TARGET_OS" == "windows"* ]]; then
+  if [[ "$TARGET_OS" == "win"* || "$TARGET_OS" == "uwp"* ]]; then
     wget https://sourceforge.net/projects/avbuild/files/dep/msvcrt-dev.7z/download -O msvcrt-dev.7z
     echo 7z x msvcrt-dev.7z -o${WINDOWSSDKDIR%/?*}
     7z x msvcrt-dev.7z -o${WINDOWSSDKDIR%/?*}
