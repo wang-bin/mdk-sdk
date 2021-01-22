@@ -8,7 +8,7 @@ echo "DEVTOOLS_CACHE_HIT: ${DEVTOOLS_CACHE_HIT}"
 
 du -hc external
 
-if [[ "$TARGET_OS" == macOS || "$TARGET_OS" == iOS* || "$TARGET_OS" == android ]]; then
+if [[ "$TARGET_OS" == mac* || "$TARGET_OS" == iOS* || "$TARGET_OS" == android ]]; then
     FF_EXTRA=
 fi
 if [ `which dpkg` ]; then # TODO: multi arch

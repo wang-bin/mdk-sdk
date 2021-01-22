@@ -14,6 +14,7 @@ if [ -d $SDK_DIR/lib/mdk.framework ]; then
   tar cf $TMP/h.tar $SDK_DIR/lib/mdk.framework
   rm -rf $SDK_DIR/lib/*
   tar xf $TMP/h.tar
+  ln -sf lib $SDK_DIR/Frameworks
   [ -d $SDK_INCLUDE ] && rm -rf $SDK_INCLUDE
   [ -L $SDK_INCLUDE ] && rm -f $SDK_INCLUDE
   ln -sfv ../lib/mdk.framework/Headers $SDK_INCLUDE #gln -rsfv $SDK_DIR/lib/mdk.framework/Headers $SDK_INCLUDE

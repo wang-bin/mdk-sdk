@@ -34,7 +34,7 @@
 
 ### CocoaPods
 
-> macOS only for now
+> For macOS and iOS
 
 ` pod 'mdk'`
 
