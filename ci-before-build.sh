@@ -1,4 +1,4 @@
-LLVER=${LLVM_VER:-11}
+LLVER=${LLVM_VER:-12}
 NDK_HOST=linux
 FF_EXTRA=-clang
 GLFW_VER=3.3.2
@@ -17,8 +17,8 @@ if [ `which dpkg` ]; then # TODO: multi arch
     #sudo apt update
     #sudo apt install -y software-properties-common # for add-apt-repository, ubuntu-tooolchain-r-test is required by trusty
     sudo apt-add-repository "deb http://apt.llvm.org/bionic/ llvm-toolchain-bionic-8 main" # rpi
-    sudo apt-add-repository "deb http://apt.llvm.org/bionic/ llvm-toolchain-bionic-11 main"
-    sudo apt-add-repository "deb http://apt.llvm.org/bionic/ llvm-toolchain-bionic main" # clang-12
+    sudo apt-add-repository "deb http://apt.llvm.org/bionic/ llvm-toolchain-bionic-12 main"
+    sudo apt-add-repository "deb http://apt.llvm.org/bionic/ llvm-toolchain-bionic main" # clang-13
     sudo apt update
     pkgs="sshpass cmake ninja-build p7zip-full lld-$LLVER clang-tools-$LLVER" # clang-tools: clang-cl
     if [ "$TARGET_OS" == "linux" ]; then
