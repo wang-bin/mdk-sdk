@@ -1,5 +1,32 @@
 Change log:
 
+
+0.10.4 - 2021-02-17
+
+- Support macCatalyst
+- Support vulkan on apple sillicon
+- VT decoder:
+    - Support VP9 on macOS 11+. Profile 0 and 2 are confirmed
+    - Support more(all) semi-planar formats, output a format with the same chroma subsample size as original format, e.g. 'p410' for hevc yuv444p10le.
+    - Fix high depth channel formats output error on apple sillicon. It's r10g10a10a2 for 10bit Y plane, but not support yet in renderer, so use p010('x420')
+    - Add "hardware" property to enable/disable hardware acceleration
+    - Add "width" and "height" property
+    - Support HDR in mkv
+    - Reduce compressed packet copy
+- VAAPI, VDPAU: fix not work since 0.10.2
+- MFT video decoder: fix h264 constrained baseline profile check
+- CUDA decoder: fix chroma format
+- FFmpeg:
+    - Fix a crash if avio open error
+    - Fix "drop" option does not work correctly
+- Improve decoder switch in paused state
+- Fix can't switch to a new decoder via setVideoDecoders() since 0.10.0
+- Fix a blank frame in gapless playback
+- Fix 2 crashes in player dtor, 1 race in setNextMedia(), 1 race/crash if faile to open a media
+- Examples:
+    - Enable glfw for apple sillicon
+
+
 0.10.3 - 2020-12-31
 
 - Player.setMedia() will stop previous media

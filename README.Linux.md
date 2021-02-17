@@ -20,7 +20,7 @@ If ffmpeg any module is not set, it's searched in the following order
 
 
 ## About SDK for Linux
-SDK is built by clang 11.0 with
+SDK is built by clang 12.0 with
 - ffmpeg: https://sourceforge.net/projects/avbuild/files/linux/ffmpeg-master-linux-clang-lite.tar.xz/download
 - libc++ 10.0.0
 
@@ -89,5 +89,5 @@ N videos renderers for 1 player: multiwidnows url
 - OBS Studio plugin: https://github.com/wang-bin/obs-mdk
 - QtMultimedia plugin: https://github.com/wang-bin/qtmultimedia-plugins-mdk
 
-Copyright (c) 2016-2020 WangBin(the author of QtAV) <wbsecg1 at gmail.com>
+Copyright (c) 2016-2021 WangBin(the author of QtAV) <wbsecg1 at gmail.com>
 Free for opensource softwares, non-commercial softwares, QtAV donors and contributors.

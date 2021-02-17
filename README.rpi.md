@@ -58,6 +58,8 @@ In mesa vc4/6 driver environment(fake/full kms), hardware decoder is available, 
 
 Tested on rpi1 and rpi3.
 
+> Note: the latest sdk links against libGL.so.1, so no need to set LD_PRELOAD.
+
 ### Use in CMake Projects
 ```
 	include(mdk-sdk-dir/lib/cmake/FindMDK.cmake)
@@ -69,5 +71,5 @@ Tested on rpi1 and rpi3.
 - OBS Studio plugin: https://github.com/wang-bin/obs-mdk
 - QtMultimedia plugin: https://github.com/wang-bin/qtmultimedia-plugins-mdk
 
-Copyright (c) 2016-2020 WangBin(the author of QtAV) <wbsecg1 at gmail.com>
+Copyright (c) 2016-2021 WangBin(the author of QtAV) <wbsecg1 at gmail.com>
 Free for opensource softwares, non-commercial softwares, QtAV donors and contributors.

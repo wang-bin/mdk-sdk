@@ -23,7 +23,7 @@ If ffmpeg any module is not set, it's searched in the following order
 
 mdk sdk for linux sunxi, with allwinner cedarv and vdpau decoder support
 
-SDK is cross built by clang 11.0 with
+SDK is cross built by clang 12.0 with
 - cmake toolchain file https://github.com/wang-bin/cmake-tools/blob/master/sunxi.clang.cmake
 - sysroot: https://sourceforge.net/projects/avbuild/files/sunxi/sunxi-sysroot.tar.xz/download
 - ffmpeg: https://sourceforge.net/projects/avbuild/files/sunxi/ffmpeg-master-sunxi-clang-lite.tar.xz/download
@@ -77,5 +77,5 @@ if default audio device does not sound correctly, try to change the device name 
 - OBS Studio plugin: https://github.com/wang-bin/obs-mdk
 - QtMultimedia plugin: https://github.com/wang-bin/qtmultimedia-plugins-mdk
 
-Copyright (c) 2016-2020 WangBin(the author of QtAV) <wbsecg1 at gmail.com>
+Copyright (c) 2016-2021 WangBin(the author of QtAV) <wbsecg1 at gmail.com>
 Free for opensource softwares, non-commercial softwares, QtAV donors and contributors.

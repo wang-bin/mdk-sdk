@@ -63,5 +63,5 @@ MediaCodec/AMediaCodec decoder will not be destroyed if app go to background, an
 - libmediandk and other java classes implemented in C++: https://github.com/wang-bin/AND
 - JNI Modern Interface: https://github.com/wang-bin/JMI
 
-Copyright (c) 2016-2020 WangBin(the author of QtAV) <wbsecg1 at gmail.com>
+Copyright (c) 2016-2021 WangBin(the author of QtAV) <wbsecg1 at gmail.com>
 Free for opensource softwares, non-commercial softwares, QtAV donors and contributors.

@@ -23,7 +23,7 @@ If ffmpeg any module is not set, it's searched in the following order
 https://github.com/wang-bin/swiftMDK
 
 ## About SDK for iOS
-SDK is built by Xcode 12.3 with
+SDK is built by Xcode 12.4 with
 - ffmpeg: https://sourceforge.net/projects/avbuild/files/iOS/ffmpeg-master-iOS-lite.tar.xz/download
 - Minimal system: iOS 8.0
 - Support Metal renderer
@@ -34,7 +34,7 @@ SDK is built by Xcode 12.3 with
 
 ### Supported Video Decoders:
 - FFmpeg. Direct rendering via property "pool=CVPixelBuffer"
-- VT: videotoolbox hardware decoder. avcC, hvcC support. propertyes: threads, realTime, async, format. e.g. `player.setVideoDecoders({"VT:format=nv12:async=1", "FFmpeg"})`
+- VT: videotoolbox hardware decoder. h264, hevc support. propertyes: threads, realTime, async, format, hardware, width, height. e.g. `player.setVideoDecoders({"VT:format=nv12:async=1", "FFmpeg"})`
 - VideoToolbox: via ffmpeg
 
 ### Use in CMake Projects
@@ -58,5 +58,5 @@ Choose any of
 - OBS Studio plugin: https://github.com/wang-bin/obs-mdk
 - QtMultimedia plugin: https://github.com/wang-bin/qtmultimedia-plugins-mdk
 
-Copyright (c) 2016-2020 WangBin(the author of QtAV) <wbsecg1 at gmail.com>
+Copyright (c) 2016-2021 WangBin(the author of QtAV) <wbsecg1 at gmail.com>
 Free for opensource softwares, non-commercial softwares, QtAV donors and contributors.

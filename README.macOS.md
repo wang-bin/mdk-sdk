@@ -23,16 +23,14 @@ If ffmpeg any module is not set, it's searched in the following order
 https://github.com/wang-bin/swiftMDK
 
 ## About SDK for macOS
-SDK is built by Xcode 12.3 with
+
+- Support Apple sillicon
+- Support Metal and Vulkan renderer
+- Support VP9 on macOS 11+
+- Support X11 if runtime libraries exist
+
+SDK is built by Xcode 12.4 with
 - ffmpeg: https://sourceforge.net/projects/avbuild/files/macOS/ffmpeg-master-macOS-lite.tar.xz/download
-
-SDK can be used by any C or C++11 compiler, e.g. g++, clang
-
-Support Apple sillicon
-
-Support Metal and Vulkan renderer.
-
-Support X11 if runtime libraries exist.
 
 ### macOS 10.15+
 Executables download from internet are not able to run. Try
@@ -55,7 +53,7 @@ Optional:
 
 ### Supported Video Decoders:
 - FFmpeg. Direct rendering via property "pool=CVPixelBuffer"
-- VT: videotoolbox hardware decoder. avcC, hvcC support. propertyes: threads, realTime, async, format. e.g. -c:v VT:format=nv12:async=1
+- VT: videotoolbox hardware decoder. h264, hevc, vp9 support. propertyes: threads, realTime, async, format, hardware, width, height. e.g. `player.setVideoDecoders({"VT:format=nv12:async=1", "FFmpeg"})`
 - VideoToolbox: via ffmpeg
 
 VT default use async mode, and the performance is better performance then FFmpeg's sync VideoToolbox
@@ -91,5 +89,5 @@ Choose any of
 - OBS Studio plugin: https://github.com/wang-bin/obs-mdk
 - QtMultimedia plugin: https://github.com/wang-bin/qtmultimedia-plugins-mdk
 
-Copyright (c) 2016-2020 WangBin(the author of QtAV) <wbsecg1 at gmail.com>
+Copyright (c) 2016-2021 WangBin(the author of QtAV) <wbsecg1 at gmail.com>
 Free for opensource softwares, non-commercial softwares, QtAV donors and contributors.

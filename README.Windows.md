@@ -20,7 +20,7 @@ If ffmpeg any module is not set, it's searched in the following order
 
 
 ## About SDK for Windows Desktop
-SDK is built by clang-cl 11.0 + lld with
+SDK is built by clang-cl 12.0 + lld with
 - FFmpeg: https://sourceforge.net/projects/avbuild/files/windows-desktop/ffmpeg-master-windows-desktop-clang-static-lite.tar.xz/download
 - Windows SDK 10.0.19041.0
 - MSVC CRT 14.26.28801
@@ -84,5 +84,5 @@ N videos renderers for 1 player: multiwidnows url
 - OBS Studio plugin: https://github.com/wang-bin/obs-mdk
 - QtMultimedia plugin: https://github.com/wang-bin/qtmultimedia-plugins-mdk
 
-Copyright (c) 2016-2020 WangBin(the author of QtAV) <wbsecg1 at gmail.com>
+Copyright (c) 2016-2021 WangBin(the author of QtAV) <wbsecg1 at gmail.com>
 Free for opensource softwares, non-commercial softwares, QtAV donors and contributors.

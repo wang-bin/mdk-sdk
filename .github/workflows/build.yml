@@ -1,5 +1,5 @@
 name: Build
-
+# TODO: nuget, vcpkg on macOS, $(brew --prefix llvm)/bin/clang (llvm11), llvm12 is default
 on:
   push:
   schedule:
@@ -17,7 +17,7 @@ env:
 jobs:
   macOS:
     # See: https://docs.github.com/en/actions/configuring-and-managing-workflows/configuring-a-workflow#configuring-a-build-matrix
-    runs-on: macos-11.0
+    runs-on: macos-latest
     env:
       TARGET_OS: 'macOS'
       TARGET_ARCH: ${{ matrix.arch }}
@@ -36,8 +36,8 @@ jobs:
         fetch-depth: 1
         token: ${{ secrets.CLONE_PAT }}
         submodules: 'recursive'
-    - name: Setup Xcode
-      run: sudo xcode-select -s /Applications/Xcode_12.3.app
+   # - name: Setup Xcode
+   #   run: sudo xcode-select -s /Applications/Xcode_12.4.app
     - name: 'Restore External Dep cache'
       id: external-dep-cache
       uses: actions/cache@v2
@@ -94,7 +94,7 @@ jobs:
 
 
   macCatalyst:
-    runs-on: macos-11.0
+    runs-on: macos-latest
     env:
       TARGET_OS: 'macCatalyst'
     strategy:
@@ -111,8 +111,8 @@ jobs:
         fetch-depth: 1
         token: ${{ secrets.CLONE_PAT }}
         submodules: 'recursive'
-    - name: Setup Xcode
-      run: sudo xcode-select -s /Applications/Xcode_12.3.app
+   # - name: Setup Xcode
+   #   run: sudo xcode-select -s /Applications/Xcode_12.4.app
     - name: 'Restore External Dep cache'
       id: external-dep-cache
       uses: actions/cache@v2
@@ -716,6 +716,7 @@ jobs:
       shell: bash
       run: sshpass -p ${SF_PW} scp -o StrictHostKeyChecking=no mdk-sdk-${TARGET_OS}.tar.xz ${SF_USER}@frs.sourceforge.net:/home/frs/project/mdk-sdk/nightly/
 
+# TODO: use macos-11.0 to use the latest ndk ANDROID_NDK_LATEST_HOME, ANDROID_SDK_ROOT
   Android:
     runs-on: ubuntu-latest
     env:
