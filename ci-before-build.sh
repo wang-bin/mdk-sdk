@@ -16,9 +16,9 @@ if [ `which dpkg` ]; then # TODO: multi arch
     wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key |sudo apt-key add -
     #sudo apt update
     #sudo apt install -y software-properties-common # for add-apt-repository, ubuntu-tooolchain-r-test is required by trusty
-    sudo apt-add-repository "deb http://apt.llvm.org/bionic/ llvm-toolchain-bionic-8 main" # rpi
-    sudo apt-add-repository "deb http://apt.llvm.org/bionic/ llvm-toolchain-bionic-12 main"
-    sudo apt-add-repository "deb http://apt.llvm.org/bionic/ llvm-toolchain-bionic main" # clang-13
+    sudo apt-add-repository "deb http://apt.llvm.org/focal/ llvm-toolchain-focal-8 main" # rpi
+    sudo apt-add-repository "deb http://apt.llvm.org/focal/ llvm-toolchain-focal-12 main"
+    sudo apt-add-repository "deb http://apt.llvm.org/focal/ llvm-toolchain-focal main" # clang-13
     sudo apt update
     pkgs="sshpass cmake ninja-build p7zip-full lld-$LLVER clang-tools-$LLVER" # clang-tools: clang-cl
     if [ "$TARGET_OS" == "linux" ]; then
@@ -108,7 +108,7 @@ if [[ "$SYSROOT_CACHE_HIT" != "true" ]]; then
     tar Jxf sysroot.tar.xz
   fi
 
-  if [ "$TARGET_OS" == "android" ]; then
+  if [ "$TARGET_OS" == "android" -a ! -d "$ANDROID_NDK_LATEST_HOME" ]; then
     wget https://dl.google.com/android/repository/android-ndk-${NDK_VERSION:-r22}-${NDK_HOST}-x86_64.zip -O ndk.zip
     7z x ndk.zip -o/tmp &>/dev/null
     mv /tmp/android-ndk-${NDK_VERSION:-r22} ${ANDROID_NDK:-/tmp/android-ndk}
