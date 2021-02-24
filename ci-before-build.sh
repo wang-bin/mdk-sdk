@@ -30,7 +30,7 @@ if [ `which dpkg` ]; then # TODO: multi arch
 elif [ `which brew` ]; then
     #time brew update --preinstall
     export HOMEBREW_NO_AUTO_UPDATE=1
-    pkgs="p7zip ninja vulkan-headers" #
+    pkgs="p7zip ninja vulkan-headers dav1d" #
     if [[ "$DEVTOOLS_CACHE_HIT" != "true" ]]; then
         pkgs+=" hudochenkov/sshpass/sshpass"
     fi
@@ -114,3 +114,5 @@ if [[ "$SYSROOT_CACHE_HIT" != "true" ]]; then
     mv /tmp/android-ndk-${NDK_VERSION:-r22} ${ANDROID_NDK:-/tmp/android-ndk}
   fi
 fi
+# win64: https://code.videolan.org/videolan/dav1d/-/jobs/577718/artifacts/download?file_type=archive
+# android arm64: https://code.videolan.org/videolan/dav1d/-/jobs/577722/artifacts/download?file_type=archive
