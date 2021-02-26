@@ -1,7 +1,7 @@
 LLVER=${LLVM_VER:-12}
 NDK_HOST=linux
 FF_EXTRA=-clang
-GLFW_VER=3.3.2
+GLFW_VER=3.3.3
 
 echo "EXTERNAL_DEP_CACHE_HIT: ${EXTERNAL_DEP_CACHE_HIT}"
 echo "DEVTOOLS_CACHE_HIT: ${DEVTOOLS_CACHE_HIT}"
@@ -114,5 +114,10 @@ if [[ "$SYSROOT_CACHE_HIT" != "true" ]]; then
     mv /tmp/android-ndk-${NDK_VERSION:-r22} ${ANDROID_NDK:-/tmp/android-ndk}
   fi
 fi
-# win64: https://code.videolan.org/videolan/dav1d/-/jobs/577718/artifacts/download?file_type=archive
-# android arm64: https://code.videolan.org/videolan/dav1d/-/jobs/577722/artifacts/download?file_type=archive
+
+if [[ "$EXTERNAL_DEP_CACHE_HIT" != "true" ]]; then
+  wget "https://www.deb-multimedia.org/pool/main/d/dav1d-dmo/libdav1d-dev_0.8.2-dmo1_armhf.deb" -O dav1d.deb
+  7z x -y dav1d.deb
+  tar xvf data.tar
+  mv usr/include/dav1d external/include/
+fi

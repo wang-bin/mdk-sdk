@@ -45,7 +45,8 @@ jobs:
         path: |
           ./mdk/external
           !./mdk/external/lib/macOS/libvulkan.tbd
-        key: external-dep-${{ env.TARGET_OS }}-ffmpeg-${{ env.FF_VER }}-${{ secrets.FF_SDK_ID }}
+          !./mdk/external/lib/libdav1d.tbd
+        key: external-dep-${{ env.TARGET_OS }}-ffmpeg-${{ env.FF_VER }}-${{ secrets.FF_SDK_ID }}-dav1d{{ secrets.DAV1D_ID }}
 # why may failed to cache/restore /usr/local/bin/sshpass?
 # no build cache because build dir content changes but key should not, then no cache save.
     - name: Create Build Environment
@@ -117,8 +118,10 @@ jobs:
       id: external-dep-cache
       uses: actions/cache@v2
       with:
-        path: ./mdk/external
-        key: external-dep-${{ env.TARGET_OS }}-ffmpeg-${{ env.FF_VER }}-${{ secrets.FF_SDK_ID }}
+        path: |
+          ./mdk/external
+          !./mdk/external/lib/libdav1d.tbd
+        key: external-dep-${{ env.TARGET_OS }}-ffmpeg-${{ env.FF_VER }}-${{ secrets.FF_SDK_ID }}-dav1d{{ secrets.DAV1D_ID }}
 # why may failed to cache/restore /usr/local/bin/sshpass?
 # no build cache because build dir content changes but key should not, then no cache save.
     - name: Create Build Environment
@@ -181,7 +184,8 @@ jobs:
         path: |
           ./mdk/external
           !./mdk/external/lib/macOS/libvulkan.tbd
-        key: external-dep-${{ env.TARGET_OS }}-ffmpeg-${{ env.FF_VER }}-${{ secrets.FF_SDK_ID }}
+          !./mdk/external/lib/libdav1d.tbd
+        key: external-dep-${{ env.TARGET_OS }}-ffmpeg-${{ env.FF_VER }}-${{ secrets.FF_SDK_ID }}-dav1d{{ secrets.DAV1D_ID }}
 # why may failed to cache/restore /usr/local/bin/sshpass?
 # no build cache because build dir content changes but key should not, then no cache save.
     - name: Create Build Environment
@@ -246,7 +250,8 @@ jobs:
         path: |
           ./mdk/external
           !./mdk/external/lib/macOS/libvulkan.tbd
-        key: external-dep-${{ env.TARGET_OS }}-ffmpeg-${{ env.FF_VER }}-${{ secrets.FF_SDK_ID }}
+          !./mdk/external/lib/libdav1d.tbd
+        key: external-dep-${{ env.TARGET_OS }}-ffmpeg-${{ env.FF_VER }}-${{ secrets.FF_SDK_ID }}-dav1d{{ secrets.DAV1D_ID }}
 # why may failed to cache/restore /usr/local/bin/sshpass?
 # no build cache because build dir content changes but key should not, then no cache save.
     - name: Create Build Environment
@@ -388,7 +393,7 @@ jobs:
       uses: actions/cache@v2
       with:
         path: ./mdk/external
-        key: external-dep-${{ env.TARGET_OS }}-ffmpeg-${{ env.FF_VER }}-${{ secrets.FF_SDK_ID }}
+        key: external-dep-${{ env.TARGET_OS }}-ffmpeg-${{ env.FF_VER }}-${{ secrets.FF_SDK_ID }}-dav1d{{ secrets.DAV1D_ID }}
     - name: 'Restore sysroot cache'
       id: sysroot-cache
       uses: actions/cache@v2
@@ -458,7 +463,7 @@ jobs:
       uses: actions/cache@v2
       with:
         path: ./mdk/external
-        key: external-dep-${{ env.TARGET_OS }}-ffmpeg-${{ env.FF_VER }}-${{ secrets.FF_SDK_ID }}-${{ secrets.GLFW_SDK_ID }}
+        key: external-dep-${{ env.TARGET_OS }}-ffmpeg-${{ env.FF_VER }}-${{ secrets.FF_SDK_ID }}-dav1d{{ secrets.DAV1D_ID }}
     - name: 'Restore sysroot cache'
       id: sysroot-cache
       uses: actions/cache@v2
@@ -556,7 +561,7 @@ jobs:
       uses: actions/cache@v2
       with:
         path: ./mdk/external
-        key: external-dep-${{ env.TARGET_OS }}-ffmpeg-${{ env.FF_VER }}-${{ secrets.FF_SDK_ID }}
+        key: external-dep-${{ env.TARGET_OS }}-ffmpeg-${{ env.FF_VER }}-${{ secrets.FF_SDK_ID }}-dav1d{{ secrets.DAV1D_ID }}
     - name: 'Restore sysroot cache'
       id: sysroot-cache
       uses: actions/cache@v2
@@ -655,7 +660,7 @@ jobs:
       uses: actions/cache@v2
       with:
         path: ./mdk/external
-        key: external-dep-${{ env.TARGET_OS }}-ffmpeg-${{ env.FF_VER }}-${{ secrets.FF_SDK_ID }}
+        key: external-dep-${{ env.TARGET_OS }}-ffmpeg-${{ env.FF_VER }}-${{ secrets.FF_SDK_ID }}-dav1d{{ secrets.DAV1D_ID }}
     - name: 'Restore sysroot cache'
       id: sysroot-cache
       uses: actions/cache@v2
@@ -741,7 +746,7 @@ jobs:
       uses: actions/cache@v2
       with:
         path: ./mdk/external
-        key: external-dep-${{ env.TARGET_OS }}-ffmpeg-${{ env.FF_VER }}-${{ secrets.FF_SDK_ID }}
+        key: external-dep-${{ env.TARGET_OS }}-ffmpeg-${{ env.FF_VER }}-${{ secrets.FF_SDK_ID }}-dav1d{{ secrets.DAV1D_ID }}
     - name: Create Build Environment
       shell: bash
       env:
