@@ -441,8 +441,6 @@ jobs:
       TARGET_OS: windows-desktop
       VCDIR: '/tmp/winsysroot/msvcrt-dev'
       WINDOWSSDKDIR: '/tmp/winsysroot/winsdk'
-      VCVER: '14.27.29110'
-      WINSDKVER: '10.0.19041.0'
     strategy:
       fail-fast: false
       matrix:
@@ -469,7 +467,7 @@ jobs:
       uses: actions/cache@v2
       with:
         path: /tmp/winsysroot
-        key: sysroot-${{ env.TARGET_OS }}${{ env.WINSDKVER }}-vc${{ env.VCVER }}
+        key: sysroot-${{ env.TARGET_OS }}${{ secrets.WINSDKVER }}-vc${{ secrets.VCVER }}
     - name: Create Build Environment
       shell: bash
       env:
@@ -522,6 +520,11 @@ jobs:
       working-directory: mdk
       run: |
         ../ci-after-build.sh
+        if [ -f $VCDIR/bin/x64/vcruntime140_1.dll ]; then
+          mkdir -p mdk-sdk/bin/x64
+          cp $VCDIR/bin/x64/vcruntime140_1.dll mdk-sdk/bin/x64
+          7z a mdk-sdk-*.7z mdk-sdk/bin/x64/vcruntime140_1.dll
+        fi
         mv mdk-sdk-*.7z ..
     - name: Archieve SDK
       uses: actions/upload-artifact@v2
@@ -544,8 +547,6 @@ jobs:
       TARGET_OS: uwp
       VCDIR: '/tmp/winsysroot/msvcrt-dev'
       WINDOWSSDKDIR: '/tmp/winsysroot/winsdk'
-      VCVER: '14.27.29110'
-      WINSDKVER: '10.0.19041.0'
     steps:
     - uses: actions/checkout@v2
     - name: Checkout source
@@ -567,7 +568,7 @@ jobs:
       uses: actions/cache@v2
       with:
         path: /tmp/winsysroot
-        key: sysroot-${{ env.TARGET_OS }}${{ env.WINSDKVER }}-vc${{ env.VCVER }}
+        key: sysroot-${{ env.TARGET_OS }}${{ secrets.WINSDKVER }}-vc${{ secrets.VCVER }}
     - name: Create Build Environment
       shell: bash
       env:

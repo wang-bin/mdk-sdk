@@ -23,7 +23,7 @@ If ffmpeg any module is not set, it's searched in the following order
 SDK is built by clang-cl 12.0 + lld with
 - FFmpeg: https://sourceforge.net/projects/avbuild/files/windows-store/ffmpeg-master-windows-store-clang-static-lite.tar.xz/download
 - Windows SDK 10.0.19041.0
-- MSVC CRT 14.26.28801
+- MSVC CRT 14.28.29333
 
 ### Use in Visual Studio
 #### Install via NuGet (Recommended)
