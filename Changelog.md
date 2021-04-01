@@ -1,14 +1,36 @@
 Change log:
 
+0.11.0 - 2021-03-31
+
+- API changes:
+    - Add [setActiveTracks()](https://github.com/wang-bin/mdk-sdk/wiki/Player-APIs#void-setactivetracksmediatype-type-const-stdsetint-tracks)
+    - Deprecate `javaVM(JavaVM*)`, use `SetGlobalOption("jvm", void*)` instead. [See Wiki](https://github.com/wang-bin/mdk-sdk/wiki/Global-Options)
+    - Deprecate `setLogLevel(LogLevel)`, use `SetGlobalOption("logLevel", name or LogLevel or int value)` instead. See Wiki](https://github.com/wang-bin/mdk-sdk/wiki/Global-Options)
+    - Deprecate `Player.setVideoDecoders(...)` and `Player.setAudioDecoders(...)`, use `Player.setDecoders(MediaType, ...)` instead
+    - Add VideoFrame.isValid()
+- Add ["dav1d"](https://github.com/wang-bin/mdk-dav1d) decoder. Default load libdav1d.5.dylib, libdav1d.so(android), libdav1d.so.5(linux), libdav1d.dll(windows), or set library name via environment var "DAV1D_LIB"
+- Support frame step forward via `seek(1, SeekFlag::FromNow|SeekFlag::Frame)`, also support N frame forward
+- `seek()` supports seeking to the last frame or the last key frame(has `SeekFlag::KeyFrame`) if target position > duration
+- Improve video decoder switch
+- setLogHandler(nullptr) once to log to std::clog, set again to disable log completely
+- Fix potential endless wait if stop playback in loop mode
+- Fix the first frame after seek is not the latest frame
+- Fix music cover image not rendered if prepare from pos > 0
+- Fix wrong position() and prepared callback invoked multiple times if play with an audio track file
+- Fix the first frame rendered after seek is not the lastest frame
+- FFmpeg:
+    - Support avdevice via "avdevice://format:filename"
+    - Support avformat options via url query, starts with "mdkopt=avformat", e.g. "some_url?mdkopt=avformat&fflags=nobuffer"
+
 
 0.10.4 - 2021-02-17
 
 - Support macCatalyst
-- Support vulkan on apple sillicon
+- Support vulkan on apple silicon
 - VT decoder:
     - Support VP9 on macOS 11+. Profile 0 and 2 are confirmed
     - Support more(all) semi-planar formats, output a format with the same chroma subsample size as original format, e.g. 'p410' for hevc yuv444p10le.
-    - Fix high depth channel formats output error on apple sillicon. It's r10g10a10a2 for 10bit Y plane, but not support yet in renderer, so use p010('x420')
+    - Fix high depth channel formats output error on apple silicon. It's r10g10a10a2 for 10bit Y plane, but not support yet in renderer, so use p010('x420')
     - Add "hardware" property to enable/disable hardware acceleration
     - Add "width" and "height" property
     - Support HDR in mkv
@@ -24,7 +46,7 @@ Change log:
 - Fix a blank frame in gapless playback
 - Fix 2 crashes in player dtor, 1 race in setNextMedia(), 1 race/crash if faile to open a media
 - Examples:
-    - Enable glfw for apple sillicon
+    - Enable glfw for apple silicon
 
 
 0.10.3 - 2020-12-31
@@ -54,7 +76,7 @@ Change log:
 
 0.10.2 - 2020-11-18
 
-- Support apple sillicon(not tested on real device)
+- Support apple silicon(not tested on real device)
 - Support swift language
 - Support cocoapods for macOS via `pod 'mdk'`
 - Add xcframework, including both macOS and iOS frameworks
