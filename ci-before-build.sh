@@ -12,15 +12,18 @@ if [[ "$TARGET_OS" == mac* || "$TARGET_OS" == iOS* || "$TARGET_OS" == android ]]
     FF_EXTRA=
 fi
 if [ `which dpkg` ]; then # TODO: multi arch
+    pkgs="sshpass cmake ninja-build p7zip-full"
     #wget https://apt.llvm.org/llvm.sh
-    wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key |sudo apt-key add -
-    #sudo apt update
-    #sudo apt install -y software-properties-common # for add-apt-repository, ubuntu-tooolchain-r-test is required by trusty
-    sudo apt-add-repository "deb http://apt.llvm.org/focal/ llvm-toolchain-focal-8 main" # rpi
-    sudo apt-add-repository "deb http://apt.llvm.org/focal/ llvm-toolchain-focal-12 main"
-    sudo apt-add-repository "deb http://apt.llvm.org/focal/ llvm-toolchain-focal main" # clang-13
-    sudo apt update
-    pkgs="sshpass cmake ninja-build p7zip-full lld-$LLVER clang-tools-$LLVER" # clang-tools: clang-cl
+    if [[ "$TARGET_OS" != android ]]; then
+      pkgs+=" lld-$LLVER clang-tools-$LLVER" # clang-tools: clang-cl
+      wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key |sudo apt-key add -
+      #sudo apt update
+      #sudo apt install -y software-properties-common # for add-apt-repository, ubuntu-tooolchain-r-test is required by trusty
+      #sudo apt-add-repository "deb http://apt.llvm.org/focal/ llvm-toolchain-focal-8 main" # rpi
+      sudo apt-add-repository "deb http://apt.llvm.org/focal/ llvm-toolchain-focal-12 main"
+      sudo apt-add-repository "deb http://apt.llvm.org/focal/ llvm-toolchain-focal main" # clang-13
+      sudo apt update
+    fi
     if [ "$TARGET_OS" == "linux" ]; then
         pkgs+=" libc++-$LLVER-dev libc++abi-$LLVER-dev libegl1-mesa-dev libgles2-mesa-dev libgl1-mesa-dev libgbm-dev libx11-dev libwayland-dev libasound2-dev libopenal-dev libpulse-dev libva-dev libvdpau-dev libglfw3-dev libsdl2-dev"
     elif [ "$TARGET_OS" == "sunxi" -o "$TARGET_OS" == "raspberry-pi" ]; then
