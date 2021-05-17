@@ -1,5 +1,29 @@
 Change log:
 
+0.11.1 - 2021-05-16
+
+- Deprecate Player.setState(State), use Player.set(State)
+- Add VideoFrame.save() to encode and save as a file
+- Buffer range for realtime streams(rtsp, rtp etc.) is unlimited by default
+- Unify pixel format channel map algorithm. Fix incorrect color for some formats(e.g. nv21)
+- Ignore incorrect hdr metadata
+- Allow renderVideo() in RenderCallback
+- VT decoder:
+  - Support jpeg, more prores profiles
+  - Support h264, hevc GBRP 8bit input pixel format
+- MFT:
+  - Fix h264 profile check
+  - Add property "blacklist", default is "mpeg4", mpeg4 is not well supported so disabled for now
+- FFmpeg:
+  - continue to decode by default if error ocurrs. can stop decoding by setting property "error=0"
+  - Use 4.4 instead of master because of abi break
+- Auto reset log handler to fix potential crash when exiting
+- Fix seek on pause may never be executed forever without resume playback
+- Fix endless wait if seek near EOF in loop mode
+- Fix license check, appid is utf8. License generator and validator is opensource now as [appke](https://github.com/wang-bin/appkey)
+- Fix crash if snapshot failed
+
+
 0.11.0 - 2021-03-31
 
 - API changes:
