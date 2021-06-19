@@ -9,7 +9,7 @@ on:
 env:
   FF_VER: 4.4
   LLVM_VER: 12
-  NDK_VERSION: r22
+  NDK_VERSION: r22b
   NINJA_STATUS: '[%f/%t %e %r]'
   SF_PW: ${{ secrets.SF_PW }}
   SF_USER: ${{ secrets.SF_USER }}
@@ -635,7 +635,37 @@ jobs:
       shell: bash
       run: sshpass -p ${SF_PW} scp -o StrictHostKeyChecking=no mdk-sdk-${TARGET_OS}.7z ${SF_USER}@frs.sourceforge.net:/home/frs/project/mdk-sdk/nightly/
 
-# TODO: nuget
+
+  NuGet:
+    runs-on: windows-latest
+    needs: [Windows_clang, UWP_clang]
+    steps:
+    - uses: actions/checkout@v2
+    - name: Download win32 sdk
+      uses: actions/download-artifact@v2
+      with:
+        name: mdk-sdk-windows-desktop-MinSizeRel
+    - name: Download uwp sdk
+      uses: actions/download-artifact@v2
+      with:
+        name: mdk-sdk-uwp-MinSizeRel
+    - name: Make nupkg
+      run: |
+        7z x mdk-sdk-windows-desktop.7z
+        7z x mdk-sdk-uwp.7z -o"uwp"
+        mkdir mdk-sdk/bin/UAP
+        cp uwp/mdk-sdk/lib/arm mdk-sdk/lib -Recurse -Force
+        cp uwp/mdk-sdk/bin/* mdk-sdk/bin/UAP -Recurse -Force
+        cp nuget/mdk.nuspec mdk-sdk
+        cd mdk-sdk
+        nuget pack mdk.nuspec
+        mv *.nupkg ../mdk.nupkg
+    - name: Archieve SDK
+      uses: actions/upload-artifact@v2
+      with:
+        name: mdk-nuget
+        path: mdk.nupkg
+
 
   Linux_libcxx:
     runs-on: ubuntu-20.04

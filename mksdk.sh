@@ -65,6 +65,7 @@ fi
 
 [ -n "$ARCH" ] && {
   cp -anvf $SDK_DIR/include $SDK_DIR_OUT
+  cp -anvf $SDK_DIR/build $SDK_DIR_OUT # for win
   cp -anvf $SDK_DIR/doc $SDK_DIR_OUT
   cp -nvf $SDK_DIR/* $SDK_DIR_OUT
   mkdir -p $SDK_DIR_OUT/lib/cmake/
