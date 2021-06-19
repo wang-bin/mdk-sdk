@@ -1,7 +1,7 @@
 LLVER=${LLVM_VER:-12}
 NDK_HOST=linux
 FF_EXTRA=-clang
-GLFW_VER=3.3.3
+GLFW_VER=3.3.4
 
 echo "EXTERNAL_DEP_CACHE_HIT: ${EXTERNAL_DEP_CACHE_HIT}"
 echo "DEVTOOLS_CACHE_HIT: ${DEVTOOLS_CACHE_HIT}"
@@ -39,7 +39,7 @@ elif [ `which brew` ]; then
     fi
     if [ "$TARGET_OS" == "macOS" ]; then
         pkgs+=" glfw3 sdl2"
-        echo "$TARGET_ARCH" |grep arm >/dev/null || {
+        echo "$TARGET_ARCH" |grep arm >/dev/null || { # FIXME: arm64 host build
           time brew cask install xquartz
           pkgs+=" pulseaudio"
         }
@@ -57,7 +57,7 @@ OS=${OS/Simulator/}
 mkdir -p external/{bin,lib}/$OS
 
 if [[ "$EXTERNAL_DEP_CACHE_HIT" != "true" ]]; then
-  wget https://sourceforge.net/projects/avbuild/files/${TARGET_OS}/ffmpeg-${FF_VER}-${TARGET_OS}${FF_EXTRA}-lite${LTO_SUFFIX}.tar.xz/download -O ffmpeg-${TARGET_OS}.tar.xz
+  curl -kL -o ffmpeg-${TARGET_OS}.tar.xz https://sourceforge.net/projects/avbuild/files/${TARGET_OS}/ffmpeg-${FF_VER}-${TARGET_OS}${FF_EXTRA}-lite${LTO_SUFFIX}.tar.xz/download
   tar Jxf ffmpeg-${TARGET_OS}.tar.xz
   #find ffmpeg-${FF_VER}-${TARGET_OS}${FF_EXTRA}-lite${LTO_SUFFIX}/lib -name "libav*.so*" -o  -name "libsw*.so*" -delete
 
@@ -69,8 +69,8 @@ if [[ "$EXTERNAL_DEP_CACHE_HIT" != "true" ]]; then
       mkdir -p external/lib/sunxi/armv7
       cp -af ffmpeg-${FF_VER}-${TARGET_OS}${FF_EXTRA}-lite${LTO_SUFFIX}/lib/* external/lib/sunxi/armv7 #single arch package
   elif [ "$TARGET_OS" == "windows-desktop" ]; then
-      wget https://github.com/glfw/glfw/releases/download/${GLFW_VER}/glfw-${GLFW_VER}.bin.WIN32.zip -O glfw32.zip
-      wget https://github.com/glfw/glfw/releases/download/${GLFW_VER}/glfw-${GLFW_VER}.bin.WIN64.zip -O glfw64.zip
+      curl -kL -o glfw32.zip https://github.com/glfw/glfw/releases/download/${GLFW_VER}/glfw-${GLFW_VER}.bin.WIN32.zip
+      curl -kL -o glfw64.zip https://github.com/glfw/glfw/releases/download/${GLFW_VER}/glfw-${GLFW_VER}.bin.WIN64.zip
       7z x glfw32.zip
       7z x glfw64.zip
       cp -af glfw-${GLFW_VER}.bin.WIN32/include/GLFW external/include/
@@ -78,7 +78,7 @@ if [[ "$EXTERNAL_DEP_CACHE_HIT" != "true" ]]; then
       cp glfw-${GLFW_VER}.bin.WIN32/lib-vc2019/glfw3.lib external/lib/windows/x86
       cp glfw-${GLFW_VER}.bin.WIN64/lib-vc2019/glfw3.lib external/lib/windows/x64
       # TODO: download in cmake(if check_include_files failed)
-      wget https://github.com/KhronosGroup/Vulkan-Headers/archive/master.zip -O vk.zip
+      curl -kL -o vk.zip https://github.com/KhronosGroup/Vulkan-Headers/archive/master.zip
       7z x vk.zip
       cp -af Vulkan-Headers-master/include/vulkan external/include/
   fi
@@ -86,10 +86,10 @@ if [[ "$EXTERNAL_DEP_CACHE_HIT" != "true" ]]; then
   if [[ "$TARGET_OS" == "win"* || "$TARGET_OS" == "uwp"* || "$TARGET_OS" == macOS ]]; then
     mkdir -p external/include/{EGL,GLES{2,3},KHR}
     for h in GLES2/gl2.h GLES2/gl2ext.h GLES2/gl2platform.h GLES3/gl3.h GLES3/gl3platform.h; do
-      wget https://www.khronos.org/registry/OpenGL/api/${h} -O external/include/${h}
+      curl -kL -o external/include/${h} https://www.khronos.org/registry/OpenGL/api/${h}
     done
     for h in EGL/egl.h EGL/eglext.h EGL/eglplatform.h KHR/khrplatform.h; do
-      wget https://www.khronos.org/registry/EGL/api/${h} -O external/include/${h}
+      curl -kL -o external/include/${h} https://www.khronos.org/registry/EGL/api/${h}
     done
   fi
 fi
@@ -119,7 +119,7 @@ if [[ "$SYSROOT_CACHE_HIT" != "true" ]]; then
 fi
 
 if [[ "$EXTERNAL_DEP_CACHE_HIT" != "true" ]]; then
-  wget "https://www.deb-multimedia.org/pool/main/d/dav1d-dmo/libdav1d-dev_0.8.2-dmo1_armhf.deb" -O dav1d.deb
+  curl -kL -o dav1d.deb "https://www.deb-multimedia.org/pool/main/d/dav1d-dmo/libdav1d-dev_0.9.0-dmo1_armhf.deb"
   7z x -y dav1d.deb
   tar xvf data.tar
   mv usr/include/dav1d external/include/

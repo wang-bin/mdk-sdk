@@ -65,13 +65,13 @@ jobs:
       working-directory: mdk
       run: |
         pwd
-        cmake -GNinja -DCMAKE_OSX_DEPLOYMENT_TARGET=10.9 -H. -Bbuild/${TARGET_OS} -DCMAKE_VERBOSE_MAKEFILE=1 -DCMAKE_BUILD_TYPE=${{ matrix.config }} -DCMAKE_INSTALL_PREFIX=$PWD/mdk-sdk # no dSYM for lto, dsymutil: no debug symbols in executable (-arch x86_64)
+        cmake -GNinja -DCMAKE_OSX_DEPLOYMENT_TARGET=10.9  -Bbuild/${TARGET_OS} -DCMAKE_VERBOSE_MAKEFILE=1 -DCMAKE_BUILD_TYPE=${{ matrix.config }} -DCMAKE_INSTALL_PREFIX=$PWD/mdk-sdk # no dSYM for lto, dsymutil: no debug symbols in executable (-arch x86_64)
     - name: Configure CMake
       if: ${{ startsWith(matrix.arch, 'arm64') }} # arm64, arm64e
       shell: bash
       working-directory: mdk
       run: |
-        cmake -GNinja -DCMAKE_OSX_ARCHITECTURES=${{ matrix.arch }} -DCMAKE_OSX_DEPLOYMENT_TARGET=11.0 -H. -Bbuild/${TARGET_OS} -DCMAKE_VERBOSE_MAKEFILE=1 -DCMAKE_BUILD_TYPE=${{ matrix.config }} -DCMAKE_INSTALL_PREFIX=$PWD/mdk-sdk # no dSYM for lto, dsymutil: no debug symbols in executable (-arch x86_64)
+        cmake -GNinja -DCMAKE_OSX_ARCHITECTURES=${{ matrix.arch }} -DCMAKE_OSX_DEPLOYMENT_TARGET=11.0  -Bbuild/${TARGET_OS} -DCMAKE_VERBOSE_MAKEFILE=1 -DCMAKE_BUILD_TYPE=${{ matrix.config }} -DCMAKE_INSTALL_PREFIX=$PWD/mdk-sdk # no dSYM for lto, dsymutil: no debug symbols in executable (-arch x86_64)
     - name: Build
       shell: bash
       working-directory: mdk
@@ -137,7 +137,7 @@ jobs:
       # access regardless of the host operating system
       shell: bash
       working-directory: mdk
-      run: cmake -GNinja -DCMAKE_TOOLCHAIN_FILE=$PWD/cmake/tools/macCatalyst.cmake -DUSE_BITCODE=1 -DCMAKE_OSX_ARCHITECTURES="x86_64;arm64" -H. -Bbuild/${TARGET_OS} -DCMAKE_VERBOSE_MAKEFILE=1 -DCMAKE_BUILD_TYPE=${{ matrix.config }} -DCMAKE_INSTALL_PREFIX=$PWD/mdk-sdk # no dSYM for lto, dsymutil: no debug symbols in executable (-arch x86_64)
+      run: cmake -GNinja -DCMAKE_TOOLCHAIN_FILE=$PWD/cmake/tools/macCatalyst.cmake -DUSE_BITCODE=1 -DCMAKE_OSX_ARCHITECTURES="x86_64;arm64"  -Bbuild/${TARGET_OS} -DCMAKE_VERBOSE_MAKEFILE=1 -DCMAKE_BUILD_TYPE=${{ matrix.config }} -DCMAKE_INSTALL_PREFIX=$PWD/mdk-sdk # no dSYM for lto, dsymutil: no debug symbols in executable (-arch x86_64)
     - name: Build
       shell: bash
       working-directory: mdk
@@ -198,7 +198,7 @@ jobs:
     - name: Configure CMake
       shell: bash
       working-directory: mdk
-      run: cmake -GNinja -DWITH_DEB_INFO=0 -DUSE_LTO=thin -DCMAKE_TOOLCHAIN_FILE=$PWD/cmake/tools/ios.cmake -DIOS_DEPLOYMENT_TARGET=8.0 -DIOS_ARCH="arm64" -DIOS_BITCODE=1 -H. -Bbuild/${TARGET_OS} -DCMAKE_BUILD_TYPE=${{ matrix.config }} -DCMAKE_INSTALL_PREFIX=$PWD/mdk-sdk -DCMAKE_VERBOSE_MAKEFILE=1 -DFFMPEG_EMBED=1 # FFMPEG_EMBED=0 to copy libffmpeg.4.dylib
+      run: cmake -GNinja -DWITH_DEB_INFO=0 -DUSE_LTO=thin -DCMAKE_TOOLCHAIN_FILE=$PWD/cmake/tools/ios.cmake -DIOS_DEPLOYMENT_TARGET=8.0 -DIOS_ARCH="arm64" -DIOS_BITCODE=1  -Bbuild/${TARGET_OS} -DCMAKE_BUILD_TYPE=${{ matrix.config }} -DCMAKE_INSTALL_PREFIX=$PWD/mdk-sdk -DCMAKE_VERBOSE_MAKEFILE=1 -DFFMPEG_EMBED=1 # FFMPEG_EMBED=0 to copy libffmpeg.4.dylib
     - name: Build
       shell: bash
       working-directory: mdk
@@ -264,7 +264,7 @@ jobs:
     - name: Configure CMake
       shell: bash
       working-directory: mdk
-      run: cmake -GNinja -DUSE_LTO=thin -DCMAKE_SYSTEM_NAME=iOS -DCMAKE_OSX_ARCHITECTURES="x86_64" -DCMAKE_OSX_DEPLOYMENT_TARGET=8.0 -DCMAKE_XCODE_ATTRIBUTE_ONLY_ACTIVE_ARCH=NO -DCMAKE_IOS_INSTALL_COMBINED=YES -DCMAKE_OSX_SYSROOT=iphonesimulator -H. -Bbuild/${TARGET_OS} -DCMAKE_BUILD_TYPE=${{ matrix.config }} -DCMAKE_INSTALL_PREFIX=$PWD/mdk-sdk -DCMAKE_VERBOSE_MAKEFILE=1 -DFFMPEG_EMBED=1 # FFMPEG_EMBED=0 to copy libffmpeg.4.dylib
+      run: cmake -GNinja -DUSE_LTO=thin -DCMAKE_SYSTEM_NAME=iOS -DCMAKE_OSX_ARCHITECTURES="x86_64" -DCMAKE_OSX_DEPLOYMENT_TARGET=8.0 -DCMAKE_XCODE_ATTRIBUTE_ONLY_ACTIVE_ARCH=NO -DCMAKE_IOS_INSTALL_COMBINED=YES -DCMAKE_OSX_SYSROOT=iphonesimulator  -Bbuild/${TARGET_OS} -DCMAKE_BUILD_TYPE=${{ matrix.config }} -DCMAKE_INSTALL_PREFIX=$PWD/mdk-sdk -DCMAKE_VERBOSE_MAKEFILE=1 -DFFMPEG_EMBED=1 # FFMPEG_EMBED=0 to copy libffmpeg.4.dylib
     - name: Build
       shell: bash
       working-directory: mdk
@@ -435,6 +435,173 @@ jobs:
       run: sshpass -p ${SF_PW} scp -o StrictHostKeyChecking=no mdk-sdk-${TARGET_OS}.tar.xz ${SF_USER}@frs.sourceforge.net:/home/frs/project/mdk-sdk/nightly/
 
 
+  Windows_MSVC:
+    runs-on: windows-latest
+    env:
+      TARGET_OS: windows-desktop
+    strategy:
+      fail-fast: false
+      matrix:
+        config: [MinSizeRel]
+    steps:
+    - uses: actions/checkout@v2
+    - name: Checkout source
+      uses: actions/checkout@v2
+      with:
+        repository: wang-bin/mdk
+        path: mdk
+        fetch-depth: 1
+        token: ${{ secrets.CLONE_PAT }}
+        submodules: 'recursive'
+    - name: 'Restore External Dep cache'
+      id: external-dep-cache
+      uses: actions/cache@v2
+      with:
+        path: ./mdk/external
+        key: external-dep-${{ env.TARGET_OS }}-ffmpeg-${{ env.FF_VER }}-${{ secrets.FF_SDK_ID }}-dav1d{{ secrets.DAV1D_ID }}
+    - name: Create Build Environment
+      shell: bash
+      env:
+        SYSROOT_CACHE_HIT: true
+        EXTERNAL_DEP_CACHE_HIT: ${{ steps.external-dep-cache.outputs.cache-hit }}
+      working-directory: mdk
+      run: ../ci-before-build.sh
+    - uses: seanmiddleditch/gha-setup-ninja@master
+    - uses: ilammy/msvc-dev-cmd@v1
+      with:
+        arch: amd64_arm64
+    - name: Configure for win arm64
+      env:
+        ARCH: arm64
+      working-directory: mdk
+      run: cmake -DUSE_LTO=1 -DCMAKE_SYSTEM_PROCESSOR=${{ env.ARCH }} -GNinja  -Bbuild/${{ env.TARGET_OS }}-${{ env.ARCH }} -DCMAKE_BUILD_TYPE=${{ matrix.config }} -DCMAKE_INSTALL_PREFIX=mdk-sdk-${{ env.ARCH }} -DCMAKE_VERBOSE_MAKEFILE=1 .
+    - name: Build for win arm64
+      working-directory: mdk
+      run: cmake --build build/${{ env.TARGET_OS }}-arm64
+    - uses: ilammy/msvc-dev-cmd@v1
+      with:
+        arch: amd64_x86
+    - name: Configure for win x86
+      env:
+        ARCH: x86
+      working-directory: mdk
+      run: cmake -DUSE_LTO=1 -DCMAKE_SYSTEM_PROCESSOR=${{ env.ARCH }} -DCMAKE_SYSTEM_VERSION="6.0" -GNinja  -Bbuild/${{ env.TARGET_OS }}-${{ env.ARCH }} -DCMAKE_BUILD_TYPE=${{ matrix.config }} -DCMAKE_INSTALL_PREFIX=mdk-sdk-${{ env.ARCH }} -DCMAKE_VERBOSE_MAKEFILE=1 .
+    - name: Build for win x86
+      working-directory: mdk
+      run: cmake --build build/${{ env.TARGET_OS }}-x86
+    - uses: ilammy/msvc-dev-cmd@v1
+      with:
+        arch: x64
+    - name: Configure for win x64
+      env:
+        ARCH: x64
+      working-directory: mdk
+      run: cmake -DUSE_LTO=1 -DCMAKE_SYSTEM_PROCESSOR=${{ env.ARCH }} -DCMAKE_SYSTEM_VERSION="6.0" -GNinja  -Bbuild/${{ env.TARGET_OS }}-${{ env.ARCH }} -DCMAKE_BUILD_TYPE=${{ matrix.config }} -DCMAKE_INSTALL_PREFIX=mdk-sdk-${{ env.ARCH }} -DCMAKE_VERBOSE_MAKEFILE=1 .
+    - name: Build for win x64
+      working-directory: mdk
+      run: cmake --build build/${{ env.TARGET_OS }}-x64
+    - name: Make SDK
+      shell: bash
+      working-directory: mdk
+      run: |
+        ../ci-after-build.sh
+        mv mdk-sdk-*.7z ../mdk-sdk-${{ env.TARGET_OS }}-vs2019.7z
+    - name: Archieve SDK
+      uses: actions/upload-artifact@v2
+      with:
+        name: mdk-sdk-vs2019-${{ env.TARGET_OS }}-${{ matrix.config }}
+        path: mdk-sdk-${{ env.TARGET_OS }}-vs2019.7z
+#    - name: Upload to SourceForge
+#      if: ${{ matrix.config == 'MinSizeRel' }}
+#      uses: garygrossgarten/github-action-scp@release
+#      with:
+#        host: 'frs.sourceforge.net'
+#        username: ${{ secrets.SF_USER }}
+#        password: ${{ secrets.SF_PW }}
+#        local: mdk-sdk-${{ env.TARGET_OS }}-vs2019.7z
+#        remote: '/home/frs/project/mdk-sdk/nightly/'
+
+  UWP_MSVC:
+    runs-on: windows-latest
+    env:
+      TARGET_OS: uwp
+    strategy:
+      fail-fast: false
+      matrix:
+        config: [MinSizeRel]
+    steps:
+    - uses: actions/checkout@v2
+    - name: Checkout source
+      uses: actions/checkout@v2
+      with:
+        repository: wang-bin/mdk
+        path: mdk
+        fetch-depth: 1
+        token: ${{ secrets.CLONE_PAT }}
+        submodules: 'recursive'
+    - name: 'Restore External Dep cache'
+      id: external-dep-cache
+      uses: actions/cache@v2
+      with:
+        path: ./mdk/external
+        key: external-dep-${{ env.TARGET_OS }}-ffmpeg-${{ env.FF_VER }}-${{ secrets.FF_SDK_ID }}-dav1d{{ secrets.DAV1D_ID }}
+    - name: Create Build Environment
+      shell: bash
+      env:
+        SYSROOT_CACHE_HIT: true
+        EXTERNAL_DEP_CACHE_HIT: ${{ steps.external-dep-cache.outputs.cache-hit }}
+      working-directory: mdk
+      run: ../ci-before-build.sh
+    - uses: seanmiddleditch/gha-setup-ninja@master
+    - uses: ilammy/msvc-dev-cmd@v1
+      with:
+        arch: amd64_arm
+        uwp: true
+    - name: Configure for uwp arm
+      env:
+        ARCH: arm
+      working-directory: mdk
+      run: cmake -DUSE_LTO=1 -DCMAKE_SYSTEM_PROCESSOR=${{ env.ARCH }} -GNinja -DCMAKE_SYSTEM_NAME=WindowsStore -DCMAKE_SYSTEM_VERSION="10.0"  -Bbuild/${{ env.TARGET_OS }}-${{ env.ARCH }} -DCMAKE_BUILD_TYPE=${{ matrix.config }} -DCMAKE_INSTALL_PREFIX=mdk-sdk-${{ env.ARCH }} -DCMAKE_VERBOSE_MAKEFILE=1 .
+    - name: Build for win arm
+      working-directory: mdk
+      run: cmake --build build/${{ env.TARGET_OS }}-arm
+    - uses: ilammy/msvc-dev-cmd@v1
+      with:
+        arch: amd64_arm64
+        uwp: true
+    - name: Configure for uwp arm64
+      env:
+        ARCH: arm64
+      working-directory: mdk
+      run: cmake -DUSE_LTO=1 -DCMAKE_SYSTEM_PROCESSOR=${{ env.ARCH }} -GNinja -DCMAKE_SYSTEM_NAME=WindowsStore -DCMAKE_SYSTEM_VERSION="10.0"  -Bbuild/${{ env.TARGET_OS }}-${{ env.ARCH }} -DCMAKE_BUILD_TYPE=${{ matrix.config }} -DCMAKE_INSTALL_PREFIX=mdk-sdk-${{ env.ARCH }} -DCMAKE_VERBOSE_MAKEFILE=1 .
+    - name: Build for win arm64
+      working-directory: mdk
+      run: cmake --build build/${{ env.TARGET_OS }}-arm64
+    - uses: ilammy/msvc-dev-cmd@v1
+      with:
+        arch: x64
+        uwp: true
+    - name: Configure for uwp x64
+      env:
+        ARCH: x64
+      working-directory: mdk
+      run: cmake -DUSE_LTO=1 -DCMAKE_SYSTEM_PROCESSOR=${{ env.ARCH }} -GNinja -DCMAKE_SYSTEM_NAME=WindowsStore -DCMAKE_SYSTEM_VERSION="10.0"  -Bbuild/${{ env.TARGET_OS }}-${{ env.ARCH }} -DCMAKE_BUILD_TYPE=${{ matrix.config }} -DCMAKE_INSTALL_PREFIX=mdk-sdk-${{ env.ARCH }} -DCMAKE_VERBOSE_MAKEFILE=1 .
+    - name: Build for win x64
+      working-directory: mdk
+      run: cmake --build build/${{ env.TARGET_OS }}-x64
+    - name: Make SDK
+      shell: bash
+      working-directory: mdk
+      run: |
+        ../ci-after-build.sh
+        mv mdk-sdk-*.7z ../mdk-sdk-${{ env.TARGET_OS }}-vs2019.7z
+    - name: Archieve SDK
+      uses: actions/upload-artifact@v2
+      with:
+        name: mdk-sdk-vs2019-${{ env.TARGET_OS }}-${{ matrix.config }}
+        path: mdk-sdk-${{ env.TARGET_OS }}-vs2019.7z
+
+
   Windows_clang:
     runs-on: ubuntu-20.04
     env:
@@ -455,7 +622,6 @@ jobs:
         fetch-depth: 1
         token: ${{ secrets.CLONE_PAT }}
         submodules: 'recursive'
-
     - name: 'Restore External Dep cache'
       id: external-dep-cache
       uses: actions/cache@v2
