@@ -369,7 +369,7 @@ jobs:
 
 
   RaspberryPi_libcxx:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     env:
       TARGET_OS: 'raspberry-pi'
       LTO_SUFFIX: -lto
@@ -435,7 +435,7 @@ jobs:
       run: sshpass -p ${SF_PW} scp -o StrictHostKeyChecking=no mdk-sdk-${TARGET_OS}.tar.xz ${SF_USER}@frs.sourceforge.net:/home/frs/project/mdk-sdk/nightly/
 
 
-  Windows_MSVC:
+  Windows_VS2019:
     runs-on: windows-latest
     env:
       TARGET_OS: windows-desktop
@@ -521,7 +521,7 @@ jobs:
 #        local: mdk-sdk-${{ env.TARGET_OS }}-vs2019.7z
 #        remote: '/home/frs/project/mdk-sdk/nightly/'
 
-  UWP_MSVC:
+  UWP_VS2019:
     runs-on: windows-latest
     env:
       TARGET_OS: uwp
@@ -603,7 +603,7 @@ jobs:
 
 
   Windows_clang:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     env:
       TARGET_OS: windows-desktop
       VCDIR: '/tmp/winsysroot/msvcrt-dev'
@@ -704,7 +704,7 @@ jobs:
 
 
   UWP_clang:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
@@ -803,8 +803,8 @@ jobs:
 
 
   NuGet:
-    runs-on: windows-latest
-    needs: [Windows_clang, UWP_clang]
+    runs-on: ubuntu-latest
+    needs: [Windows_clang, UWP_clang, Windows_VS2019, UWP_VS2019]
     steps:
     - uses: actions/checkout@v2
     - name: Download win32 sdk
@@ -815,26 +815,53 @@ jobs:
       uses: actions/download-artifact@v2
       with:
         name: mdk-sdk-uwp-MinSizeRel
-    - name: Make nupkg
+    - name: Download win32 vs2019 sdk
+      uses: actions/download-artifact@v2
+      with:
+        name: mdk-sdk-vs2019-windows-desktop-MinSizeRel
+    - name: Download uwp vs2019 sdk
+      uses: actions/download-artifact@v2
+      with:
+        name: mdk-sdk-vs2019-uwp-MinSizeRel
+    - name: Make nupkg (clang)
       run: |
         7z x mdk-sdk-windows-desktop.7z
         7z x mdk-sdk-uwp.7z -o"uwp"
         mkdir mdk-sdk/bin/UAP
-        cp uwp/mdk-sdk/lib/arm mdk-sdk/lib -Recurse -Force
-        cp uwp/mdk-sdk/bin/* mdk-sdk/bin/UAP -Recurse -Force
+        cp -af uwp/mdk-sdk/lib/arm mdk-sdk/lib
+        cp -af uwp/mdk-sdk/bin/* mdk-sdk/bin/UAP
         cp nuget/mdk.nuspec mdk-sdk
         cd mdk-sdk
         nuget pack mdk.nuspec
-        mv *.nupkg ../mdk.nupkg
+        mv *.nupkg ../mdk-clang.nupkg
+    - name: Make nupkg (VS2019)
+      run: |
+        rm -rf mdk-sdk uwp
+        7z x mdk-sdk-windows-desktop-vs2019.7z
+        7z x mdk-sdk-uwp-vs2019.7z -o"uwp"
+        mkdir mdk-sdk/bin/UAP
+        cp -af uwp/mdk-sdk/lib/arm mdk-sdk/lib
+        cp -af uwp/mdk-sdk/bin/* mdk-sdk/bin/UAP
+        cp nuget/mdk.nuspec mdk-sdk
+        cd mdk-sdk
+        nuget pack mdk.nuspec
+        mv *.nupkg ../mdk-vs2019.nupkg
     - name: Archieve SDK
       uses: actions/upload-artifact@v2
       with:
         name: mdk-nuget
-        path: mdk.nupkg
-
+        path: 'mdk*.nupkg'
+    - name: Upload to SourceForge
+      shell: bash
+      run:  |
+        sudo apt update
+        sudo apt install -y sshpass
+        for f in mdk-sdk-windows-desktop-vs2019.7z mdk-sdk-uwp-vs2019.7z mdk-vs2019.nupkg; do
+          sshpass -p ${SF_PW} scp -o StrictHostKeyChecking=no $f ${SF_USER}@frs.sourceforge.net:/home/frs/project/mdk-sdk/nightly/
+        done
 
   Linux_libcxx:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     env:
       TARGET_OS: linux
       LTO_SUFFIX: -lto
@@ -919,7 +946,7 @@ jobs:
       run: sshpass -p ${SF_PW} scp -o StrictHostKeyChecking=no mdk-sdk-${TARGET_OS}.tar.xz ${SF_USER}@frs.sourceforge.net:/home/frs/project/mdk-sdk/nightly/
 
   Android:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     env:
       TARGET_OS: android
       LTO_SUFFIX: -lto
