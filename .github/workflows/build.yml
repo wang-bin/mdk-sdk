@@ -7,7 +7,7 @@ on:
   repository_dispatch:
 
 env:
-  FF_VER: 4.4
+  FF_VER: master
   LLVM_VER: 12
   NDK_VERSION: r22b
   NINJA_STATUS: '[%f/%t %e %r]'
