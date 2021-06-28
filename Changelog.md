@@ -1,5 +1,24 @@
 Change log:
 
+0.12.0 - 2021-06-26
+- API:
+    - Add Player.setVolume(float value, int channel) to control channel volume
+    - Deprecate setState(State), use set(State)
+    - Add GetGlobalOption()
+- Fix uyvy422, yuvy422 rendering
+- Fix MediaInfo.start_time if < 0
+- Fix crash in decoder name is not supported
+- Fix a track may endless wait for loop end
+- Fix muti-tracks stream can not loop
+- Fix slow down near EOF in loop mode at high playback rate
+- Fix VAAPI not work in wayland
+- VT decoder:
+    - Fix decoder stops when bad data error occurs
+    - Fix frames are out of order from the 2nd loop
+- D3D11 prefers fence for synchronization.
+- FFmpeg: support 4.x and 5.x abi, prefer 5.x
+
+
 0.11.1 - 2021-05-16
 
 - Deprecate Player.setState(State), use Player.set(State)

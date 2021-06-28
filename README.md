@@ -4,7 +4,8 @@
 
 **Download** [Nightly Build SDK](https://sourceforge.net/projects/mdk-sdk/files/nightly/)
 
-[Changelog](https://github.com/wang-bin/mdk-sdk/blob/master/Changelog.md)
+[Changelog](https://github.com/wang-bin/mdk-sdk/blob/master/Changelog.md). 
+[API](https://github.com/wang-bin/mdk-sdk/wiki/Player-APIs)
 
 ## Features
 
@@ -18,7 +19,7 @@
 - [Seamless/Gapless media and bitrate switch for any media](https://github.com/wang-bin/mdk-sdk/wiki/Player-APIs)
 - HDR rendering in GPU
 - Optimized Continuous seeking. As fast as mpv, but much lower cpu, memory and gpu load. Suitable for [timeline preview](https://github.com/wang-bin/mdk-sdk/wiki/Typical-Usage#timeline-preview)
-- [Smart FFmpeg runtime](https://github.com/wang-bin/mdk-sdk/wiki/FFmpeg-Runtime)
+- [Smart FFmpeg runtime, dynamic load, compatible with 4.x/5.x abi](https://github.com/wang-bin/mdk-sdk/wiki/FFmpeg-Runtime)
 
 ## [API Levels](https://github.com/wang-bin/mdk-sdk/wiki/%E9%80%9A%E7%94%A8ABI%E7%9A%84CPP%E5%BA%93API%E8%AE%BE%E8%AE%A1)
 
