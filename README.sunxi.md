@@ -1,23 +1,19 @@
 ## MDK: Multimedia Development Kit
+### [Changelog](https://github.com/wang-bin/mdk-sdk/blob/master/Changelog.md)
+### [API](https://github.com/wang-bin/mdk-sdk/wiki/Player-APIs)
 
 ### Features
-- Simple and powerful API set
-- Cross platform: Windows, UWP, Linux, macOS, Android, iOS, Raspberry Pi
-- Hardware accelerated decoding and 0-copy GPU rendering for all supported platforms
-- OpenGL, D3D11, Vulkan and Metal rendering w/ or w/o user provided context
-- Integrated with any gui toolkit or app via OpenGL, D3D11, Vulkan and Metal (OBS, Qt, SDL, glfw, SFML and native ui etc.) easily
-- Seamless/Gapless media and bitrate switch for any media
-- Configurable FFmpeg runtime libraries.
+- [Simple and powerful API set](https://github.com/wang-bin/mdk-sdk/wiki/Player-APIs)
+- [Cross platform: Windows, UWP, Linux, macOS, Android, iOS, Raspberry Pi](https://github.com/wang-bin/mdk-sdk/wiki/System-Requirements)
+- [Hardware accelerated decoders](https://github.com/wang-bin/mdk-sdk/wiki/Decoders)
+- [0-copy GPU rendering for all platforms and all renderers(Vulkan is WIP.)](https://github.com/wang-bin/mdk-sdk/wiki/Zero-Copy-Renderer)
+- [Dynamic OpenGL](https://github.com/wang-bin/mdk-sdk/wiki/OpenGL-Support-Matrix)
+- [OpenGL, D3D11, Vulkan and Metal rendering w/ or w/o user provided context](https://github.com/wang-bin/mdk-sdk/wiki/Render-API)
+- Integrated with any platform native ui apps, gui toolkits or other apps via [OpenGL, D3D11, Vulkan and Metal](https://github.com/wang-bin/mdk-sdk/wiki/Render-API) ([OBS](https://github.com/wang-bin/obs-mdk), [Qt](https://github.com/wang-bin/mdk-examples/tree/master/Qt), [SDL](https://github.com/wang-bin/mdk-examples/tree/master/SDL), [GLFW](https://github.com/wang-bin/mdk-examples/tree/master/GLFW), [SFML](https://github.com/wang-bin/mdk-examples/tree/master/SFML) etc.) easily
+- [Seamless/Gapless media and bitrate switch for any media](https://github.com/wang-bin/mdk-sdk/wiki/Player-APIs)
 - HDR rendering in GPU
 - Optimized Continuous seeking. As fast as mpv, but much lower cpu, memory and gpu load. Suitable for timeline preview
-
-## FFmpeg Runtime Lookup
-FFmpeg modules can be specified via environment var AVUTIL_LIB, AVCODEC_LIB, AVFORMAT_LIB, AVFILTER_LIB, SWRESAMPLE_LIB, SWSCALE_LIB, or SetGlobalOption() with key avutil_lib, avcodec_lib, avformat_lib, swresample_lib, swscale_lib, avfilter_lib. For example `SetGlobalOption("avutil_lib", "/opt/lib/libavutil.so.56")`
-
-If ffmpeg any module is not set, it's searched in the following order
-- current module dir > framework dir(apple) > system default search dir
-- single ffmpeg library > ffmpeg modules w/ version > ffmpeg modules w/o version
-
+- [Smart FFmpeg runtime, dynamic load, compatible with 4.x/5.x abi](https://github.com/wang-bin/mdk-sdk/wiki/FFmpeg-Runtime)
 
 ## About SDK for SUNXI
 
@@ -73,9 +69,11 @@ if default audio device does not sound correctly, try to change the device name 
 ```
 
 ## Source code:
-- some examples using mdk sdk: https://github.com/wang-bin/mdk-examples
-- OBS Studio plugin: https://github.com/wang-bin/obs-mdk
-- QtMultimedia plugin: https://github.com/wang-bin/qtmultimedia-plugins-mdk
+- [some examples using mdk sdk](https://github.com/wang-bin/mdk-examples)
+- [OBS Studio plugin](https://github.com/wang-bin/obs-mdk)
+- [QtMultimedia plugin](https://github.com/wang-bin/qtmultimedia-plugins-mdk)
+- [MFT decoder module](https://github.com/wang-bin/mdk-mft)
+- [dav1d decoder module](https://github.com/wang-bin/mdk-dav1d)
 
 Copyright (c) 2016-2021 WangBin(the author of QtAV) <wbsecg1 at gmail.com>
 Free for opensource softwares, non-commercial softwares, QtAV donors and contributors.
