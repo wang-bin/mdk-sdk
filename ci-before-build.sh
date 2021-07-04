@@ -1,7 +1,7 @@
 LLVER=${LLVM_VER:-12}
 NDK_HOST=linux
 FF_EXTRA=-clang
-GLFW_VER=3.3.4
+FFPKG_EXT=tar.xz
 
 echo "EXTERNAL_DEP_CACHE_HIT: ${EXTERNAL_DEP_CACHE_HIT}"
 echo "DEVTOOLS_CACHE_HIT: ${DEVTOOLS_CACHE_HIT}"
@@ -10,6 +10,10 @@ du -hc external
 
 if [[ "$TARGET_OS" == mac* || "$TARGET_OS" == iOS* || "$TARGET_OS" == android ]]; then
     FF_EXTRA=
+fi
+if [[ "$TARGET_OS" == "win"* || "$TARGET_OS" == "uwp"* ]]; then
+  FF_EXTRA=-vs2019
+  FFPKG_EXT=7z
 fi
 if [ `which dpkg` ]; then # TODO: multi arch
     pkgs="sshpass cmake ninja-build p7zip-full"
@@ -57,26 +61,27 @@ OS=${OS/Simulator/}
 mkdir -p external/{bin,lib}/$OS
 
 if [[ "$EXTERNAL_DEP_CACHE_HIT" != "true" ]]; then
-  curl -kL -o ffmpeg-${TARGET_OS}.tar.xz https://sourceforge.net/projects/avbuild/files/${TARGET_OS}/ffmpeg-${FF_VER}-${TARGET_OS}${FF_EXTRA}-lite${LTO_SUFFIX}.tar.xz/download
-  tar Jxf ffmpeg-${TARGET_OS}.tar.xz
-  #find ffmpeg-${FF_VER}-${TARGET_OS}${FF_EXTRA}-lite${LTO_SUFFIX}/lib -name "libav*.so*" -o  -name "libsw*.so*" -delete
+  FFPKG=ffmpeg-${FF_VER}-${TARGET_OS}${FF_EXTRA}-lite${LTO_SUFFIX}
+  curl -kL -o ffmpeg-${TARGET_OS}.${FFPKG_EXT} https://sourceforge.net/projects/avbuild/files/${TARGET_OS}/${FFPKG}.${FFPKG_EXT}/download
+  if [[ "${FFPKG_EXT}" == 7z ]]; then
+    7z x ffmpeg-${TARGET_OS}.${FFPKG_EXT}
+  else
+    tar Jxf ffmpeg-${TARGET_OS}.${FFPKG_EXT}
+  fi
+  #find ${FFPKG}/lib -name "libav*.so*" -o  -name "libsw*.so*" -delete
 
-  cp -af ffmpeg-${FF_VER}-${TARGET_OS}${FF_EXTRA}-lite${LTO_SUFFIX}/lib/* external/lib/$OS
-  cp -af ffmpeg-${FF_VER}-${TARGET_OS}${FF_EXTRA}-lite${LTO_SUFFIX}/include external/
-  cp -af ffmpeg-${FF_VER}-${TARGET_OS}${FF_EXTRA}-lite${LTO_SUFFIX}/bin/* external/bin/$OS # ffmpeg dll
+  cp -af ${FFPKG}/lib/* external/lib/$OS
+  cp -af ${FFPKG}/include external/
+  cp -af ${FFPKG}/bin/* external/bin/$OS # ffmpeg dll
 
   if [ "$TARGET_OS" == "sunxi" ]; then
       mkdir -p external/lib/sunxi/armv7
-      cp -af ffmpeg-${FF_VER}-${TARGET_OS}${FF_EXTRA}-lite${LTO_SUFFIX}/lib/* external/lib/sunxi/armv7 #single arch package
+      cp -af ${FFPKG}/lib/* external/lib/sunxi/armv7 #single arch package
   elif [ "$TARGET_OS" == "windows-desktop" ]; then
-      curl -kL -o glfw32.zip https://github.com/glfw/glfw/releases/download/${GLFW_VER}/glfw-${GLFW_VER}.bin.WIN32.zip
-      curl -kL -o glfw64.zip https://github.com/glfw/glfw/releases/download/${GLFW_VER}/glfw-${GLFW_VER}.bin.WIN64.zip
-      7z x glfw32.zip
-      7z x glfw64.zip
-      cp -af glfw-${GLFW_VER}.bin.WIN32/include/GLFW external/include/
-      cp -af glfw-${GLFW_VER}.bin.WIN64/include/GLFW external/include/
-      cp glfw-${GLFW_VER}.bin.WIN32/lib-vc2019/glfw3.lib external/lib/windows/x86
-      cp glfw-${GLFW_VER}.bin.WIN64/lib-vc2019/glfw3.lib external/lib/windows/x64
+      curl -kL -o glfw3.7z https://sourceforge.net/projects/mdk-sdk/files/deps/glfw3.7z/download
+      7z x glfw3.7z
+      cp -af glfw3/include/GLFW external/include/
+      cp -af glfw3/lib/* external/lib/windows/
       # TODO: download in cmake(if check_include_files failed)
       curl -kL -o vk.zip https://github.com/KhronosGroup/Vulkan-Headers/archive/master.zip
       7z x vk.zip
@@ -112,9 +117,9 @@ if [[ "$SYSROOT_CACHE_HIT" != "true" ]]; then
   fi
 
   if [ "$TARGET_OS" == "android" -a ! -d "$ANDROID_NDK_LATEST_HOME" ]; then
-    wget https://dl.google.com/android/repository/android-ndk-${NDK_VERSION:-r22}-${NDK_HOST}-x86_64.zip -O ndk.zip
+    wget https://dl.google.com/android/repository/android-ndk-${NDK_VERSION:-r22b}-${NDK_HOST}-x86_64.zip -O ndk.zip
     7z x ndk.zip -o/tmp &>/dev/null
-    mv /tmp/android-ndk-${NDK_VERSION:-r22} ${ANDROID_NDK:-/tmp/android-ndk}
+    mv /tmp/android-ndk-${NDK_VERSION:-r22b} ${ANDROID_NDK:-/tmp/android-ndk}
   fi
 fi
 
