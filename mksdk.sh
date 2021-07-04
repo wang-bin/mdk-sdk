@@ -20,7 +20,10 @@ if [ -d $SDK_DIR/lib/mdk.framework ]; then
   ln -sfv ../lib/mdk.framework/Headers $SDK_INCLUDE #gln -rsfv $SDK_DIR/lib/mdk.framework/Headers $SDK_INCLUDE
   mv $SDK_DIR/lib/mdk.framework/Versions/Current/mdk.dSYM $SDK_DIR/lib/mdk.framework.dSYM
   rm -rf $SDK_DIR/lib/mdk.framework/mdk.dSYM # iOS
-  [ -f $SDK_DIR/lib/mdk.framework/Versions/Current/libffmpeg.4.dylib ] && ln -sf mdk.framework/Versions/Current/libffmpeg.4.dylib $SDK_DIR/lib/
+  ffdso=(`find $SDK_DIR/lib/mdk.framework -name "libffmpeg.*.dylib"`)
+  ffdso=${ffdso[$((${#ffdso[@]}-1))]}
+  ffdso=${ffdso##*lib/}
+  [ -f "$ffdso" ] && ln -sf $ffdso $SDK_DIR/lib/
 else
   tar cf $TMP/h.tar $SDK_DIR/include/mdk
   rm -rf $SDK_DIR/include/*
