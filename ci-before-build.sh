@@ -1,4 +1,4 @@
-LLVER=${LLVM_VER:-12}
+LLVER=${LLVM_VER:-13}
 NDK_HOST=linux
 FF_EXTRA=-clang
 FFPKG_EXT=tar.xz
@@ -24,8 +24,8 @@ if [ `which dpkg` ]; then # TODO: multi arch
       #sudo apt update
       #sudo apt install -y software-properties-common # for add-apt-repository, ubuntu-tooolchain-r-test is required by trusty
       #sudo apt-add-repository "deb http://apt.llvm.org/focal/ llvm-toolchain-focal-8 main" # rpi
-      sudo apt-add-repository "deb http://apt.llvm.org/focal/ llvm-toolchain-focal-12 main"
-      sudo apt-add-repository "deb http://apt.llvm.org/focal/ llvm-toolchain-focal main" # clang-13
+      sudo apt-add-repository "deb http://apt.llvm.org/focal/ llvm-toolchain-focal-13 main"
+      sudo apt-add-repository "deb http://apt.llvm.org/focal/ llvm-toolchain-focal main" # clang-14
       sudo apt update
     fi
     if [ "$TARGET_OS" == "linux" ]; then
@@ -117,14 +117,14 @@ if [[ "$SYSROOT_CACHE_HIT" != "true" ]]; then
   fi
 
   if [ "$TARGET_OS" == "android" -a ! -d "$ANDROID_NDK_LATEST_HOME" ]; then
-    wget https://dl.google.com/android/repository/android-ndk-${NDK_VERSION:-r22b}-${NDK_HOST}-x86_64.zip -O ndk.zip
+    wget https://dl.google.com/android/repository/android-ndk-${NDK_VERSION:-r23}-${NDK_HOST}-x86_64.zip -O ndk.zip
     7z x ndk.zip -o/tmp &>/dev/null
-    mv /tmp/android-ndk-${NDK_VERSION:-r22b} ${ANDROID_NDK:-/tmp/android-ndk}
+    mv /tmp/android-ndk-${NDK_VERSION:-r23} ${ANDROID_NDK:-/tmp/android-ndk}
   fi
 fi
 
 if [[ "$EXTERNAL_DEP_CACHE_HIT" != "true" ]]; then
-  curl -kL -o dav1d.deb "https://www.deb-multimedia.org/pool/main/d/dav1d-dmo/libdav1d-dev_0.9.0-dmo1_armhf.deb"
+  curl -kL -o dav1d.deb "https://www.deb-multimedia.org/pool/main/d/dav1d-dmo/libdav1d-dev_0.9.2-dmo1_armhf.deb"
   7z x -y dav1d.deb
   tar xvf data.tar
   mv usr/include/dav1d external/include/
