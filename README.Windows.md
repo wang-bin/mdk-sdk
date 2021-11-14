@@ -18,12 +18,11 @@
 - [Smart FFmpeg runtime, dynamic load, compatible with 4.x/5.x abi](https://github.com/wang-bin/mdk-sdk/wiki/FFmpeg-Runtime)
 
 ## About SDK for Windows Desktop
-SDK is built by clang-cl 12.0 + lld with
-- [FFmpeg master](https://sourceforge.net/projects/avbuild/files/windows-desktop/ffmpeg-master-windows-desktop-clang-lite.tar.xz/download)
-- Windows SDK 10.0.19041.0
-- MSVC CRT 14.28.29333
+SDK is built by
+- clang-cl 13.0 + lld,  with Windows SDK 10.0.19041.0, MSVC CRT 14.28.29333, [FFmpeg](https://sourceforge.net/projects/avbuild/files/windows-store/ffmpeg-master-windows-desktop-vs2022-lite.tar.xz/download)
+- latest vs2022 with [FFmpeg](https://sourceforge.net/projects/avbuild/files/windows-store/ffmpeg-master-windows-desktop-vs2022-lite.tar.xz/download)
 
-SDK can be used by any C or C++11 compiler, e.g. vs2015, vs2019, mingw g++, clang
+SDK can be used by any C or C++11 compiler, e.g. vs2015, vs2022, mingw g++, clang
 
 ### Use in Visual Studio
 

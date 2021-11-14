@@ -12,7 +12,7 @@ if [[ "$TARGET_OS" == mac* || "$TARGET_OS" == iOS* || "$TARGET_OS" == android ]]
     FF_EXTRA=
 fi
 if [[ "$TARGET_OS" == "win"* || "$TARGET_OS" == "uwp"* ]]; then
-  FF_EXTRA=-vs2019
+  FF_EXTRA=-vs2022
   FFPKG_EXT=7z
 fi
 if [ `which dpkg` ]; then # TODO: multi arch
@@ -117,9 +117,9 @@ if [[ "$SYSROOT_CACHE_HIT" != "true" ]]; then
   fi
 
   if [ "$TARGET_OS" == "android" -a ! -d "$ANDROID_NDK_LATEST_HOME" ]; then
-    wget https://dl.google.com/android/repository/android-ndk-${NDK_VERSION:-r23}-${NDK_HOST}-x86_64.zip -O ndk.zip
+    wget https://dl.google.com/android/repository/android-ndk-${NDK_VERSION:-r23b}-${NDK_HOST}-x86_64.zip -O ndk.zip
     7z x ndk.zip -o/tmp &>/dev/null
-    mv /tmp/android-ndk-${NDK_VERSION:-r23} ${ANDROID_NDK:-/tmp/android-ndk}
+    mv /tmp/android-ndk-${NDK_VERSION:-r23b} ${ANDROID_NDK:-/tmp/android-ndk}
   fi
 fi
 

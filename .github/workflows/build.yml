@@ -435,8 +435,8 @@ jobs:
       run: sshpass -p ${SF_PW} scp -o StrictHostKeyChecking=no mdk-sdk-${TARGET_OS}.tar.xz ${SF_USER}@frs.sourceforge.net:/home/frs/project/mdk-sdk/nightly/
 
 
-  Windows_VS2019:
-    runs-on: windows-latest
+  Windows_VS2022:
+    runs-on: windows-2022
     env:
       TARGET_OS: windows-desktop
     strategy:
@@ -505,12 +505,12 @@ jobs:
       working-directory: mdk
       run: |
         ../ci-after-build.sh
-        mv mdk-sdk-*.7z ../mdk-sdk-${{ env.TARGET_OS }}-vs2019.7z
+        mv mdk-sdk-*.7z ../mdk-sdk-${{ env.TARGET_OS }}-vs2022.7z
     - name: Archieve SDK
       uses: actions/upload-artifact@v2
       with:
-        name: mdk-sdk-vs2019-${{ env.TARGET_OS }}-${{ matrix.config }}
-        path: mdk-sdk-${{ env.TARGET_OS }}-vs2019.7z
+        name: mdk-sdk-vs2022-${{ env.TARGET_OS }}-${{ matrix.config }}
+        path: mdk-sdk-${{ env.TARGET_OS }}-vs2022.7z
 #    - name: Upload to SourceForge
 #      if: ${{ matrix.config == 'MinSizeRel' }}
 #      uses: garygrossgarten/github-action-scp@release
@@ -518,11 +518,11 @@ jobs:
 #        host: 'frs.sourceforge.net'
 #        username: ${{ secrets.SF_USER }}
 #        password: ${{ secrets.SF_PW }}
-#        local: mdk-sdk-${{ env.TARGET_OS }}-vs2019.7z
+#        local: mdk-sdk-${{ env.TARGET_OS }}-vs2022.7z
 #        remote: '/home/frs/project/mdk-sdk/nightly/'
 
-  UWP_VS2019:
-    runs-on: windows-latest
+  UWP_VS2022:
+    runs-on: windows-2022
     env:
       TARGET_OS: uwp
     strategy:
@@ -594,12 +594,12 @@ jobs:
       working-directory: mdk
       run: |
         ../ci-after-build.sh
-        mv mdk-sdk-*.7z ../mdk-sdk-${{ env.TARGET_OS }}-vs2019.7z
+        mv mdk-sdk-*.7z ../mdk-sdk-${{ env.TARGET_OS }}-vs2022.7z
     - name: Archieve SDK
       uses: actions/upload-artifact@v2
       with:
-        name: mdk-sdk-vs2019-${{ env.TARGET_OS }}-${{ matrix.config }}
-        path: mdk-sdk-${{ env.TARGET_OS }}-vs2019.7z
+        name: mdk-sdk-vs2022-${{ env.TARGET_OS }}-${{ matrix.config }}
+        path: mdk-sdk-${{ env.TARGET_OS }}-vs2022.7z
 
 
   Windows_clang:
@@ -804,7 +804,7 @@ jobs:
 
   NuGet:
     runs-on: ubuntu-latest
-    needs: [Windows_clang, UWP_clang, Windows_VS2019, UWP_VS2019]
+    needs: [Windows_clang, UWP_clang, Windows_VS2022, UWP_VS2022]
     steps:
     - uses: actions/checkout@v2
     - name: Download win32 sdk
@@ -815,14 +815,14 @@ jobs:
       uses: actions/download-artifact@v2
       with:
         name: mdk-sdk-uwp-MinSizeRel
-    - name: Download win32 vs2019 sdk
+    - name: Download win32 vs2022 sdk
       uses: actions/download-artifact@v2
       with:
-        name: mdk-sdk-vs2019-windows-desktop-MinSizeRel
-    - name: Download uwp vs2019 sdk
+        name: mdk-sdk-vs2022-windows-desktop-MinSizeRel
+    - name: Download uwp vs2022 sdk
       uses: actions/download-artifact@v2
       with:
-        name: mdk-sdk-vs2019-uwp-MinSizeRel
+        name: mdk-sdk-vs2022-uwp-MinSizeRel
     - name: Make nupkg (clang)
       run: |
         7z x mdk-sdk-windows-desktop.7z
@@ -834,18 +834,18 @@ jobs:
         cd mdk-sdk
         nuget pack mdk.nuspec
         mv *.nupkg ../mdk-clang.nupkg
-    - name: Make nupkg (VS2019)
+    - name: Make nupkg (VS2022)
       run: |
         rm -rf mdk-sdk uwp
-        7z x mdk-sdk-windows-desktop-vs2019.7z
-        7z x mdk-sdk-uwp-vs2019.7z -o"uwp"
+        7z x mdk-sdk-windows-desktop-vs2022.7z
+        7z x mdk-sdk-uwp-vs2022.7z -o"uwp"
         mkdir mdk-sdk/bin/UAP
         cp -af uwp/mdk-sdk/lib/arm mdk-sdk/lib
         cp -af uwp/mdk-sdk/bin/* mdk-sdk/bin/UAP
         cp nuget/mdk.nuspec mdk-sdk
         cd mdk-sdk
         nuget pack mdk.nuspec
-        mv *.nupkg ../mdk-vs2019.nupkg
+        mv *.nupkg ../mdk-vs2022.nupkg
     - name: Archieve SDK
       uses: actions/upload-artifact@v2
       with:
@@ -856,7 +856,7 @@ jobs:
       run:  |
         sudo apt update
         sudo apt install -y sshpass
-        for f in mdk-sdk-windows-desktop-vs2019.7z mdk-sdk-uwp-vs2019.7z mdk-vs2019.nupkg; do
+        for f in mdk-sdk-windows-desktop-vs2022.7z mdk-sdk-uwp-vs2022.7z mdk-vs2022.nupkg; do
           sshpass -p ${SF_PW} scp -o StrictHostKeyChecking=no $f ${SF_USER}@frs.sourceforge.net:/home/frs/project/mdk-sdk/nightly/
         done
 
