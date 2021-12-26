@@ -19,7 +19,7 @@
 https://github.com/wang-bin/swiftMDK
 
 ## About SDK for iOS
-SDK is built by Xcode 12.4 with
+SDK is built by Xcode 13.2.1 with
 - ffmpeg: https://sourceforge.net/projects/avbuild/files/iOS/ffmpeg-master-iOS-lite.tar.xz/download
 - Minimal system: iOS 8.0
 - Support Metal renderer

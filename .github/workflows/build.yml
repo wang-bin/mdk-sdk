@@ -17,7 +17,7 @@ env:
 jobs:
   macOS:
     # See: https://docs.github.com/en/actions/configuring-and-managing-workflows/configuring-a-workflow#configuring-a-build-matrix
-    runs-on: macos-latest
+    runs-on: macos-11
     env:
       TARGET_OS: 'macOS'
       TARGET_ARCH: ${{ matrix.arch }}
@@ -65,13 +65,13 @@ jobs:
       working-directory: mdk
       run: |
         pwd
-        cmake -GNinja -DCMAKE_OSX_DEPLOYMENT_TARGET=10.9  -Bbuild/${TARGET_OS} -DCMAKE_VERBOSE_MAKEFILE=1 -DCMAKE_BUILD_TYPE=${{ matrix.config }} -DCMAKE_INSTALL_PREFIX=$PWD/mdk-sdk # no dSYM for lto, dsymutil: no debug symbols in executable (-arch x86_64)
+        cmake -DWITH_X11=1 -GNinja -Bbuild/${TARGET_OS} -DCMAKE_VERBOSE_MAKEFILE=1 -DCMAKE_BUILD_TYPE=${{ matrix.config }} -DCMAKE_INSTALL_PREFIX=$PWD/mdk-sdk # no dSYM for lto, dsymutil: no debug symbols in executable (-arch x86_64)
     - name: Configure CMake
       if: ${{ startsWith(matrix.arch, 'arm64') }} # arm64, arm64e
       shell: bash
       working-directory: mdk
       run: |
-        cmake -GNinja -DCMAKE_OSX_ARCHITECTURES=${{ matrix.arch }} -DCMAKE_OSX_DEPLOYMENT_TARGET=11.0  -Bbuild/${TARGET_OS} -DCMAKE_VERBOSE_MAKEFILE=1 -DCMAKE_BUILD_TYPE=${{ matrix.config }} -DCMAKE_INSTALL_PREFIX=$PWD/mdk-sdk # no dSYM for lto, dsymutil: no debug symbols in executable (-arch x86_64)
+        cmake -GNinja -DCMAKE_OSX_ARCHITECTURES=${{ matrix.arch }} -Bbuild/${TARGET_OS} -DCMAKE_VERBOSE_MAKEFILE=1 -DCMAKE_BUILD_TYPE=${{ matrix.config }} -DCMAKE_INSTALL_PREFIX=$PWD/mdk-sdk # no dSYM for lto, dsymutil: no debug symbols in executable (-arch x86_64)
     - name: Build
       shell: bash
       working-directory: mdk
@@ -95,7 +95,7 @@ jobs:
 
 
   macCatalyst:
-    runs-on: macos-latest
+    runs-on: macos-11
     env:
       TARGET_OS: 'macCatalyst'
     strategy:
@@ -160,7 +160,7 @@ jobs:
 
 
   iOS:
-    runs-on: macos-latest
+    runs-on: macos-11
     env:
       TARGET_OS: iOS
     strategy:

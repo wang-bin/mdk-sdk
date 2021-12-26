@@ -1,6 +1,33 @@
 Change log:
 
+0.13.0 - 2021-12-26
+
+- API:
+    - Add Player.setFrameRate(). Default is 25fps if no timestamp in stream.
+- MFT:
+    - Fix crash on some new drivers
+    - Add "activate" property to select mft plugin
+    - Add "threads" property for software decoding
+- VT:
+    - Support more 420, 422 16 bit semi-planar formats, use the closest format
+    - Support HEVC with alpha
+    - Support HEVC gray formats
+- AMediaCodec:
+    - Support decoding dolby vision profile 5
+- Enable YUV with alpha for all renderers
+- Support semi-planar yuv with alpha: NV12A, P416A, 16bit gray format L016
+- GL, D3D11, Metal timestamp query
+- Fix fail to render hw frame mapped to host for all renderers
+- Fix wrong OpenGL blend state
+- Fix D3D11 renderer crash on device change
+- Use vulkan loader set by env var `QT_VULKAN_LIB` or `VULKAN_LIB`
+- Fix CUDA decoder crash
+- Fix subtitle endless decode loop at EOF
+- Compat with latest FFmpeg 5.0 abi
+
+
 0.12.0 - 2021-06-26
+
 - API:
     - Add Player.setVolume(float value, int channel) to control channel volume
     - Deprecate setState(State), use set(State)
