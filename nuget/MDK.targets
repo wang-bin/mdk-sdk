@@ -3,7 +3,7 @@
   <PropertyGroup>
     <mdk-DeviceType Condition="'$(TargetPlatformIdentifier)' == 'UAP'">UAP</mdk-DeviceType>
     <mdk-BinPath>$(MSBuildThisFileDirectory)..\..\bin\$(mdk-DeviceType)\$(PlatformTarget)\</mdk-BinPath>
-    <mdk-LibPath>$(MSBuildThisFileDirectory)..\..\lib\$(mdk-DeviceType)\$(PlatformTarget)\</mdk-LibPath>
+    <mdk-LibPath>$(MSBuildThisFileDirectory)..\..\lib\$(PlatformTarget)\</mdk-LibPath>
     <mdk-IncPath>$(MSBuildThisFileDirectory)..\..\include\</mdk-IncPath>
   </PropertyGroup>
 
@@ -43,9 +43,11 @@
   <!-- Copy dll redistributable -->
   <Target Name="MdkCopyDllRedist" AfterTargets="AfterBuild">
     <Copy SourceFiles="$(mdk-BinPath)\mdk.dll" DestinationFolder="$(TargetDir)" SkipUnchangedFiles="true" />
+    <Copy SourceFiles="$(mdk-BinPath)\mdk.pdb" DestinationFolder="$(TargetDir)" SkipUnchangedFiles="true" />
     <Copy SourceFiles="$(mdk-BinPath)\mdk-avglue.dll" DestinationFolder="$(TargetDir)" SkipUnchangedFiles="true"  Condition="Exists('$(mdk-BinPath)\mdk-avglue.dll')" />
     <Copy SourceFiles="$(mdk-BinPath)\ffmpeg.dll" DestinationFolder="$(TargetDir)" SkipUnchangedFiles="true"  Condition="Exists('$(mdk-BinPath)\ffmpeg.dll')" />
     <Copy SourceFiles="$(mdk-BinPath)\ffmpeg-4.dll" DestinationFolder="$(TargetDir)" SkipUnchangedFiles="true"  Condition="Exists('$(mdk-BinPath)\ffmpeg-4.dll')" />
+    <Copy SourceFiles="$(mdk-BinPath)\ffmpeg-5.dll" DestinationFolder="$(TargetDir)" SkipUnchangedFiles="true"  Condition="Exists('$(mdk-BinPath)\ffmpeg-5.dll')" />
     <Copy SourceFiles="$(mdk-BinPath)\libEGL.dll" DestinationFolder="$(TargetDir)" SkipUnchangedFiles="true"  Condition="Exists('$(mdk-BinPath)\libEGL.dll')" />
     <Copy SourceFiles="$(mdk-BinPath)\libGLESv2.dll" DestinationFolder="$(TargetDir)" SkipUnchangedFiles="true" Condition="Exists('$(mdk-BinPath)\libGLESv2.dll')" />
     <Copy SourceFiles="$(mdk-BinPath)\OpenAL32.dll" DestinationFolder="$(TargetDir)" SkipUnchangedFiles="true" Condition="Exists('$(mdk-BinPath)\OpenAL32.dll')" />

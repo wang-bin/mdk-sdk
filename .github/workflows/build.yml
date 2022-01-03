@@ -1,5 +1,7 @@
 name: Build
 # TODO: nuget, vcpkg on macOS, $(brew --prefix llvm)/bin/clang (llvm11), llvm12 is default
+# https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-nuget-registry
+
 on:
   push:
   schedule:
@@ -823,6 +825,9 @@ jobs:
       uses: actions/download-artifact@v2
       with:
         name: mdk-sdk-vs2022-uwp-MinSizeRel
+    - name: update build version
+      shell: bash
+      run: sed -i "s,\(.*\.\)[0-9]*\(</version>\),\1${GITHUB_RUN_NUMBER}\2," nuget/mdk.nuspec
     - name: Make nupkg (clang)
       run: |
         7z x mdk-sdk-windows-desktop.7z
