@@ -1,5 +1,20 @@
 Change log:
 
+0.14.0 - 2022-01-31
+
+- API:
+    - Add `Player.setPointMap()`
+- Fix Player::foreignGLContextDestroyed() does nothing. Useful to realease gl resources if player is destroyed before context
+- Release GL resources ASAP.
+- Fix realtime streams frame drop
+- Fix rtp decode error
+- Fix a crash if recreate opengl context frequently
+- Fix macCatalyst build, fix macOS < 11
+- Fix ffmpeg av1 can not fallback to dav1d
+- Fix metal snapshot and resize renders a green frame
+- Fix seeking may output a frame with wrong timestamp
+
+
 0.13.0 - 2021-12-26
 
 - API:

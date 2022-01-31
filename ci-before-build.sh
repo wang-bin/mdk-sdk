@@ -44,8 +44,7 @@ elif [ `which brew` ]; then
     if [ "$TARGET_OS" == "macOS" ]; then
         pkgs+=" glfw3 sdl2"
         echo "$TARGET_ARCH" |grep arm >/dev/null || { # FIXME: arm64 host build
-          time brew cask install xquartz
-          pkgs+=" pulseaudio"
+          pkgs+=" xquartz pulseaudio" # no more cask
         }
     fi
     time brew install $pkgs
