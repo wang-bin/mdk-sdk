@@ -18,7 +18,7 @@
 ## About SDK for Android
 SDK is built with
 - ffmpeg: https://sourceforge.net/projects/avbuild/files/android/ffmpeg-master-android-clang-lite.tar.xz/download
-- ndk r22, libc++_shared
+- ndk r23, libc++_shared
 
 SDK can be used by any C or C++11 compiler, e.g. g++, clang
 
@@ -61,5 +61,5 @@ MediaCodec/AMediaCodec decoder will not be destroyed if app go to background, an
 - [libmediandk and other java classes implemented in C++](https://github.com/wang-bin/AND)
 - [JNI Modern Interface](https://github.com/wang-bin/JMI)
 
-Copyright (c) 2016-2021 WangBin(the author of QtAV) <wbsecg1 at gmail.com>
+Copyright (c) 2016-2022 WangBin(the author of QtAV) <wbsecg1 at gmail.com>
 Free for opensource softwares, non-commercial softwares, QtAV donors and contributors.

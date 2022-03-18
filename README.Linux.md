@@ -16,7 +16,7 @@
 - [Smart FFmpeg runtime, dynamic load, compatible with 4.x/5.x abi](https://github.com/wang-bin/mdk-sdk/wiki/FFmpeg-Runtime)
 
 ## About SDK for Linux
-SDK is built by clang 12.0 with
+SDK is built by clang 13.0 with
 - ffmpeg: https://sourceforge.net/projects/avbuild/files/linux/ffmpeg-master-linux-clang-lite.tar.xz/download
 - libc++ 10.0.0
 
@@ -87,5 +87,5 @@ N videos renderers for 1 player: multiwidnows url
 - [MFT decoder module](https://github.com/wang-bin/mdk-mft)
 - [dav1d decoder module](https://github.com/wang-bin/mdk-dav1d)
 
-Copyright (c) 2016-2021 WangBin(the author of QtAV) <wbsecg1 at gmail.com>
+Copyright (c) 2016-2022 WangBin(the author of QtAV) <wbsecg1 at gmail.com>
 Free for opensource softwares, non-commercial softwares, QtAV donors and contributors.

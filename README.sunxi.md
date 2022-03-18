@@ -19,7 +19,7 @@
 
 mdk sdk for linux sunxi, with allwinner cedarv and vdpau decoder support
 
-SDK is cross built by clang 12.0 with
+SDK is cross built by clang 13.0 with
 - cmake toolchain file https://github.com/wang-bin/cmake-tools/blob/master/sunxi.clang.cmake
 - sysroot: https://sourceforge.net/projects/avbuild/files/sunxi/sunxi-sysroot.tar.xz/download
 - ffmpeg: https://sourceforge.net/projects/avbuild/files/sunxi/ffmpeg-master-sunxi-clang-lite.tar.xz/download
@@ -75,5 +75,5 @@ if default audio device does not sound correctly, try to change the device name 
 - [MFT decoder module](https://github.com/wang-bin/mdk-mft)
 - [dav1d decoder module](https://github.com/wang-bin/mdk-dav1d)
 
-Copyright (c) 2016-2021 WangBin(the author of QtAV) <wbsecg1 at gmail.com>
+Copyright (c) 2016-2022 WangBin(the author of QtAV) <wbsecg1 at gmail.com>
 Free for opensource softwares, non-commercial softwares, QtAV donors and contributors.

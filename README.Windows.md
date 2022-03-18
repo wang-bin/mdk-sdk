@@ -85,5 +85,5 @@ N videos renderers for 1 player: multiwidnows url
 - [dav1d decoder module](https://github.com/wang-bin/mdk-dav1d)
 
 
-Copyright (c) 2016-2021 WangBin(the author of QtAV) <wbsecg1 at gmail.com>
+Copyright (c) 2016-2022 WangBin(the author of QtAV) <wbsecg1 at gmail.com>
 Free for opensource softwares, non-commercial softwares, QtAV donors and contributors.

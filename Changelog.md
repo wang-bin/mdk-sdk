@@ -1,6 +1,19 @@
 Change log:
 
-0.14.0 - 2022-01-31
+0.14.1 - 2022-03-18
+
+- Fix android undefined __emutls_get_address
+- Improve accurate seek and seek callback
+- D3D11: fix rendering MFT output w/o hw decoding
+- D3D11: Wait for fence in gpu
+- Support rendering float 16/32 textures
+- Fix packed yuv may not be correctly rendered
+- Fix mediaInfo() crash
+- Support exr image
+- VT: support more codecs, including ProRes Raw
+
+
+0.14.0 - 2022-02-01
 
 - API:
     - Add `Player.setPointMap()`
