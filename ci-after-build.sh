@@ -1,4 +1,4 @@
-LLVER=${LLVM_VER:-8}
+LLVER=${LLVM_VER:-14}
 ls -lh build/${TARGET_OS}*
 if [ -f build/${TARGET_OS}/libmdk.so ]; then
   readelf -d build/${TARGET_OS}/libmdk.so

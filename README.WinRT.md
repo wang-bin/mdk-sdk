@@ -18,7 +18,7 @@
 
 ## About SDK for Windows Store
 SDK is built by
-- clang-cl 13.0 + lld,  with Windows SDK 10.0.19041.0, MSVC CRT 14.28.29333, [FFmpeg](https://sourceforge.net/projects/avbuild/files/uwp/ffmpeg-master-uwp-vs2022-lite.tar.xz/download)
+- clang-cl 14.0 + lld,  with Windows SDK 10.0.19041.0, MSVC CRT 14.28.29333, [FFmpeg](https://sourceforge.net/projects/avbuild/files/uwp/ffmpeg-master-uwp-vs2022-lite.tar.xz/download)
 - latest vs2022 with [FFmpeg](https://sourceforge.net/projects/avbuild/files/uwp/ffmpeg-master-uwp-vs2022-lite.tar.xz/download)
 
 ### Use in Visual Studio
