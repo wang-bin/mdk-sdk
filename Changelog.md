@@ -1,5 +1,24 @@
 Change log:
 
+0.14.2 - 2022-04-30
+
+- CUDA decoder:
+    - support av1 8 and 10 bit
+    - support gray format (mjpeg)
+    - fix context error, which results in jpeg decode error
+- VT decoder:
+    - support deinterlace and enabled by default
+    - add "threads" property for software decoding
+    - support 16bit yuv with alpha, e.g. ProRes with alpha
+    - disable h264 422 10bit for macOS < 11.0. decoded image is corrupt(macOS bug?)
+    - fix color info from decoder
+- Support dav1d 1.0
+- Improve playing live recording ts file near EOF
+- Fix record before running state
+- Fix recorded video may be malformed when using hardware decoders
+- Fix loop at end does not work if "continue_at_end" property is set
+
+
 0.14.1 - 2022-03-18
 
 - Fix android undefined __emutls_get_address
