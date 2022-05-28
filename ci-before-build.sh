@@ -77,10 +77,6 @@ if [[ "$EXTERNAL_DEP_CACHE_HIT" != "true" ]]; then
       mkdir -p external/lib/sunxi/armv7
       cp -af ${FFPKG}/lib/* external/lib/sunxi/armv7 #single arch package
   elif [ "$TARGET_OS" == "windows-desktop" ]; then
-      curl -kL -o glfw3.7z https://sourceforge.net/projects/mdk-sdk/files/deps/glfw3.7z/download
-      7z x glfw3.7z
-      cp -af glfw3/include/GLFW external/include/
-      cp -af glfw3/lib/* external/lib/windows/
       # TODO: download in cmake(if check_include_files failed)
       curl -kL -o vk.zip https://github.com/KhronosGroup/Vulkan-Headers/archive/master.zip
       7z x vk.zip
@@ -95,6 +91,11 @@ if [[ "$EXTERNAL_DEP_CACHE_HIT" != "true" ]]; then
     for h in EGL/egl.h EGL/eglext.h EGL/eglplatform.h KHR/khrplatform.h; do
       curl -kL -o external/include/${h} https://www.khronos.org/registry/EGL/api/${h}
     done
+  fi
+  if [[ "$TARGET_OS" == "win"* || "$TARGET_OS" == "uwp"* || "$TARGET_OS" == macOS || "$TARGET_OS" == "linux" ]]; then
+    curl -kL -o dep.7z https://sourceforge.net/projects/mdk-sdk/files/deps/dep.7z/download
+    7z x dep.7z
+    cp -af dep/* external/
   fi
 fi
 
