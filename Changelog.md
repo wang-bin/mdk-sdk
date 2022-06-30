@@ -1,5 +1,28 @@
 Change log:
 
+0.15.0 - 2022-06-30
+
+- Add new decoder "hap" to decode Hap1, Hap5, HapY and HapM videos into compressed gpu textures(BC1~4). Only desktop platforms are enabled. It's preferred over "FFmpeg" if Player.setDecoders() is not called by user. See https://github.com/wang-bin/mdk-sdk/wiki/Decoders#hap
+- Support gpu accelerated Hap rendering via decoder name "hap".
+- Support backward seek by frame. `pos` in `seek(pos, SeekFlag::FromNow|SeekFlag::Frame)` can be negative, -1 means go back 1 frame.
+- Add SeekFlag::InCache to support seeking in cached data to improve online video seeking. Target position must be in range `(position(), position() + Player.buffered()]`.
+- VT Supports mpeg2video
+- `VideoFrame.save()` can save original data. Also select closest format if save as an image.
+- Improve rendering RGB with X/0(unused alpha channel) formats
+- Fix position() is not correctly when seeking by frame.
+- Fix playback may stop unexpected, and seeking is slow if seek near EOF
+- Fix wrong playback speed if resume from paused state on apple platforms
+- Fix empty png snapshot
+- Fix snapshot error on OpenGL ES2
+- Fix A-B loop may block if too many players
+- Fix wrong `Player.position()` and audio timestamp if `playbackRate()` != 1
+- Fix `prepare()` callback not called or called many times
+- Fix shader compiling affected by locale and may crash, e.g. LC_ALL == de_CH
+- FFmpeg:
+    - Improve avdevice playback
+    - Supports ffmpeg 5.1+
+
+
 0.14.2 - 2022-04-30
 
 - CUDA decoder:
