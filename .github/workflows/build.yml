@@ -331,6 +331,9 @@ jobs:
         cp -af macOS-x86_64/mdk-sdk macOS/ # libffmpeg is already fat
         lipo -create macOS-{arm,x86_}64/mdk-sdk/lib/mdk.framework/mdk -output macOS/mdk-sdk/lib/mdk.framework/Versions/Current/mdk
         lipo -create macOS-{arm,x86_}64/mdk-sdk/lib/mdk.framework.dSYM/Contents/Resources/DWARF/mdk -output macOS/mdk-sdk/lib/mdk.framework.dSYM/Contents/Resources/DWARF/mdk
+        if [ -f macOS-arm64/mdk-sdk/lib/mdk.framework/Versions/Current/libmdk-braw.dylib -a -f macOS-x86_64/mdk-sdk/lib/mdk.framework/Versions/Current/libmdk-braw.dylib ]; then
+          lipo -create macOS-{arm,x86_}64/mdk-sdk/lib/mdk.framework/Versions/Current/libmdk-braw.dylib -output macOS/mdk-sdk/lib/mdk.framework/Versions/Current/libmdk-braw.dylib
+        fi
         for b in `ls macOS-arm64/mdk-sdk/bin`; do # exes exist in both archs
           lipo -create macOS-{arm,x86_}64/mdk-sdk/bin/$b -output macOS/mdk-sdk/bin/$b
         done

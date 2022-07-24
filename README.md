@@ -64,6 +64,7 @@ Install via [NuGet](https://www.nuget.org/packages/mdk) in Visual Studio for bot
 ### Modules and Dependencies
 - [License generator and validator](https://github.com/wang-bin/appkey)
 - [Android java wrapper and example](https://github.com/wang-bin/mdk-android)
+- [blackmagic raw plugin](https://github.com/wang-bin/mdk-braw)
 - [MediaFoundation decoder module](https://github.com/wang-bin/mdk-mft)
 - [av1 software decoder module](https://github.com/wang-bin/mdk-dav1d)
 - [sunxi decoder + renderer](https://github.com/wang-bin/mdk-sunxi)
