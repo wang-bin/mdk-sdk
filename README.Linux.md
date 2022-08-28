@@ -14,11 +14,13 @@
 - HDR rendering in GPU
 - Optimized Continuous seeking. As fast as mpv, but much lower cpu, memory and gpu load. Suitable for timeline preview
 - [Smart FFmpeg runtime, dynamic load, compatible with 4.x/5.x abi](https://github.com/wang-bin/mdk-sdk/wiki/FFmpeg-Runtime)
+- Professional codecs: GPU accelerated [HAP](https://github.com/wang-bin/mdk-sdk/wiki/Decoders#hap) codec rendering, [Blackmagic RAW](https://github.com/wang-bin/mdk-braw)
+
 
 ## About SDK for Linux
 SDK is built by clang 14.0 with
 - ffmpeg: https://sourceforge.net/projects/avbuild/files/linux/ffmpeg-master-linux-clang-lite.tar.xz/download
-- libc++ 10.0.0
+- libc++ 14.0
 
 SDK can be used by any C or C++11 compiler, e.g. g++, clang
 

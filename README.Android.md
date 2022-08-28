@@ -18,7 +18,7 @@
 ## About SDK for Android
 SDK is built with
 - ffmpeg: https://sourceforge.net/projects/avbuild/files/android/ffmpeg-master-android-clang-lite.tar.xz/download
-- ndk r23, libc++_shared
+- ndk r25, libc++_shared
 
 SDK can be used by any C or C++11 compiler, e.g. g++, clang
 

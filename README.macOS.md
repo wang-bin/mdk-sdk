@@ -14,6 +14,7 @@
 - HDR rendering in GPU
 - Optimized Continuous seeking. As fast as mpv, but much lower cpu, memory and gpu load. Suitable for timeline preview
 - [Smart FFmpeg runtime, dynamic load, compatible with 4.x/5.x abi](https://github.com/wang-bin/mdk-sdk/wiki/FFmpeg-Runtime)
+- Professional codecs: GPU accelerated [HAP](https://github.com/wang-bin/mdk-sdk/wiki/Decoders#hap) codec rendering, [Blackmagic RAW](https://github.com/wang-bin/mdk-braw)
 
 ## Swift
 https://github.com/wang-bin/swiftMDK
@@ -25,7 +26,7 @@ https://github.com/wang-bin/swiftMDK
 - Support VP9 on macOS 11+
 - Support X11 if runtime libraries exist
 
-SDK is built by Xcode 13.2.1 with
+SDK is built by Xcode 13 with
 - ffmpeg: https://sourceforge.net/projects/avbuild/files/macOS/ffmpeg-master-macOS-lite.tar.xz/download
 
 ### macOS 10.15+

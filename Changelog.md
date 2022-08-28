@@ -1,5 +1,19 @@
 Change log:
 
+0.16.0 - 2022-08-28
+
+- Blackmagic RAW playback support, decoder name is [`BRAW`](https://github.com/wang-bin/mdk-sdk/wiki/Decoders#braw). [Plugin is opensource](https://github.com/wang-bin/mdk-braw)
+- Seek callback will always report the correct result position
+- Improve seek
+- Fix D3D/MFT decoder + WGL on windows may displays green image
+- Supports DNG
+- More pixel formats, bayer, float rgb etc.
+- Fix audio crash on win7
+- Fix snapshot crash if render with transform, fix incorrect transform if point map is set
+- VideoFrame.to() will copy to host memory first if necessary
+- Fix decoded video timestamp maybe not monotonic
+
+
 0.15.0 - 2022-06-30
 
 - Add new decoder "hap" to decode Hap1, Hap5, HapY and HapM videos into compressed gpu textures(BC1~4). Only desktop platforms are enabled. It's preferred over "FFmpeg" if Player.setDecoders() is not called by user. See https://github.com/wang-bin/mdk-sdk/wiki/Decoders#hap
