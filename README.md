@@ -94,6 +94,7 @@ Install via [NuGet](https://www.nuget.org/packages/mdk) in Visual Studio for bot
 [![Flyability](https://www.flyability.com/hs-fs/hubfs/Brand_Identity/Flyability%20Logo%20Package/2%20-%20Horizontal/flyability_logo_horizontal_color_trimmed-1.png)](https://www.flyability.com)
 [![Quipu](http://www.quipu.eu/wp-content/uploads/2015/03/logo-quipu-innovative-solutions-in-medical-ultrasound.png)](www.quipu.eu)
 [![GyroFlow](https://gyroflow.xyz/assets/logo.png)](https://gyroflow.xyz)
+<a href="https://www.xnview.com/en/xnviewmp"><img class="logo" src="https://www.xnview.com/img/app-xnviewmp-512.webp"  height=120 alt="XnViewMP"></a>
 
 [金嵘达科技](http://www.kingroda.com)
 

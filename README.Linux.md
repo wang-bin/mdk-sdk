@@ -18,7 +18,7 @@
 
 
 ## About SDK for Linux
-SDK is built by clang 14.0 with
+SDK is built by clang 15.0 with
 - ffmpeg: https://sourceforge.net/projects/avbuild/files/linux/ffmpeg-master-linux-clang-lite.tar.xz/download
 - libc++ 14.0
 

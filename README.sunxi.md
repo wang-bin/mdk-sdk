@@ -19,7 +19,7 @@
 
 mdk sdk for linux sunxi, with allwinner cedarv and vdpau decoder support
 
-SDK is cross built by clang 14.0 with
+SDK is cross built by clang 15.0 with
 - cmake toolchain file https://github.com/wang-bin/cmake-tools/blob/master/sunxi.clang.cmake
 - sysroot: https://sourceforge.net/projects/avbuild/files/sunxi/sunxi-sysroot.tar.xz/download
 - ffmpeg: https://sourceforge.net/projects/avbuild/files/sunxi/ffmpeg-master-sunxi-clang-lite.tar.xz/download

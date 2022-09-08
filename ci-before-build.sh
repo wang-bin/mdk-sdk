@@ -1,4 +1,4 @@
-LLVER=${LLVM_VER:-14}
+LLVER=${LLVM_VER:-15}
 NDK_HOST=linux
 FF_EXTRA=-clang
 FFPKG_EXT=tar.xz
@@ -24,8 +24,8 @@ if [ `which dpkg` ]; then # TODO: multi arch
       #sudo apt update
       #sudo apt install -y software-properties-common # for add-apt-repository, ubuntu-tooolchain-r-test is required by trusty
       #sudo apt-add-repository "deb http://apt.llvm.org/focal/ llvm-toolchain-focal-8 main" # rpi
-      sudo apt-add-repository "deb http://apt.llvm.org/focal/ llvm-toolchain-focal-14 main"
-      sudo apt-add-repository "deb http://apt.llvm.org/focal/ llvm-toolchain-focal main" # clang-15
+      sudo apt-add-repository "deb http://apt.llvm.org/focal/ llvm-toolchain-focal-15 main"
+      sudo apt-add-repository "deb http://apt.llvm.org/focal/ llvm-toolchain-focal main" # clang-16
       sudo apt update
     fi
     if [ "$TARGET_OS" == "linux" ]; then
@@ -117,9 +117,9 @@ if [[ "$SYSROOT_CACHE_HIT" != "true" ]]; then
   fi
 
   if [ "$TARGET_OS" == "android" -a ! -d "$ANDROID_NDK_LATEST_HOME" ]; then
-    wget https://dl.google.com/android/repository/android-ndk-${NDK_VERSION:-r24}-${NDK_HOST}-x86_64.zip -O ndk.zip
+    wget https://dl.google.com/android/repository/android-ndk-${NDK_VERSION:-r25b}-${NDK_HOST}-x86_64.zip -O ndk.zip
     7z x ndk.zip -o/tmp &>/dev/null
-    mv /tmp/android-ndk-${NDK_VERSION:-r24} ${ANDROID_NDK:-/tmp/android-ndk}
+    mv /tmp/android-ndk-${NDK_VERSION:-r25b} ${ANDROID_NDK:-/tmp/android-ndk}
   fi
 fi
 
