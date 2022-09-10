@@ -34,6 +34,7 @@ jobs:
       with:
         repository: wang-bin/mdk
         path: mdk
+        ref: master
         fetch-depth: 1
         token: ${{ secrets.CLONE_PAT }}
         submodules: 'recursive'
@@ -110,6 +111,7 @@ jobs:
       with:
         repository: wang-bin/mdk
         path: mdk
+        ref: master
         fetch-depth: 1
         token: ${{ secrets.CLONE_PAT }}
         submodules: 'recursive'
@@ -175,6 +177,7 @@ jobs:
       with:
         repository: wang-bin/mdk
         path: mdk
+        ref: master
         fetch-depth: 1
         token: ${{ secrets.CLONE_PAT }}
         submodules: 'recursive'
@@ -241,6 +244,7 @@ jobs:
       with:
         repository: wang-bin/mdk
         path: mdk
+        ref: master
         fetch-depth: 1
         token: ${{ secrets.CLONE_PAT }}
         submodules: 'recursive'
@@ -389,6 +393,7 @@ jobs:
       with:
         repository: wang-bin/mdk
         path: mdk
+        ref: master
         fetch-depth: 1
         token: ${{ secrets.CLONE_PAT }}
         submodules: 'recursive'
@@ -454,6 +459,7 @@ jobs:
       with:
         repository: wang-bin/mdk
         path: mdk
+        ref: master
         fetch-depth: 1
         token: ${{ secrets.CLONE_PAT }}
         submodules: 'recursive'
@@ -540,6 +546,7 @@ jobs:
       with:
         repository: wang-bin/mdk
         path: mdk
+        ref: master
         fetch-depth: 1
         token: ${{ secrets.CLONE_PAT }}
         submodules: 'recursive'
@@ -623,6 +630,7 @@ jobs:
       with:
         repository: wang-bin/mdk
         path: mdk
+        ref: master
         fetch-depth: 1
         token: ${{ secrets.CLONE_PAT }}
         submodules: 'recursive'
@@ -724,6 +732,7 @@ jobs:
       with:
         repository: wang-bin/mdk
         path: mdk
+        ref: master
         fetch-depth: 1
         token: ${{ secrets.CLONE_PAT }}
         submodules: 'recursive'
@@ -883,6 +892,7 @@ jobs:
       with:
         repository: wang-bin/mdk
         path: mdk
+        ref: master
         fetch-depth: 1
         token: ${{ secrets.CLONE_PAT }}
         submodules: 'recursive'
@@ -969,6 +979,7 @@ jobs:
       with:
         repository: wang-bin/mdk
         path: mdk
+        ref: master
         fetch-depth: 1
         token: ${{ secrets.CLONE_PAT }}
         submodules: 'recursive'
