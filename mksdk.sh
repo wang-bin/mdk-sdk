@@ -38,7 +38,6 @@ else
     cp -afvL $SDK_DIR/lib/lib{ffmpeg,mdk-*}.so $TMP/
     cp -afvL $SDK_DIR/lib/libmdk.so $TMP/
     cp -afvL $SDK_DIR/lib/libmdk.so.dsym $TMP/
-    cp -afvL $SDK_DIR/lib/libqtav-mediacodec.so $TMP/
   elif [ -f "$SDK_DIR/lib/mdk.lib" ]; then
     cp -afvL $SDK_DIR/lib/mdk.lib $TMP/
     cp -afvL $SDK_DIR/bin/{ffmpeg,mdk}*.dll $TMP/
@@ -53,7 +52,7 @@ else
   mv $TMP/*mdk*.{dll,pdb} $TMP/*ffmpeg-?.dll $SDK_DIR_OUT/bin/$ARCH
 
   mkdir -p $SDK_DIR_OUT/lib/$ARCH
-  mv -v $TMP/libmdk* $TMP/mdk.lib $TMP/libffmpeg.so* $TMP/libc++.so.1 $TMP/libqtav-mediacodec.so $SDK_DIR_OUT/lib/$ARCH
+  mv -v $TMP/libmdk* $TMP/mdk.lib $TMP/libffmpeg.so* $TMP/libc++.so.1 $SDK_DIR_OUT/lib/$ARCH
 fi
 tar xf $TMP/cmake.tar
 

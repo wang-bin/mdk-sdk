@@ -1057,4 +1057,6 @@ jobs:
     - name: Upload to SourceForge
       if: ${{ matrix.config == 'MinSizeRel' }}
       shell: bash
-      run: sshpass -p ${SF_PW} scp -o StrictHostKeyChecking=no mdk-sdk-${TARGET_OS}.7z ${SF_USER}@frs.sourceforge.net:/home/frs/project/mdk-sdk/nightly/
+      run: |
+        sshpass -p ${SF_PW} scp -o StrictHostKeyChecking=no mdk-sdk-${TARGET_OS}.7z ${SF_USER}@frs.sourceforge.net:/home/frs/project/mdk-sdk/nightly/
+        sshpass -p ${SF_PW} scp -o StrictHostKeyChecking=no mdk/build/android-arm64-v8a/video/libqtav-mediacodec.so ${SF_USER}@frs.sourceforge.net:/home/frs/project/qtav/depends/mediacodec/arm64-v8a
