@@ -1,5 +1,30 @@
 Change log:
 
+0.17.0 - 2022-09-30
+
+- MFT:
+    - Support vc1, wmv, opus, amr, wma, dolby audio
+    - Fix mpeg4, enable mpeg2/4
+    - Flac partially works, but disabled by property "blacklist=flac"
+- Add D3D11RenderAPI.vendor to choose gpu vendor, case insensitive. For example "nv" will select nvidia gpu
+- MediaInfo.bit_rate is updated in real time
+- Improve audio track switch when playing
+- MediaStatus is Invalid if no track found
+- D3D11: always flush after renderVideo
+- Fix position error if audio has a cover art
+- Fix ALSA dead lock if stopping player in paused state
+- Pause clock when buffering
+- Fix network stream frame update after buffering (apple)
+- FFmpeg:
+    - Fix D3D11 vc1 decoding
+    - Fix audio decode error when seeking ts
+    - Fix probing dts audio in ts
+    - Fix filter is initialized twice
+    - Fix frame pts abi
+    - Improve encoder
+- New [Flutter desktop example](https://github.com/wang-bin/fvp)
+
+
 0.16.0 - 2022-08-28
 
 - Blackmagic RAW playback support, decoder name is [`BRAW`](https://github.com/wang-bin/mdk-sdk/wiki/Decoders#braw). [Plugin is opensource](https://github.com/wang-bin/mdk-braw)
