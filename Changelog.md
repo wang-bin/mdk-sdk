@@ -1,5 +1,31 @@
 Change log:
 
+0.18.0 - 2022-11-16
+
+- API:
+    - Add Player.set(ColorSpace), supports auto HDR display, SDR to HDR or HDR to SDR tone mapping. [More details](https://github.com/wang-bin/mdk-sdk/wiki/Player-APIs#player-setcolorspace-value-void-vo_opaque--nullptr)
+- Support HDR display for D3D11 and Metal. If a swapchain and metal layer is provided in RenderAPI, and Player.setColorSpace(ColorSpaceUnknown), then hdr display will be automatically enabled when possible.
+- AMediaCodec:
+    - "surface" property can be ANativeWindow address to decode video into user profided surface from SurfaceView, SurfaceTexture etc.
+    - Add "image" property to support AHardwareBuffer as output, default is "0", can be enabled by "1". Requires android 8.0+.
+- VT:
+    - Fix frames sorting for some videos
+    - Ignore reference missing error
+- Fix wrong playback rate on apple if replay after playback end
+- Fix audio timestamp is not monotonic for some streams and result in playback stuttering
+- Fix decoding image is slow
+- Fix global options are not correctly applied
+- Fix HLG is not correctly set on MFT decoded frames
+- Vulkan: ix crash on macOS with new drivers
+- BRAW: fix file path encoding
+- Fix some crashes
+- Increase frame queue size in renderer, drop frames less
+- Improve logging
+- Global options changes:
+    - "log" == "logLevel", "ffmpeg.log" == "ffmpeg.logLevel"
+    - Add "profiler.gpu", shows gpu time for a frame in log
+
+
 0.17.0 - 2022-09-30
 
 - MFT:
