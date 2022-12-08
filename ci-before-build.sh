@@ -23,9 +23,9 @@ if [ `which dpkg` ]; then # TODO: multi arch
       wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key |sudo apt-key add -
       #sudo apt update
       #sudo apt install -y software-properties-common # for add-apt-repository, ubuntu-tooolchain-r-test is required by trusty
-      #sudo apt-add-repository "deb http://apt.llvm.org/focal/ llvm-toolchain-focal-8 main" # rpi
-      sudo apt-add-repository "deb http://apt.llvm.org/focal/ llvm-toolchain-focal-15 main"
-      sudo apt-add-repository "deb http://apt.llvm.org/focal/ llvm-toolchain-focal main" # clang-16
+      #sudo apt-add-repository "deb http://apt.llvm.org/jammy/ llvm-toolchain-jammy-8 main" # rpi
+      sudo apt-add-repository "deb http://apt.llvm.org/jammy/ llvm-toolchain-jammy-15 main"
+      sudo apt-add-repository "deb http://apt.llvm.org/jammy/ llvm-toolchain-jammy main" # clang-16
       sudo apt update
     fi
     if [ "$TARGET_OS" == "linux" ]; then
@@ -92,11 +92,11 @@ if [[ "$EXTERNAL_DEP_CACHE_HIT" != "true" ]]; then
       curl -kL -o external/include/${h} https://www.khronos.org/registry/EGL/api/${h}
     done
   fi
-  if [[ "$TARGET_OS" == "win"* || "$TARGET_OS" == "uwp"* || "$TARGET_OS" == macOS || "$TARGET_OS" == "linux" ]]; then
+  #if [[ "$TARGET_OS" == "win"* || "$TARGET_OS" == "uwp"* || "$TARGET_OS" == macOS || "$TARGET_OS" == "linux" ]]; then
     curl -kL -o dep.7z https://sourceforge.net/projects/mdk-sdk/files/deps/dep.7z/download
     7z x dep.7z
     cp -af dep/* external/
-  fi
+  #fi
 fi
 
 if [[ "$SYSROOT_CACHE_HIT" != "true" ]]; then
