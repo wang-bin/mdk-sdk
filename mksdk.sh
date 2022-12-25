@@ -24,6 +24,10 @@ if [ -d $SDK_DIR/lib/mdk.framework ]; then
   ffdso=${ffdso[$((${#ffdso[@]}-1))]}
   ffdso=${ffdso##*lib/}
   [ -n "$ffdso" ] && ln -sf $ffdso $SDK_DIR/lib/
+  assdso=(`find $SDK_DIR/lib/mdk.framework -name "libass.*.dylib"`)
+  assdso=${assdso[$((${#assdso[@]}-1))]}
+  assdso=${assdso##*lib/}
+  [ -n "$assdso" ] && ln -sf $assdso $SDK_DIR/lib/
 else
   tar cf $TMP/h.tar $SDK_DIR/include/mdk
   rm -rf $SDK_DIR/include/*
@@ -32,27 +36,28 @@ else
     cp -afv $SDK_DIR/lib/libmdk.so $TMP/
     cp -afvL $SDK_DIR/lib/libmdk-*.so $TMP/
     cp -afvL $SDK_DIR/lib/libmdk*.dsym $TMP/
-    cp -afvL $SDK_DIR/lib/lib{ffmpeg,mdk}.so.? $TMP/
+    cp -afvL $SDK_DIR/lib/lib{ass,ffmpeg,mdk}.so.? $TMP/
     cp -afvL $SDK_DIR/lib/libc++.so.1 $TMP/
   elif [ -f "$SDK_DIR/lib/libmdk.so" ]; then # android
-    cp -afvL $SDK_DIR/lib/lib{ffmpeg,mdk-*}.so $TMP/
+    cp -afvL $SDK_DIR/lib/lib{ass,ffmpeg,mdk-*}.so $TMP/
     cp -afvL $SDK_DIR/lib/libmdk.so $TMP/
     cp -afvL $SDK_DIR/lib/libmdk.so.dsym $TMP/
   elif [ -f "$SDK_DIR/lib/mdk.lib" ]; then
     cp -afvL $SDK_DIR/lib/mdk.lib $TMP/
     cp -afvL $SDK_DIR/bin/{ffmpeg,mdk}*.dll $TMP/
+    cp -afvL $SDK_DIR/bin/libass*.dll $TMP/
     cp -afvL $SDK_DIR/bin/mdk*.pdb $TMP/
   elif [ -f "$SDK_DIR/lib/libmdk.dll.a" ]; then
     cp -afvL $SDK_DIR/lib/libmdk.dll.a $TMP/
-    cp -afvL $SDK_DIR/bin/lib{ffmpeg,mdk}*.dll $TMP/
+    cp -afvL $SDK_DIR/bin/lib{ass,ffmpeg,mdk}*.dll $TMP/
   fi
   rm -rfv $SDK_DIR/lib/* $SDK_DIR/bin/*.{dll,pdb} # clean up unneeded files
 
   mkdir -p $SDK_DIR_OUT/bin/$ARCH
-  mv $TMP/*mdk*.{dll,pdb} $TMP/*ffmpeg-?.dll $SDK_DIR_OUT/bin/$ARCH
+  mv $TMP/*mdk*.{dll,pdb} $TMP/*ffmpeg-?.dll $TMP/libass*.dll $SDK_DIR_OUT/bin/$ARCH
 
   mkdir -p $SDK_DIR_OUT/lib/$ARCH
-  mv -v $TMP/libmdk* $TMP/mdk.lib $TMP/libffmpeg.so* $TMP/libc++.so.1 $SDK_DIR_OUT/lib/$ARCH
+  mv -v $TMP/libmdk* $TMP/mdk.lib $TMP/libffmpeg.so* $TMP/libass.so $TMP/libc++.so.1 $SDK_DIR_OUT/lib/$ARCH
 fi
 tar xf $TMP/cmake.tar
 

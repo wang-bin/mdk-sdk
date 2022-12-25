@@ -217,6 +217,10 @@ jobs:
         if [ -f "$libffmpeg" ]; then
           lipo -thin arm64 "$libffmpeg" -output "$libffmpeg"
         fi
+        libass=$(find mdk-sdk/lib/mdk.framework -name "libass*.dylib")
+        if [ -f "$libass" ]; then
+          lipo -thin arm64 "$libass" -output "$libass"
+        fi
         tar Jcfv mdk-sdk-$TARGET_OS.tar.xz mdk-sdk
         mv mdk-sdk*.tar.xz ..
     - name: Archieve SDK
@@ -283,6 +287,10 @@ jobs:
         libffmpeg=$(find mdk-sdk/lib/mdk.framework -name "libffmpeg*.dylib")
         if [ -f "$libffmpeg" ]; then
           lipo -thin x86_64 "$libffmpeg" -output "$libffmpeg"
+        fi
+        libass=$(find mdk-sdk/lib/mdk.framework -name "libass*.dylib")
+        if [ -f "$libass" ]; then
+          lipo -thin x86_64 "$libass" -output "$libass"
         fi
         tar Jcfv mdk-sdk-$TARGET_OS.tar.xz mdk-sdk
         mv mdk-sdk*.tar.xz ..
