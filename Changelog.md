@@ -1,5 +1,25 @@
 Change log:
 
+0.19.0 - 2022-12-28
+
+- New: support subtitle rendering. Can be embedded or external text/bitmap subtitle tracks. The first embedded subtitle track is enabled by default. Use `setActiveTrack(MediaType::Subtitle, ...)` to switch embedded subtitle track. External subtitle must be explicitly enabled by user via `setMedia(file, MediaType::Subtitle)`, and must call it at some point after main video `setMedia(mainVideoFile)`. Text subtitle is rendered by libass, only windows desktop and macOS prebuilt libass is provided for now. Linux users can install system libass. Text subtitles must be UTF-8 encoded.
+- API:
+    - add Player.enqueue(VideoFrame) to draw a frame provided by user
+- Change frame timestamp precision from millisecond to microsecond
+- Fix wrong display aspect ratio
+- Improve redraw for D3D11, Metal and Vulkan
+- Reduce frame queue in renderer to fix some decoders(MFT) may fail to output frames
+- VT:
+    - add property "fourcc", "CVPixelFormat" to force an output format
+    - more pixel formats
+    - fix color range error
+- QSV: support d3d11. add `d3d` option, can be 11(default for ffmpeg5.0+) or 9.
+- FFmpeg:
+    - log level for ffmpeg class, for example SetGlobalOption("ffmpeg.log", "trace=tcp")
+    - Check opt availability before set, no more warnings
+    - Fix unknown media type crash
+
+
 0.18.0 - 2022-11-16
 
 - API:
@@ -16,7 +36,7 @@ Change log:
 - Fix decoding image is slow
 - Fix global options are not correctly applied
 - Fix HLG is not correctly set on MFT decoded frames
-- Vulkan: ix crash on macOS with new drivers
+- Vulkan: fix crash on macOS with new drivers
 - BRAW: fix file path encoding
 - Fix some crashes
 - Increase frame queue size in renderer, drop frames less

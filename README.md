@@ -4,7 +4,7 @@
 
 **Download** [Nightly Build SDK](https://sourceforge.net/projects/mdk-sdk/files/nightly/)
 
-[Changelog](https://github.com/wang-bin/mdk-sdk/blob/master/Changelog.md). 
+[Changelog](https://github.com/wang-bin/mdk-sdk/blob/master/Changelog.md).
 [API](https://github.com/wang-bin/mdk-sdk/wiki/Player-APIs)
 
 ## Features
@@ -89,8 +89,9 @@ Install via [NuGet](https://www.nuget.org/packages/mdk) in Visual Studio for bot
 ## Users
 
 <a href="https://bigringvr.com"><img src="https://bigringvr.com/images/BR_Logo_only.svg" width=140 height=120 alt="BigRingVR"/></a>
-<a herf="http://1218.io"><img src="https://avatars.githubusercontent.com/u/15963166?v=4" width=120 height=120 alt="Seer"/></a>
+<a href="http://1218.io"><img src="https://avatars.githubusercontent.com/u/15963166?v=4" width=120 height=120 alt="Seer"/></a>
 <a href="https://www.heavym.net/en"><img alt="HeavyM" src="https://eadn-wc04-3624428.nxedge.io/cdn/wp-content/uploads/2020/09/Logo-Verticale-Base-Sans-signature-Small-border.svg" height=120 ></a>
+[![Sportimization](https://www.sportimization.com/assets/images/logo_sportimization_small.png)](https://www.sportimization.com)
 <a href="https://sureyyasoft.com"><img class="logo" src="http://sureyyasoft.com/images/s_images/logo_title.png"  height=70 alt="SureyyaSoft"></a>
 [![Flyability](https://www.flyability.com/hs-fs/hubfs/Brand_Identity/Flyability%20Logo%20Package/2%20-%20Horizontal/flyability_logo_horizontal_color_trimmed-1.png)](https://www.flyability.com)
 [![Quipu](http://www.quipu.eu/wp-content/uploads/2015/03/logo-quipu-innovative-solutions-in-medical-ultrasound.png)](www.quipu.eu)
