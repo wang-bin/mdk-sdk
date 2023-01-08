@@ -48,7 +48,7 @@ jobs:
           ./mdk/external
           !./mdk/external/lib/macOS/libvulkan.tbd
           !./mdk/external/lib/libdav1d.tbd
-        key: external-dep-${{ env.TARGET_OS }}-ffmpeg-${{ env.FF_VER }}-${{ secrets.FF_SDK_ID }}-dav1d{{ secrets.DAV1D_ID }}
+        key: external-dep-${{ env.TARGET_OS }}-ffmpeg-${{ env.FF_VER }}-${{ secrets.FF_SDK_ID }}-dav1d${{ secrets.DAV1D_ID }}
 # why may failed to cache/restore /usr/local/bin/sshpass?
 # no build cache because build dir content changes but key should not, then no cache save.
     - name: Create Build Environment
@@ -67,13 +67,13 @@ jobs:
       working-directory: mdk
       run: |
         pwd
-        cmake -DWITH_X11=1 -DCMAKE_OSX_DEPLOYMENT_TARGET=10.9 -GNinja -Bbuild/${TARGET_OS} -DCMAKE_VERBOSE_MAKEFILE=1 -DCMAKE_BUILD_TYPE=${{ matrix.config }} -DCMAKE_INSTALL_PREFIX=$PWD/mdk-sdk # no dSYM for lto, dsymutil: no debug symbols in executable (-arch x86_64)
+        cmake -DWITH_X11=1 -DR3DSDK=$PWD/external/R3DSDK -DCMAKE_OSX_DEPLOYMENT_TARGET=10.9 -GNinja -Bbuild/${TARGET_OS} -DCMAKE_VERBOSE_MAKEFILE=1 -DCMAKE_BUILD_TYPE=${{ matrix.config }} -DCMAKE_INSTALL_PREFIX=$PWD/mdk-sdk # no dSYM for lto, dsymutil: no debug symbols in executable (-arch x86_64)
     - name: Configure CMake
       if: ${{ startsWith(matrix.arch, 'arm64') }} # arm64, arm64e
       shell: bash
       working-directory: mdk
       run: |
-        cmake -DCMAKE_OSX_DEPLOYMENT_TARGET=11.0 -GNinja -DCMAKE_OSX_ARCHITECTURES=${{ matrix.arch }} -Bbuild/${TARGET_OS} -DCMAKE_VERBOSE_MAKEFILE=1 -DCMAKE_BUILD_TYPE=${{ matrix.config }} -DCMAKE_INSTALL_PREFIX=$PWD/mdk-sdk # no dSYM for lto, dsymutil: no debug symbols in executable (-arch x86_64)
+        cmake -DR3DSDK=$PWD/external/R3DSDK -DCMAKE_OSX_DEPLOYMENT_TARGET=11.0 -GNinja -DCMAKE_OSX_ARCHITECTURES=${{ matrix.arch }} -Bbuild/${TARGET_OS} -DCMAKE_VERBOSE_MAKEFILE=1 -DCMAKE_BUILD_TYPE=${{ matrix.config }} -DCMAKE_INSTALL_PREFIX=$PWD/mdk-sdk # no dSYM for lto, dsymutil: no debug symbols in executable (-arch x86_64)
     - name: Build
       shell: bash
       working-directory: mdk
@@ -124,7 +124,7 @@ jobs:
         path: |
           ./mdk/external
           !./mdk/external/lib/libdav1d.tbd
-        key: external-dep-${{ env.TARGET_OS }}-ffmpeg-${{ env.FF_VER }}-${{ secrets.FF_SDK_ID }}-dav1d{{ secrets.DAV1D_ID }}
+        key: external-dep-${{ env.TARGET_OS }}-ffmpeg-${{ env.FF_VER }}-${{ secrets.FF_SDK_ID }}-dav1d${{ secrets.DAV1D_ID }}
 # why may failed to cache/restore /usr/local/bin/sshpass?
 # no build cache because build dir content changes but key should not, then no cache save.
     - name: Create Build Environment
@@ -189,7 +189,7 @@ jobs:
           ./mdk/external
           !./mdk/external/lib/macOS/libvulkan.tbd
           !./mdk/external/lib/libdav1d.tbd
-        key: external-dep-${{ env.TARGET_OS }}-ffmpeg-${{ env.FF_VER }}-${{ secrets.FF_SDK_ID }}-dav1d{{ secrets.DAV1D_ID }}
+        key: external-dep-${{ env.TARGET_OS }}-ffmpeg-${{ env.FF_VER }}-${{ secrets.FF_SDK_ID }}-dav1d${{ secrets.DAV1D_ID }}
 # why may failed to cache/restore /usr/local/bin/sshpass?
 # no build cache because build dir content changes but key should not, then no cache save.
     - name: Create Build Environment
@@ -260,7 +260,7 @@ jobs:
           ./mdk/external
           !./mdk/external/lib/macOS/libvulkan.tbd
           !./mdk/external/lib/libdav1d.tbd
-        key: external-dep-${{ env.TARGET_OS }}-ffmpeg-${{ env.FF_VER }}-${{ secrets.FF_SDK_ID }}-dav1d{{ secrets.DAV1D_ID }}
+        key: external-dep-${{ env.TARGET_OS }}-ffmpeg-${{ env.FF_VER }}-${{ secrets.FF_SDK_ID }}-dav1d${{ secrets.DAV1D_ID }}
 # why may failed to cache/restore /usr/local/bin/sshpass?
 # no build cache because build dir content changes but key should not, then no cache save.
     - name: Create Build Environment
@@ -345,6 +345,9 @@ jobs:
         if [ -f macOS-arm64/mdk-sdk/lib/mdk.framework/Versions/Current/libmdk-braw.dylib -a -f macOS-x86_64/mdk-sdk/lib/mdk.framework/Versions/Current/libmdk-braw.dylib ]; then
           lipo -create macOS-{arm,x86_}64/mdk-sdk/lib/mdk.framework/Versions/Current/libmdk-braw.dylib -output macOS/mdk-sdk/lib/mdk.framework/Versions/Current/libmdk-braw.dylib
         fi
+        if [ -f macOS-arm64/mdk-sdk/lib/mdk.framework/Versions/Current/libmdk-r3d.dylib -a -f macOS-x86_64/mdk-sdk/lib/mdk.framework/Versions/Current/libmdk-r3d.dylib ]; then
+          lipo -create macOS-{arm,x86_}64/mdk-sdk/lib/mdk.framework/Versions/Current/libmdk-r3d.dylib -output macOS/mdk-sdk/lib/mdk.framework/Versions/Current/libmdk-r3d.dylib
+        fi
         for b in `ls macOS-arm64/mdk-sdk/bin`; do # exes exist in both archs
           lipo -create macOS-{arm,x86_}64/mdk-sdk/bin/$b -output macOS/mdk-sdk/bin/$b
         done
@@ -410,7 +413,7 @@ jobs:
       uses: actions/cache@v3
       with:
         path: ./mdk/external
-        key: external-dep-${{ env.TARGET_OS }}-ffmpeg-${{ env.FF_VER }}-${{ secrets.FF_SDK_ID }}-dav1d{{ secrets.DAV1D_ID }}
+        key: external-dep-${{ env.TARGET_OS }}-ffmpeg-${{ env.FF_VER }}-${{ secrets.FF_SDK_ID }}-dav1d${{ secrets.DAV1D_ID }}
     - name: 'Restore sysroot cache'
       id: sysroot-cache
       uses: actions/cache@v3
@@ -476,7 +479,7 @@ jobs:
       uses: actions/cache@v3
       with:
         path: ./mdk/external
-        key: external-dep-${{ env.TARGET_OS }}-ffmpeg-${{ env.FF_VER }}-${{ secrets.FF_SDK_ID }}-dav1d{{ secrets.DAV1D_ID }}
+        key: external-dep-${{ env.TARGET_OS }}-ffmpeg-${{ env.FF_VER }}-${{ secrets.FF_SDK_ID }}-dav1d${{ secrets.DAV1D_ID }}
     - name: Create Build Environment
       shell: bash
       env:
@@ -502,8 +505,9 @@ jobs:
     - name: Configure for win x86
       env:
         ARCH: x86
+        R3DSDK: ${{ github.workspace }}/mdk/external/R3DSDK
       working-directory: mdk
-      run: cmake -DUSE_LTO=1 -DCMAKE_SYSTEM_PROCESSOR=${{ env.ARCH }} -DCMAKE_SYSTEM_VERSION="6.0" -GNinja  -Bbuild/${{ env.TARGET_OS }}-${{ env.ARCH }} -DCMAKE_BUILD_TYPE=${{ matrix.config }} -DCMAKE_INSTALL_PREFIX=mdk-sdk-${{ env.ARCH }} -DCMAKE_VERBOSE_MAKEFILE=1 .
+      run: cmake -DR3DSDK=${{ env.R3DSDK }} -DUSE_LTO=1 -DCMAKE_SYSTEM_PROCESSOR=${{ env.ARCH }} -DCMAKE_SYSTEM_VERSION="6.0" -GNinja  -Bbuild/${{ env.TARGET_OS }}-${{ env.ARCH }} -DCMAKE_BUILD_TYPE=${{ matrix.config }} -DCMAKE_INSTALL_PREFIX=mdk-sdk-${{ env.ARCH }} -DCMAKE_VERBOSE_MAKEFILE=1 .
     - name: Build for win x86
       working-directory: mdk
       run: cmake --build build/${{ env.TARGET_OS }}-x86
@@ -513,8 +517,9 @@ jobs:
     - name: Configure for win x64
       env:
         ARCH: x64
+        R3DSDK: ${{ github.workspace }}/mdk/external/R3DSDK
       working-directory: mdk
-      run: cmake -DUSE_LTO=1 -DCMAKE_SYSTEM_PROCESSOR=${{ env.ARCH }} -DCMAKE_SYSTEM_VERSION="6.0" -GNinja  -Bbuild/${{ env.TARGET_OS }}-${{ env.ARCH }} -DCMAKE_BUILD_TYPE=${{ matrix.config }} -DCMAKE_INSTALL_PREFIX=mdk-sdk-${{ env.ARCH }} -DCMAKE_VERBOSE_MAKEFILE=1 .
+      run: cmake -DR3DSDK=${{ env.R3DSDK }} -DUSE_LTO=1 -DCMAKE_SYSTEM_PROCESSOR=${{ env.ARCH }} -DCMAKE_SYSTEM_VERSION="6.0" -GNinja  -Bbuild/${{ env.TARGET_OS }}-${{ env.ARCH }} -DCMAKE_BUILD_TYPE=${{ matrix.config }} -DCMAKE_INSTALL_PREFIX=mdk-sdk-${{ env.ARCH }} -DCMAKE_VERBOSE_MAKEFILE=1 .
     - name: Build for win x64
       working-directory: mdk
       run: cmake --build build/${{ env.TARGET_OS }}-x64
@@ -563,7 +568,7 @@ jobs:
       uses: actions/cache@v3
       with:
         path: ./mdk/external
-        key: external-dep-${{ env.TARGET_OS }}-ffmpeg-${{ env.FF_VER }}-${{ secrets.FF_SDK_ID }}-dav1d{{ secrets.DAV1D_ID }}
+        key: external-dep-${{ env.TARGET_OS }}-ffmpeg-${{ env.FF_VER }}-${{ secrets.FF_SDK_ID }}-dav1d${{ secrets.DAV1D_ID }}
     - name: Create Build Environment
       shell: bash
       env:
@@ -647,7 +652,7 @@ jobs:
       uses: actions/cache@v3
       with:
         path: ./mdk/external
-        key: external-dep-${{ env.TARGET_OS }}-ffmpeg-${{ env.FF_VER }}-${{ secrets.FF_SDK_ID }}-dav1d{{ secrets.DAV1D_ID }}
+        key: external-dep-${{ env.TARGET_OS }}-ffmpeg-${{ env.FF_VER }}-${{ secrets.FF_SDK_ID }}-dav1d${{ secrets.DAV1D_ID }}
     - name: 'Restore sysroot cache'
       id: sysroot-cache
       uses: actions/cache@v3
@@ -683,7 +688,7 @@ jobs:
       run: |
         export WindowsSdkDir=${WINDOWSSDKDIR}
         export WindowsSDKVersion=$(cat ${WINDOWSSDKDIR}/.version)
-        cmake -DCMAKE_SYSTEM_PROCESSOR=${ARCH} -DCMAKE_TOOLCHAIN_FILE=$PWD/cmake/tools/windows.clang.cmake -GNinja -H$PWD -B$PWD/build/${TARGET_OS}-${ARCH} -DCMAKE_BUILD_TYPE=${{ matrix.config }} -DCMAKE_INSTALL_PREFIX=$PWD/mdk-sdk-${ARCH} -DCMAKE_VERBOSE_MAKEFILE=1
+        cmake -DR3DSDK=$PWD/external/R3DSDK -DCMAKE_SYSTEM_PROCESSOR=${ARCH} -DCMAKE_TOOLCHAIN_FILE=$PWD/cmake/tools/windows.clang.cmake -GNinja -H$PWD -B$PWD/build/${TARGET_OS}-${ARCH} -DCMAKE_BUILD_TYPE=${{ matrix.config }} -DCMAKE_INSTALL_PREFIX=$PWD/mdk-sdk-${ARCH} -DCMAKE_VERBOSE_MAKEFILE=1
     - name: Build for x86
       shell: bash
       working-directory: mdk
@@ -696,7 +701,7 @@ jobs:
       run: |
         export WindowsSdkDir=${WINDOWSSDKDIR}
         export WindowsSDKVersion=$(cat ${WINDOWSSDKDIR}/.version)
-        cmake -DCMAKE_SYSTEM_PROCESSOR=${ARCH} -DCMAKE_TOOLCHAIN_FILE=$PWD/cmake/tools/windows.clang.cmake -GNinja -H$PWD -B$PWD/build/${TARGET_OS}-${ARCH} -DCMAKE_BUILD_TYPE=${{ matrix.config }} -DCMAKE_INSTALL_PREFIX=$PWD/mdk-sdk-${ARCH} -DCMAKE_VERBOSE_MAKEFILE=1
+        cmake -DR3DSDK=$PWD/external/R3DSDK -DCMAKE_SYSTEM_PROCESSOR=${ARCH} -DCMAKE_TOOLCHAIN_FILE=$PWD/cmake/tools/windows.clang.cmake -GNinja -H$PWD -B$PWD/build/${TARGET_OS}-${ARCH} -DCMAKE_BUILD_TYPE=${{ matrix.config }} -DCMAKE_INSTALL_PREFIX=$PWD/mdk-sdk-${ARCH} -DCMAKE_VERBOSE_MAKEFILE=1
     - name: Build for x64
       shell: bash
       working-directory: mdk
@@ -749,7 +754,7 @@ jobs:
       uses: actions/cache@v3
       with:
         path: ./mdk/external
-        key: external-dep-${{ env.TARGET_OS }}-ffmpeg-${{ env.FF_VER }}-${{ secrets.FF_SDK_ID }}-dav1d{{ secrets.DAV1D_ID }}
+        key: external-dep-${{ env.TARGET_OS }}-ffmpeg-${{ env.FF_VER }}-${{ secrets.FF_SDK_ID }}-dav1d${{ secrets.DAV1D_ID }}
     - name: 'Restore sysroot cache'
       id: sysroot-cache
       uses: actions/cache@v3
@@ -890,7 +895,7 @@ jobs:
       uses: actions/cache@v3
       with:
         path: ./mdk/external
-        key: external-dep-${{ env.TARGET_OS }}-ffmpeg-${{ env.FF_VER }}-${{ secrets.FF_SDK_ID }}-dav1d{{ secrets.DAV1D_ID }}
+        key: external-dep-${{ env.TARGET_OS }}-ffmpeg-${{ env.FF_VER }}-${{ secrets.FF_SDK_ID }}-dav1d${{ secrets.DAV1D_ID }}
     - name: 'Restore sysroot cache'
       id: sysroot-cache
       uses: actions/cache@v3
@@ -910,7 +915,7 @@ jobs:
         ARCH: amd64
       shell: bash
       working-directory: mdk
-      run: cmake -DGLVA_STATIC_CXX=OFF -DUSE_LTO=thin -DUSE_LIBCXX=1 -DCMAKE_SYSTEM_PROCESSOR=${ARCH} -DCMAKE_TOOLCHAIN_FILE=$PWD/cmake/tools/${TARGET_OS/r*pi/rpi}.clang.cmake -DLINUX_SYSROOT=$PWD/sysroot -GNinja -H$PWD -B$PWD/build/${TARGET_OS}-${ARCH} -DCMAKE_BUILD_TYPE=${{ matrix.config }} -DCMAKE_INSTALL_PREFIX=$PWD/mdk-sdk-${ARCH}  -DCMAKE_VERBOSE_MAKEFILE=1
+      run: cmake -DR3DSDK=$PWD/external/R3DSDK -DGLVA_STATIC_CXX=OFF -DUSE_LTO=thin -DUSE_LIBCXX=1 -DCMAKE_SYSTEM_PROCESSOR=${ARCH} -DCMAKE_TOOLCHAIN_FILE=$PWD/cmake/tools/${TARGET_OS/r*pi/rpi}.clang.cmake -DLINUX_SYSROOT=$PWD/sysroot -GNinja -H$PWD -B$PWD/build/${TARGET_OS}-${ARCH} -DCMAKE_BUILD_TYPE=${{ matrix.config }} -DCMAKE_INSTALL_PREFIX=$PWD/mdk-sdk-${ARCH}  -DCMAKE_VERBOSE_MAKEFILE=1
     - name: Build for x64
       shell: bash
       working-directory: mdk
@@ -977,7 +982,7 @@ jobs:
       uses: actions/cache@v3
       with:
         path: ./mdk/external
-        key: external-dep-${{ env.TARGET_OS }}-ffmpeg-${{ env.FF_VER }}-${{ secrets.FF_SDK_ID }}-dav1d{{ secrets.DAV1D_ID }}
+        key: external-dep-${{ env.TARGET_OS }}-ffmpeg-${{ env.FF_VER }}-${{ secrets.FF_SDK_ID }}-dav1d${{ secrets.DAV1D_ID }}
     - name: Create Build Environment
       shell: bash
       env:

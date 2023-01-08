@@ -92,6 +92,10 @@ if [[ "$EXTERNAL_DEP_CACHE_HIT" != "true" ]]; then
       curl -kL -o external/include/${h} https://www.khronos.org/registry/EGL/api/${h}
     done
   fi
+  if [[ "$TARGET_OS" == "win"* || "$TARGET_OS" == macOS || "$TARGET_OS" == "linux" ]]; then
+    curl -kL -o R3DSDK.7z https://sourceforge.net/projects/mdk-sdk/files/deps/r3d/R3DSDK.7z/download
+    7z x R3DSDK.7z -oexternal
+  fi
   #if [[ "$TARGET_OS" == "win"* || "$TARGET_OS" == "uwp"* || "$TARGET_OS" == macOS || "$TARGET_OS" == "linux" ]]; then
     curl -kL -o dep.7z https://sourceforge.net/projects/mdk-sdk/files/deps/dep.7z/download
     7z x dep.7z
