@@ -1,4 +1,4 @@
-LLVER=${LLVM_VER:-15}
+LLVER=${LLVM_VER:-16}
 NDK_HOST=linux
 FF_EXTRA=-clang
 FFPKG_EXT=tar.xz
@@ -20,13 +20,10 @@ if [ `which dpkg` ]; then # TODO: multi arch
     #wget https://apt.llvm.org/llvm.sh
     if [[ "$TARGET_OS" != android ]]; then
       pkgs+=" lld-$LLVER clang-tools-$LLVER" # clang-tools: clang-cl
-      wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key |sudo apt-key add -
-      #sudo apt update
-      #sudo apt install -y software-properties-common # for add-apt-repository, ubuntu-tooolchain-r-test is required by trusty
-      #sudo apt-add-repository "deb http://apt.llvm.org/jammy/ llvm-toolchain-jammy-8 main" # rpi
-      sudo apt-add-repository "deb http://apt.llvm.org/jammy/ llvm-toolchain-jammy-15 main"
-      sudo apt-add-repository "deb http://apt.llvm.org/jammy/ llvm-toolchain-jammy main" # clang-16
-      sudo apt update
+        #bash -c "$(wget -O - https://apt.llvm.org/llvm.sh)"
+        wget https://apt.llvm.org/llvm.sh
+        chmod +x llvm.sh
+        sudo ./llvm.sh ${LLVM_VER}
     fi
     if [ "$TARGET_OS" == "linux" ]; then
         pkgs+=" libc++-$LLVER-dev libc++abi-$LLVER-dev libegl1-mesa-dev libgles2-mesa-dev libgl1-mesa-dev libgbm-dev libx11-dev libwayland-dev libasound2-dev libopenal-dev libpulse-dev libva-dev libvdpau-dev libglfw3-dev libsdl2-dev"

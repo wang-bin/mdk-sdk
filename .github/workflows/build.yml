@@ -10,7 +10,7 @@ on:
 
 env:
   FF_VER: master
-  LLVM_VER: 15
+  LLVM_VER: 16
   NINJA_STATUS: '[%f/%t %e %r]'
   SF_PW: ${{ secrets.SF_PW }}
   SF_USER: ${{ secrets.SF_USER }}
@@ -1054,3 +1054,27 @@ jobs:
       run: |
         sshpass -p ${SF_PW} scp -o StrictHostKeyChecking=no mdk-sdk-${TARGET_OS}.7z ${SF_USER}@frs.sourceforge.net:/home/frs/project/mdk-sdk/nightly/
         sshpass -p ${SF_PW} scp -o StrictHostKeyChecking=no mdk/build/android-arm64-v8a/video/libqtav-mediacodec.so ${SF_USER}@frs.sourceforge.net:/home/frs/project/qtav/depends/mediacodec/arm64-v8a
+
+
+  abi:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Checkout source
+      uses: actions/checkout@v3
+      with:
+        repository: wang-bin/mdk
+        path: mdk
+        ref: master
+        fetch-depth: 1
+        token: ${{ secrets.CLONE_PAT }}
+    - name: Make SDK
+      shell: bash
+      run: |
+        mkdir -p mdk-sdk/include/abi/mdk
+        cp -avf mdk/include/mdk/{AudioFormat,AudioFrame,Buffer,ColorSpace,FrameReader,global,MediaInfo,Property,VideoBuffer,VideoFormat,VideoFrame}.h mdk-sdk/include/abi/mdk
+    - name: Archieve SDK
+      uses: actions/upload-artifact@v3
+      with:
+        name: mdk-abi-sdk
+        path: mdk-sdk/
