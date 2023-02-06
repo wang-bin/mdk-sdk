@@ -11,6 +11,7 @@ on:
 env:
   FF_VER: master
   LLVM_VER: 16
+  VC_LTL_VER: 5.0.5
   NINJA_STATUS: '[%f/%t %e %r]'
   SF_PW: ${{ secrets.SF_PW }}
   SF_USER: ${{ secrets.SF_USER }}
@@ -544,6 +545,91 @@ jobs:
 #        local: mdk-sdk-${{ env.TARGET_OS }}-vs2022.7z
 #        remote: '/home/frs/project/mdk-sdk/nightly/'
 
+
+  Windows_VS2022_LTL:
+    runs-on: windows-2022
+    env:
+      TARGET_OS: windows-desktop
+      CRT_EXTRA: LTL
+    strategy:
+      fail-fast: false
+      matrix:
+        config: [MinSizeRel]
+    steps:
+    - uses: actions/checkout@v3
+    - name: Checkout source
+      uses: actions/checkout@v3
+      with:
+        repository: wang-bin/mdk
+        path: mdk
+        ref: master
+        fetch-depth: 1
+        token: ${{ secrets.CLONE_PAT }}
+        submodules: 'recursive'
+    - name: 'Restore External Dep cache'
+      id: external-dep-cache
+      uses: actions/cache@v3
+      with:
+        path: ./mdk/external
+        key: external-dep-${{ env.TARGET_OS }}-ffmpeg-${{ env.FF_VER }}-${{ secrets.FF_SDK_ID }}-dav1d${{ secrets.DAV1D_ID }}
+    - name: 'Restore VC-LTL cache'
+      id: ltl-cache
+      uses: actions/cache@v3
+      with:
+        path: ./mdk/cmake/VC-LTL
+        key: ltl-${{ env.VC_LTL_VER }}
+    - if: ${{ steps.ltl-cache.outputs.cache-hit != 'true' }}
+      name: Get VC-LTL
+      shell: bash
+      working-directory: mdk/cmake
+      run: |
+        curl -kL -o ltl.7z https://github.com/Chuyu-Team/VC-LTL5/releases/download/v${VC_LTL_VER}/VC-LTL-${VC_LTL_VER}-Binary.7z
+        7z x ltl.7z -oVC-LTL
+    - name: Create Build Environment
+      shell: bash
+      env:
+        SYSROOT_CACHE_HIT: true
+        EXTERNAL_DEP_CACHE_HIT: ${{ steps.external-dep-cache.outputs.cache-hit }}
+      working-directory: mdk
+      run: ../ci-before-build.sh
+    - uses: seanmiddleditch/gha-setup-ninja@master
+    - uses: ilammy/msvc-dev-cmd@v1
+      with:
+        arch: amd64_x86
+    - name: Configure for win x86
+      env:
+        ARCH: x86
+        R3DSDK: ${{ github.workspace }}/mdk/external/R3DSDK
+      working-directory: mdk
+      run: cmake -DVC_LTL=1 -DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreaded -DR3DSDK=${{ env.R3DSDK }} -DUSE_LTO=1 -DCMAKE_SYSTEM_PROCESSOR=${{ env.ARCH }} -DCMAKE_SYSTEM_VERSION="6.0" -GNinja  -Bbuild/${{ env.TARGET_OS }}-${{ env.ARCH }} -DCMAKE_BUILD_TYPE=${{ matrix.config }} -DCMAKE_INSTALL_PREFIX=mdk-sdk-${{ env.ARCH }} -DCMAKE_VERBOSE_MAKEFILE=1 .
+    - name: Build for win x86
+      working-directory: mdk
+      run: cmake --build build/${{ env.TARGET_OS }}-x86
+    - uses: ilammy/msvc-dev-cmd@v1
+      with:
+        arch: x64
+    - name: Configure for win x64
+      env:
+        ARCH: x64
+        R3DSDK: ${{ github.workspace }}/mdk/external/R3DSDK
+      working-directory: mdk
+      run: cmake -DVC_LTL=1 -DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreaded -DR3DSDK=${{ env.R3DSDK }} -DUSE_LTO=1 -DCMAKE_SYSTEM_PROCESSOR=${{ env.ARCH }} -DCMAKE_SYSTEM_VERSION="6.0" -GNinja  -Bbuild/${{ env.TARGET_OS }}-${{ env.ARCH }} -DCMAKE_BUILD_TYPE=${{ matrix.config }} -DCMAKE_INSTALL_PREFIX=mdk-sdk-${{ env.ARCH }} -DCMAKE_VERBOSE_MAKEFILE=1 .
+    - name: Build for win x64
+      working-directory: mdk
+      run: cmake --build build/${{ env.TARGET_OS }}-x64
+    - name: Make SDK
+      shell: bash
+      working-directory: mdk
+      run: |
+        ../ci-after-build.sh
+        mv mdk-sdk-*.7z ../mdk-sdk-${{ env.TARGET_OS }}-vs2022-ltl.7z
+    - name: Archieve SDK
+      uses: actions/upload-artifact@v3
+      with:
+        name: mdk-sdk-vs2022-ltl-${{ env.TARGET_OS }}-${{ matrix.config }}
+        path: mdk-sdk-${{ env.TARGET_OS }}-vs2022-ltl.7z
+
+
   UWP_VS2022:
     runs-on: windows-2022
     env:
@@ -837,6 +923,10 @@ jobs:
       uses: actions/download-artifact@v3
       with:
         name: mdk-sdk-vs2022-windows-desktop-MinSizeRel
+    - name: Download win32 vs2022 sdk
+      uses: actions/download-artifact@v3
+      with:
+        name: mdk-sdk-vs2022-ltl-windows-desktop-MinSizeRel
     - name: Download uwp vs2022 sdk
       uses: actions/download-artifact@v3
       with:
@@ -866,7 +956,7 @@ jobs:
       run:  |
         sudo apt update
         sudo apt install -y sshpass
-        for f in mdk-sdk-windows-desktop-vs2022.7z mdk-sdk-uwp-vs2022.7z mdk-vs2022.nupkg; do
+        for f in mdk-sdk-windows-desktop-vs2022-ltl.7z mdk-sdk-windows-desktop-vs2022.7z mdk-sdk-uwp-vs2022.7z mdk-vs2022.nupkg; do
           sshpass -p ${SF_PW} scp -o StrictHostKeyChecking=no $f ${SF_USER}@frs.sourceforge.net:/home/frs/project/mdk-sdk/nightly/
         done
 

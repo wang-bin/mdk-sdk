@@ -8,11 +8,17 @@ echo "DEVTOOLS_CACHE_HIT: ${DEVTOOLS_CACHE_HIT}"
 
 du -hc external
 
+tolower(){
+  echo "$@" | tr ABCDEFGHIJKLMNOPQRSTUVWXYZ abcdefghijklmnopqrstuvwxyz
+}
+
+crt_extra=$(tolower ${CRT_EXTRA})
+
 if [[ "$TARGET_OS" == mac* || "$TARGET_OS" == iOS* || "$TARGET_OS" == android ]]; then
     FF_EXTRA=
 fi
 if [[ "$TARGET_OS" == "win"* || "$TARGET_OS" == "uwp"* ]]; then
-  FF_EXTRA=-vs2022
+  FF_EXTRA=-vs2022${crt_extra}
   FFPKG_EXT=7z
 fi
 if [ `which dpkg` ]; then # TODO: multi arch
