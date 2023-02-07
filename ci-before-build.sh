@@ -81,9 +81,9 @@ if [[ "$EXTERNAL_DEP_CACHE_HIT" != "true" ]]; then
       cp -af ${FFPKG}/lib/* external/lib/sunxi/armv7 #single arch package
   elif [ "$TARGET_OS" == "windows-desktop" ]; then
       # TODO: download in cmake(if check_include_files failed)
-      curl -kL -o vk.zip https://github.com/KhronosGroup/Vulkan-Headers/archive/master.zip
+      curl -kL -o vk.zip https://github.com/KhronosGroup/Vulkan-Headers/archive/main.zip
       7z x vk.zip
-      cp -af Vulkan-Headers-master/include/vulkan external/include/
+      cp -af Vulkan-Headers-main/include/* external/include/
   fi
 
   if [[ "$TARGET_OS" == "win"* || "$TARGET_OS" == "uwp"* || "$TARGET_OS" == macOS ]]; then
