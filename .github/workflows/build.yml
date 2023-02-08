@@ -571,7 +571,7 @@ jobs:
       uses: actions/cache@v3
       with:
         path: ./mdk/external
-        key: external-dep-${{ env.TARGET_OS }}-ffmpeg-${{ env.FF_VER }}-${{ secrets.FF_SDK_ID }}-dav1d${{ secrets.DAV1D_ID }}
+        key: external-dep-${{ env.TARGET_OS }}-${{ env.CRT_EXTRA }}-ffmpeg-${{ env.FF_VER }}-${{ secrets.FF_SDK_ID }}-dav1d${{ secrets.DAV1D_ID }}
     - name: 'Restore VC-LTL cache'
       id: ltl-cache
       uses: actions/cache@v3
