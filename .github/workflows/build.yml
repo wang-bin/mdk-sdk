@@ -9,7 +9,7 @@ on:
   repository_dispatch:
 
 env:
-  FF_VER: master
+  FF_VER: 5.1
   LLVM_VER: 16
   VC_LTL_VER: 5.0.5
   NINJA_STATUS: '[%f/%t %e %r]'
