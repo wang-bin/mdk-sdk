@@ -131,7 +131,7 @@ if [[ "$SYSROOT_CACHE_HIT" != "true" ]]; then
 fi
 
 if [[ "$EXTERNAL_DEP_CACHE_HIT" != "true" ]]; then
-  curl -kL -o dav1d.deb "https://www.deb-multimedia.org/pool/main/d/dav1d-dmo/libdav1d-dev_1.0.0-dmo1_armhf.deb"
+  curl -kL -o dav1d.deb "https://www.deb-multimedia.org/pool/main/d/dav1d-dmo/libdav1d-dev_1.1.0-dmo1_armhf.deb"
   7z x -y dav1d.deb
   tar xvf data.tar
   mv usr/include/dav1d external/include/
