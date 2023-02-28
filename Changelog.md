@@ -1,5 +1,33 @@
 Change log:
 
+0.20.0 - 2023-02-28
+
+- Support R3D raw videos via R3D SDK. Document: https://github.com/wang-bin/mdk-sdk/wiki/Decoders#r3d
+- Support decoding closed caption for ffmpeg based decoders(FFmpeg, VideoToolbox, D3D11 etc.) and rendering. Add "cc" event when closed caption is detect
+- Add drm prime 0-copy rendering, support multi-layers, multi-planes object, support 2d and external texture. Will be used by ffmpeg rpi v4l2 decoder and rkmpp decoder. It should work but not tested.
+- Support QSV decoder via oneVPL
+- Add video decoder change event https://github.com/wang-bin/mdk-sdk/wiki/Types#class-mediaevent
+- FFmpeg: Support 6.0 abi. now the same binary is compatible with ffmpeg 4.4~6.0 runtime
+- Improve log
+- Reduce shader update for Vulkan and D3D11 renderer
+- Fix CUDA and NVDEC not fully enabled on linux
+- Fix incorrect `Player.position` if in paused state for videos with no audio track
+- Fix incorrect pixel aspect ratio for some videos, prefer the value from decoder(e.g. MFT)
+- Fix audio clock not paused if prepare() without play(Apple only).
+- BRAW: fix audio not paused if without play
+- iOS: fix rejected by app store
+- OpenGL: Fix bayer formats not rendered
+- VAAPI:
+    - Fix derive image
+    - Add property "x11", "drm"(or "device") to set x11 display and drm device path(global option "X11Display", "DRMDevice"). "display" option to use "x11" or "drm" display.
+    - Improve surface sync
+    - Support exporting to an drm prime object with a composed layer with multiple planes. decoder option "composed=1"
+    - Add decoder "VADRM" to test exporting drm prime from vaapi
+- VT: Use semi-planar formats for macOS11+ & iOS14+ to fix unsupported default output formats
+- Add VC-LTL build for windows desktop
+- Support build plugins(braw, r3d) with sdk + abi headers. Add global options "plugins_dir"
+
+
 0.19.0 - 2022-12-28
 
 - New: support subtitle rendering. Can be embedded or external text/bitmap subtitle tracks. The first embedded subtitle track is enabled by default. Use `setActiveTrack(MediaType::Subtitle, ...)` to switch embedded subtitle track. External subtitle must be explicitly enabled by user via `setMedia(file, MediaType::Subtitle)`, and must call it at some point after main video `setMedia(mainVideoFile)`. Text subtitle is rendered by libass, only windows desktop and macOS prebuilt libass is provided for now. Linux users can install system libass. Text subtitles must be UTF-8 encoded.

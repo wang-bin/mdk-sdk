@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
   <metadata>
     <id>mdk</id>
-    <version>0.19.0.0</version>
+    <version>0.20.0.0</version>
     <title>MDK</title>
     <authors>Wang Bin</authors>
     <owners>Wang Bin</owners>
@@ -14,8 +14,8 @@
     <description>C/C++ Multimedia Development Kit</description>
     <summary>Cross platform multimedia development kit in C/C++</summary>
     <releaseNotes>https://github.com/wang-bin/mdk-sdk/releases</releaseNotes>
-    <copyright>Copyright 2022</copyright>
-    <tags>Multimedia MediaPlayer VideoPlayer Video Player Playback HDR FFmpeg CrossPlatform UWP Win32 cross-platform OpenGL OpenGLES Vulkan D3D11 BRAW Hap</tags>
+    <copyright>Copyright 2023</copyright>
+    <tags>Multimedia MediaPlayer VideoPlayer Video Player Playback HDR FFmpeg CrossPlatform UWP Win32 cross-platform OpenGL OpenGLES Vulkan D3D11 BRAW Hap R3D</tags>
   </metadata>
   <files>
     <file src="README.md" target="" />
