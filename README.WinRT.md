@@ -13,7 +13,7 @@
 - [HDR display, HDR to SDR and SDR to HDR tone mapping](https://github.com/wang-bin/mdk-sdk/wiki/Player-APIs#player-setcolorspace-value-void-vo_opaque--nullptr)
 - [Seamless/Gapless media and bitrate switch for any media](https://github.com/wang-bin/mdk-sdk/wiki/Player-APIs#player-setcolorspace-value-void-vo_opaque--nullptr)
 - Optimized Continuous seeking. As fast as mpv, but much lower cpu, memory and gpu load. Suitable for [timeline preview](https://github.com/wang-bin/mdk-sdk/wiki/Typical-Usage#timeline-preview)
-- [Smart FFmpeg runtime, dynamic load, compatible with 4.x/5.x abi](https://github.com/wang-bin/mdk-sdk/wiki/FFmpeg-Runtime)
+- [Smart FFmpeg runtime, dynamic load, compatible with 4.x~6.x abi](https://github.com/wang-bin/mdk-sdk/wiki/FFmpeg-Runtime)
 - Professional codecs: GPU accelerated [HAP](https://github.com/wang-bin/mdk-sdk/wiki/Decoders#hap) codec rendering, [Blackmagic RAW](https://github.com/wang-bin/mdk-sdk/wiki/Decoders#braw), [R3D](https://github.com/wang-bin/mdk-sdk/wiki/Decoders#r3d)
 
 ## About SDK for Windows Store
@@ -53,6 +53,7 @@ Optional:
 - [FFmpeg](https://github.com/wang-bin/mdk-sdk/wiki/Decoders#ffmpeg). options: threads=N. e.g. -c:v FFmpeg. -c:v FFmpeg:threads=4
 - [MFT](https://github.com/wang-bin/mdk-sdk/wiki/Decoders#mft). options: d3d=0/9/11, pool=0/1. e.g. -c:v MFT(software), -c:v MFT:d3d=11(hardware).
 - [D3D11](https://github.com/wang-bin/mdk-sdk/wiki/Decoders#d3d11): via FFmpeg
+- [hap](https://github.com/wang-bin/mdk-sdk/wiki/Decoders#hap)
 
 ## Source code:
 - [some examples using mdk sdk](https://github.com/wang-bin/mdk-examples)
@@ -60,6 +61,8 @@ Optional:
 - [QtMultimedia plugin](https://github.com/wang-bin/qtmultimedia-plugins-mdk)
 - [MFT decoder module](https://github.com/wang-bin/mdk-mft)
 - [dav1d decoder module](https://github.com/wang-bin/mdk-dav1d)
+- [Blackmagic RAW](https://github.com/wang-bin/mdk-braw)
+- [R3D RAW](https://github.com/wang-bin/mdk-r3d)
 
 Copyright (c) 2016-2023 WangBin(the author of QtAV) <wbsecg1 at gmail.com>
 Free for opensource softwares, non-commercial softwares, QtAV donors and contributors.

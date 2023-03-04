@@ -943,6 +943,7 @@ jobs:
         cp -af uwp/mdk-sdk/lib/arm mdk-sdk/lib
         cp -af uwp/mdk-sdk/bin/* mdk-sdk/bin/UAP
         cp nuget/mdk.nuspec mdk-sdk
+        cp -avf nuget/README.md mdk-sdk
         cd mdk-sdk
         nuget pack mdk.nuspec
         mv *.nupkg ../mdk-vs2022.nupkg

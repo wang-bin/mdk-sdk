@@ -19,7 +19,7 @@
 - [HDR display, HDR to SDR and SDR to HDR tone mapping](https://github.com/wang-bin/mdk-sdk/wiki/Player-APIs#player-setcolorspace-value-void-vo_opaque--nullptr)
 - [Seamless/Gapless media and bitrate switch for any media](https://github.com/wang-bin/mdk-sdk/wiki/Player-APIs#player-setcolorspace-value-void-vo_opaque--nullptr)
 - Optimized Continuous seeking. As fast as mpv, but much lower cpu, memory and gpu load. Suitable for [timeline preview](https://github.com/wang-bin/mdk-sdk/wiki/Typical-Usage#timeline-preview)
-- [Smart FFmpeg runtime, dynamic load, compatible with 4.x/5.x abi](https://github.com/wang-bin/mdk-sdk/wiki/FFmpeg-Runtime)
+- [Smart FFmpeg runtime, dynamic load, compatible with 4.x~6.x abi](https://github.com/wang-bin/mdk-sdk/wiki/FFmpeg-Runtime)
 - Professional codecs: GPU accelerated [HAP](https://github.com/wang-bin/mdk-sdk/wiki/Decoders#hap) codec rendering, [Blackmagic RAW](https://github.com/wang-bin/mdk-braw), [R3D](https://github.com/wang-bin/mdk-r3d)
 
 
@@ -76,6 +76,8 @@ Install via [NuGet](https://www.nuget.org/packages/mdk) in Visual Studio for bot
 - [C++ TLS](https://github.com/wang-bin/ThreadLocal)
 - [C++ compatibility layer](https://github.com/wang-bin/cppcompat)
 - [cmake tools](https://github.com/wang-bin/cmake-tools)
+- [Blackmagic RAW](https://github.com/wang-bin/mdk-braw)
+- [R3D RAW](https://github.com/wang-bin/mdk-r3d)
 
 ### Examples and Plugins for Other Frameworks
 - [examples for different platforms and gui toolkits](https://github.com/wang-bin/mdk-examples)

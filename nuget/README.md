@@ -1,6 +1,8 @@
 ## MDK: Multimedia Development Kit
+
 ### [Changelog](https://github.com/wang-bin/mdk-sdk/blob/master/Changelog.md)
 ### [API](https://github.com/wang-bin/mdk-sdk/wiki/Player-APIs)
+
 
 ### Features
 - [Simple and powerful API set](https://github.com/wang-bin/mdk-sdk/wiki/Player-APIs)
@@ -17,70 +19,45 @@
 - Professional codecs: GPU accelerated [HAP](https://github.com/wang-bin/mdk-sdk/wiki/Decoders#hap) codec rendering, [Blackmagic RAW](https://github.com/wang-bin/mdk-sdk/wiki/Decoders#braw), [R3D](https://github.com/wang-bin/mdk-sdk/wiki/Decoders#r3d)
 
 
-## About SDK for Linux
-SDK is built by clang 16.0 with
-- ffmpeg: https://sourceforge.net/projects/avbuild/files/linux/ffmpeg-master-linux-clang-lite.tar.xz/download
-- libc++ 16.0
+## About SDK for Windows Desktop & UWP
+SDK is built by
+- latest VS2022 with [FFmpeg](https://sourceforge.net/projects/avbuild/files/windows-store/ffmpeg-master-windows-desktop-vs2022-lite.tar.xz/download)
 
-SDK can be used by any C or C++11 compiler, e.g. g++, clang
-
-### [Runtime Requirements](https://github.com/wang-bin/mdk-sdk/wiki/System-Requirements#linux-desktop-raspberry-pi-64bit)
-
-ubuntu>=14.04(maybe 12.04)
-
-- glibc >= 2.14
-- libc++1, libc++abi1: not using gnu stl because libc++ has better compatibility. previous sdks depend on glibc++ 3.4.22(g++6)
-- libva version 2 or 1: libva2, libva-x11-2, libva-drm2 or libva1, libva-x11-1, libva-drm1. Running `apt install vainfo` will install these
-- libasound2, libpulse0
-- libwayland-client0
-- libgbm1
-- libgl1-mesa-glx
-
-Optional:
-- libegl1-mesa: egl context
-- libvdpau1: vdpau rendering. (required by ffmpeg decoder)
-- libwayland-egl1: wayland surface and egl context support
-- libopenal1
-- libsdl2: sdlplay example
-
-### Environment Vars:
-- GL_EGL: 0 = use glx context, 1 = use egl context (if created by mdk)
-- GL_ES: 0 = use opengl, 1 = use opengl es (if created by mdk)
-- VDPAU_GL: video = interop with video surface, output = interop with output surface, pixmap = interop with x11 pixmap(required by egl from x11)
-- VAAPI_GL: x11 = interop with glx/egl(via x11 pixmap), drm = interop with drm prime, drm2 = interop with drm prime2
-- CUDA_STREAM: 0/1
-- CUDA_PBO: 0/1
-- CUDA_HOST: 0/1
-- CUDA_DEVICE: number
-
-### [Supported Graphics APIs:](https://github.com/wang-bin/mdk-sdk/wiki/Render-API)
-- OpenGL
-- [OpenGL ES2/3](https://github.com/wang-bin/mdk-sdk/wiki/OpenGL-Support-Matrix): via EGL, GLX, ANGLE or others. the default if EGL is available.
-- Vulkan: broken now
-
-### [Supported Decoders:](https://github.com/wang-bin/mdk-sdk/wiki/Decoders)
-- FFmpeg, VDPAU, VAAPI, CUDA, QSV(not tested), NVDEC
-- command line: -c:v decodername
-
-### Examples
-GL Context
-- Created by MDK: glfwplay -gl:opengl=1, glfwplay -gl:opengl=1:egl=1, glfwplay -gl, mdkplay, x11win
-- Foreign Context: glfwplay, multiplayers, multiwindows (via glfw), sdlplay(via sdl)
-
-Gapless Playback for Any Media:
-- mdkplay(or glfwplay/window/sdlplay) file file2 ...
-
-N players for 1 video: multiplayers -share -win N url
-
-N videos and N players: multiplayers -share url1 url2 ... urlN
-
-N videos renderers for 1 player: multiwidnows url
+SDK can be used by any C or C++11 compiler, e.g. vs2015, vs2022, mingw g++, clang
 
 ### Use in CMake Projects
 ```
 	include(mdk-sdk-dir/lib/cmake/FindMDK.cmake)
 	target_link_libraries(your_target PRIVATE mdk)
 ```
+
+
+### [Runtime Requirements](https://github.com/wang-bin/mdk-sdk/wiki/System-Requirements#windows-desktop)
+- Vista+
+- ucrt, vc140+ runtime
+
+Optional:
+- libEGL.dll, libGLESv2.dll, D3DCompiler_47/43.dll. Qt apps can use qt's dlls
+- vulkan
+
+### [Supported Graphics APIs:](https://github.com/wang-bin/mdk-sdk/wiki/Render-API)
+- D3D11: recommended
+- [OpenGL(No UWP)](https://github.com/wang-bin/mdk-sdk/wiki/OpenGL-Support-Matrix): via WGL. The default if EGL runtime is not found.
+- [OpenGL ES2/3](https://github.com/wang-bin/mdk-sdk/wiki/OpenGL-Support-Matrix): via ANGLE or others. The default if EGL runtime is found.
+- Vulkan(No UWP)
+
+### [Supported Decoders:](https://github.com/wang-bin/mdk-sdk/wiki/Decoders)
+- [FFmpeg](https://github.com/wang-bin/mdk-sdk/wiki/Decoders#ffmpeg). options: threads=N. e.g. -c:v FFmpeg. -c:v FFmpeg:threads=4
+- [MFT](https://github.com/wang-bin/mdk-sdk/wiki/Decoders#mft). options: d3d=0/9/11, pool=0/1. e.g. -c:v MFT(software), -c:v MFT:d3d=11(hardware).
+- [CUDA](https://github.com/wang-bin/mdk-sdk/wiki/Decoders#cuda)(No UWP)
+- [D3D11](https://github.com/wang-bin/mdk-sdk/wiki/Decoders#d3d11): via FFmpeg
+- [DXVA](https://github.com/wang-bin/mdk-sdk/wiki/Decoders#dxva)(No UWP): via FFmpeg
+- [NVDEC](https://github.com/wang-bin/mdk-sdk/wiki/Decoders#nvdec)(No UWP): via FFmpeg
+- CUVID(No UWP): via FFmpeg
+- [QSV](https://github.com/wang-bin/mdk-sdk/wiki/Decoders#qsv)(No UWP): via FFmpeg
+- [BRAW](https://github.com/wang-bin/mdk-sdk/wiki/Decoders#braw): Blackmagic RAW
+- [R3D](https://github.com/wang-bin/mdk-sdk/wiki/Decoders#r3d): R3D RAW
+- [hap](https://github.com/wang-bin/mdk-sdk/wiki/Decoders#hap)
 
 ## Source code:
 - [some examples using mdk sdk](https://github.com/wang-bin/mdk-examples)
@@ -90,6 +67,7 @@ N videos renderers for 1 player: multiwidnows url
 - [dav1d decoder module](https://github.com/wang-bin/mdk-dav1d)
 - [Blackmagic RAW](https://github.com/wang-bin/mdk-braw)
 - [R3D RAW](https://github.com/wang-bin/mdk-r3d)
+
 
 Copyright (c) 2016-2023 WangBin(the author of QtAV) <wbsecg1 at gmail.com>
 Free for opensource softwares, non-commercial softwares, QtAV donors and contributors.

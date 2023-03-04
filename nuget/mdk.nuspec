@@ -16,6 +16,7 @@
     <releaseNotes>https://github.com/wang-bin/mdk-sdk/releases</releaseNotes>
     <copyright>Copyright 2023</copyright>
     <tags>Multimedia MediaPlayer VideoPlayer Video Player Playback HDR FFmpeg CrossPlatform UWP Win32 cross-platform OpenGL OpenGLES Vulkan D3D11 BRAW Hap R3D</tags>
+    <readme>README.md</readme>
   </metadata>
   <files>
     <file src="README.md" target="" />
