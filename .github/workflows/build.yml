@@ -391,6 +391,7 @@ jobs:
   RaspberryPi_libcxx:
     runs-on: ubuntu-latest
     env:
+      FF_VER: 5.1 # master build error
       TARGET_OS: 'raspberry-pi'
       LTO_SUFFIX: -lto
       #LLVM_VER: 8
