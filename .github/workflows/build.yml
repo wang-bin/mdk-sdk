@@ -547,6 +547,74 @@ jobs:
 #        remote: '/home/frs/project/mdk-sdk/nightly/'
 
 
+  Win64_SRC:
+    runs-on: windows-2022
+    env:
+      TARGET_OS: windows-desktop
+      ARCH: x64
+    strategy:
+      fail-fast: false
+      matrix:
+        config: [RelWithDebInfo,Debug]
+    steps:
+    - uses: actions/checkout@v3
+    - name: Checkout source
+      uses: actions/checkout@v3
+      with:
+        repository: wang-bin/mdk
+        path: mdk
+        ref: master
+        fetch-depth: 1
+        token: ${{ secrets.CLONE_PAT }}
+        submodules: 'recursive'
+    - name: 'Restore External Dep cache'
+      id: external-dep-cache
+      uses: actions/cache@v3
+      with:
+        path: ./mdk/external
+        key: external-dep-${{ env.TARGET_OS }}-ffmpeg-${{ env.FF_VER }}-${{ secrets.FF_SDK_ID }}-dav1d${{ secrets.DAV1D_ID }}
+    - name: Create Build Environment
+      shell: bash
+      env:
+        SYSROOT_CACHE_HIT: true
+        EXTERNAL_DEP_CACHE_HIT: ${{ steps.external-dep-cache.outputs.cache-hit }}
+      working-directory: mdk
+      run: ../ci-before-build.sh
+    - uses: seanmiddleditch/gha-setup-ninja@master
+    - uses: ilammy/msvc-dev-cmd@v1
+      with:
+        arch: x64
+    - name: Configure for win x64
+      env:
+        R3DSDK: ${{ github.workspace }}/mdk/external/R3DSDK
+      working-directory: mdk
+      run: cmake -DSOURCE_MODULES=core -DR3DSDK=${{ env.R3DSDK }} -DUSE_LTO=0 -DCMAKE_SYSTEM_PROCESSOR=${{ env.ARCH }} -DCMAKE_SYSTEM_VERSION="6.0" -GNinja  -Bbuild/${{ env.TARGET_OS }}-${{ env.ARCH }} -DCMAKE_BUILD_TYPE=${{ matrix.config }} -DCMAKE_INSTALL_PREFIX=mdk-sdk-${{ env.ARCH }} -DCMAKE_VERBOSE_MAKEFILE=1 .
+    - name: Build for win x64
+      working-directory: mdk
+      run: cmake --build build/${{ env.TARGET_OS }}-x64
+    - name: Install for win x64
+      working-directory: mdk
+      run: cmake --install build/${{ env.TARGET_OS }}-x64
+    - name: Make SRC SDK
+      shell: bash
+      working-directory: mdk
+      run: |
+        chmod +x ../mksrc.sh
+        ../mksrc.sh $PWD mdk-sdk-${{ env.ARCH }}
+        cp -avf ../CMakeLists.txt mdk-sdk-${{ env.ARCH }}
+        if [[ ${{ matrix.config }} == Debug ]]; then
+          CRT_SUFFIX=d
+        fi
+        cp -avf external/lib/windows/${{ env.ARCH }}/MD$CRT_SUFFIX/{vpl,snappy}.lib mdk-sdk-${{ env.ARCH }}/lib
+        date +%m%d
+        7z a -p${{ secrets.SRC_USER }}`date +%m%d` -mhe ../mdk-src-${{ env.TARGET_OS }}-vs2022.7z mdk-sdk-${{ env.ARCH }}
+    - name: Archieve SDK
+      uses: actions/upload-artifact@v3
+      with:
+        name: mdk-src-vs2022-${{ env.TARGET_OS }}-${{ matrix.config }}
+        path: mdk-src-${{ env.TARGET_OS }}-vs2022.7z
+
+
   Windows_VS2022_LTL:
     runs-on: windows-2022
     env:
