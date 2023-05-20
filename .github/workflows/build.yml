@@ -388,7 +388,8 @@ jobs:
         make -f upload.mk
 
 
-  RaspberryPi_libcxx:
+  Legacy_RaspberryPi_libcxx:
+    if: false   # FIXME: std::to_array undeclared if use clang-16 + sysroot libc++8, linux build is fine
     runs-on: ubuntu-latest
     env:
       FF_VER: 5.1 # master build error
