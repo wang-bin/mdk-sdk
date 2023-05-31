@@ -1,5 +1,49 @@
 Change log:
 
+0.21.0 - 2023-05-31
+
+- New D3D12 renderer via `D3D12RenderAPI`. Support all decoders. Performance is similar to D3D11. Optimal texture upload for iGPU, env var "GPU_OPTIMAL_UPLOAD=0" can disale optimal upload to compare performance. You can try [Qt6 QML example](https://github.com/wang-bin/mdk-examples/blob/master/Qt/qmlrhi/VideoTextureNodePub.cpp#L143) or `./glfwplay -d3d12 video_file`.
+- D3D11:
+    - Texture upload optimize for iGPU on win10. env var "GPU_OPTIMAL_UPLOAD", significantly reduce vram usage, about 50~70%, and even more for compressed textures. Software decoders and built-in hap decoder will benifit from it.
+    - Cache shader binaries
+    - Fix crash on win7 if default swapchain format is not supported
+- DRM Prime:
+    - Auto detect external texture requirements via modifiers
+    - Fix fd leak in 0.20.0
+    - Support reusing EGLImage to improve performance via global option `SetGlobalOption("eglimage.reuse", 1)`, or decoder option `reuse=1`. Known to work for raspberry pi.
+- Vulkan:
+    - Fix `snapshot()` error, a regression in previous release
+    - Fix a crash for Hap videos
+- Metal:
+    - Fix BC3CoCgSY
+    - Support BC formats for iOS 16.4+
+- OpenGL: Fix deleting queries without a context, fix potential leaks
+- MFT:
+    - Supports `d3d=12` option to enable d3d12 decoding. Currently 0-copy renderer is only D3D12, requires `copy=1` option to be used in other renderers.
+    - `d3d=11` is default
+    - Fallback to lower d3d version or software decoder if open error. So now using `MFT` without option as decoder name is enough.
+    - Fix decode error on win7
+- VAAPI:
+    - [Support windows](https://devblogs.microsoft.com/directx/video-acceleration-api-va-api-now-available-on-windows), backend is d3d12 decoder. Currently only supported by D3D12 renderer 0-copy rendering, or use `copy=1` option for other renderers. Requires dlls from https://www.nuget.org/packages/Microsoft.Direct3D.VideoAccelerationCompatibilityPack can be found by `LoadLibrary()`
+    - Fix render error because of drm fd leak
+- Raspberry Pi 3/4:
+    - Perfectly support h264, hevc hardware decoder and 0-copy rendering in Raspberry Pi OS via `Player.setDecoders(MediaType::Video, {"V4L2M2M","FFmpeg:hwcontext=drm"})`. System ffmpeg is required, MUST delete libffmpeg.so.* in mdk sdk package. May also work with https://github.com/jc-kynesim/rpi-ffmpeg . EGL + OpenGL ES2/3 is recommended by hevc. You can test with `./glfwplay -c:v V4L2M2M,FFmpeg:hwcontext=drm -gl test.mp4`
+- Android:
+    - AMediaCodec video decoder enable `image=1` option by default, lower latency
+    - Fix acquiring AImage when it's not ready
+    - Fix jni env detach
+    - Add `low_latency` option for AMediaCodec video decoder, default is 0. requires api level 30+
+- Fix alpha value for opaque formats in all renderers
+- Enable `SeekFlag::InCache` for `Default` flag
+- Support programs, add `MediaInfo.program`. `setActiveTracks(MediaType::Unknown, {N})` will select Nth program and it's audio/video tracks will be active. Useful for mpegts programs
+- Add `SubtitleStreamInfo.metadata`, subtitle(and other streams) language is `metadata["language"]`
+- New pixel formats supported by dx, drm
+- Fix a/v sync if audio duration is a lot less than video
+- Fix BRAW seek
+- FFmpeg:
+    - Improve abi compatibility, better support ffmpeg 4.x and 5.x
+
+
 0.20.0 - 2023-02-28
 
 - Support R3D raw videos via R3D SDK. Document: https://github.com/wang-bin/mdk-sdk/wiki/Decoders#r3d
@@ -26,6 +70,7 @@ Change log:
 - VT: Use semi-planar formats for macOS11+ & iOS14+ to fix unsupported default output formats
 - Add VC-LTL build for windows desktop
 - Support build plugins(braw, r3d) with sdk + abi headers. Add global options "plugins_dir"
+
 
 
 0.19.0 - 2022-12-28

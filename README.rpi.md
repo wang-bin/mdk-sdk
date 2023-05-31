@@ -1,4 +1,7 @@
 ## MDK: Multimedia Development Kit
+
+**Use generic linux sdk package for raspberry pi3/4 with modern RaspberryPi OS**
+
 ### [Changelog](https://github.com/wang-bin/mdk-sdk/blob/master/Changelog.md)
 ### [API](https://github.com/wang-bin/mdk-sdk/wiki/Player-APIs)
 
@@ -16,7 +19,7 @@
 - [Smart FFmpeg runtime, dynamic load, compatible with 4.x~6.x abi](https://github.com/wang-bin/mdk-sdk/wiki/FFmpeg-Runtime)
 - Professional codecs: GPU accelerated [HAP](https://github.com/wang-bin/mdk-sdk/wiki/Decoders#hap) codec rendering, [Blackmagic RAW](https://github.com/wang-bin/mdk-sdk/wiki/Decoders#braw), [R3D](https://github.com/wang-bin/mdk-sdk/wiki/Decoders#r3d)
 
-## About SDK for Raspberry Pi
+## About SDK for Legacy Raspberry Pi
 SDK is cross built by clang 16.0 with
 - cmake toolchain file https://github.com/wang-bin/cmake-tools/blob/master/raspberry-pi.clang.cmake
 - sysroot: https://sourceforge.net/projects/avbuild/files/raspberry-pi/raspberry-pi-sysroot.tar.xz/download
@@ -43,14 +46,14 @@ clang >= 9 result dso can not be loaded on rpi1, maybe there is a bug in lld
 
 ### Examples
 In legacy driver environment, hardware decoder (MMAL, mmal) supports zero copy rendering in GLES2 and has the best performance
-- legacy driver gles2: ./mdkplay -c:v MMAL test.mp4
+- legacy driver gles2: ./window -c:v MMAL test.mp4
 
 
 In mesa vc4/6 driver environment(fake/full kms), hardware decoder is available, but zero copy rendering is not
-- vc4/6 egl+es2: LD_PRELOAD=libX11.so.6 ./mdkplay -c:v MMAL test.mp4 # if not link against libX11(except weak) or libpulse
-- vc4/6 glx: GL_ES=0 LD_PRELOAD=libGL.so.1 ./mdkplay -c:v MMAL test.mp4 # if not link against libGL or libOpenGL
-- vc4/6 wayland: ./mdkplay -c:v MMAL test.mp4  # assume weston is running in x11 or CLI mode via weston-launch
-- vc4/6 gbm: ./mdkplay -surface gbm -c:v MMAL test.mp4  # assume weston is running # in CLI mode
+- vc4/6 egl+es2: LD_PRELOAD=libX11.so.6 ./window -c:v MMAL test.mp4 # if not link against libX11(except weak) or libpulse
+- vc4/6 glx: GL_ES=0 LD_PRELOAD=libGL.so.1 ./window -c:v MMAL test.mp4 # if not link against libGL or libOpenGL
+- vc4/6 wayland: ./window -c:v MMAL test.mp4  # assume weston is running in x11 or CLI mode via weston-launch
+- vc4/6 gbm: ./window -surface gbm -c:v MMAL test.mp4  # assume weston is running # in CLI mode
 
 Tested on rpi1 and rpi3.
 

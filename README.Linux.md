@@ -40,6 +40,7 @@ Optional:
 - libegl1-mesa: egl context
 - libvdpau1: vdpau rendering. (required by ffmpeg decoder)
 - libwayland-egl1: wayland surface and egl context support
+- libass5~9 to support subtitle
 - libopenal1
 - libsdl2: sdlplay example
 
@@ -61,6 +62,11 @@ Optional:
 ### [Supported Decoders:](https://github.com/wang-bin/mdk-sdk/wiki/Decoders)
 - FFmpeg, VDPAU, VAAPI, CUDA, QSV(not tested), NVDEC
 - command line: -c:v decodername
+
+### DRM Prime
+RaspberryPi OS system ffmpeg provides hevc and v4l2m2m drm_prime frame output, you can use system ffmpeg(delete libffmpeg.so.* in sdk package) with OpenGLES(desktop GL does not support hevc) contexts created from EGL to get maximum performance. glfwplay option to test: -c:v V4L2M2M,FFmpeg:hwcontext=drm -gl. It's recommend to call `SetGlobalOption("eglimage.reuse", 1)` or decoder option `reuse=1` to get better performance, glfwplay option is `-eglimage.reuse 1`.
+
+RaspberryPi OS rendering performance is poor, you may have to disable log, log to file or minimize terminal to get higher fps, otherwise rendering log may slow down video rendering.
 
 ### Examples
 GL Context
