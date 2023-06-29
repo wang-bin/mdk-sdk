@@ -532,11 +532,13 @@ jobs:
       run: |
         ../ci-after-build.sh
         mv mdk-sdk-*.7z ../mdk-sdk-${{ env.TARGET_OS }}-vs2022.7z
+        rm -rf mdk-sdk/bin/{x86,arm*}
+        7z a -ssc -m0=lzma2 -mx=9 -ms=on -mf=off ../mdk-sdk-${{ env.TARGET_OS }}-vs2022-x64.7z mdk-sdk
     - name: Archieve SDK
       uses: actions/upload-artifact@v3
       with:
         name: mdk-sdk-vs2022-${{ env.TARGET_OS }}-${{ matrix.config }}
-        path: mdk-sdk-${{ env.TARGET_OS }}-vs2022.7z
+        path: mdk-sdk-${{ env.TARGET_OS }}-vs2022*.7z
 #    - name: Upload to SourceForge
 #      if: ${{ matrix.config == 'MinSizeRel' }}
 #      uses: garygrossgarten/github-action-scp@release
@@ -1027,7 +1029,7 @@ jobs:
       run:  |
         sudo apt update
         sudo apt install -y sshpass
-        for f in mdk-sdk-windows-desktop-vs2022-ltl.7z mdk-sdk-windows-desktop-vs2022.7z mdk-sdk-uwp-vs2022.7z mdk-vs2022.nupkg; do
+        for f in mdk-sdk-windows-desktop-vs2022-ltl.7z mdk-sdk-windows-desktop-vs2022*.7z mdk-sdk-uwp-vs2022.7z mdk-vs2022.nupkg; do
           sshpass -p ${SF_PW} scp -o StrictHostKeyChecking=no $f ${SF_USER}@frs.sourceforge.net:/home/frs/project/mdk-sdk/nightly/
         done
 
@@ -1107,15 +1109,19 @@ jobs:
       run: |
         ../ci-after-build.sh
         mv mdk-sdk*.tar.xz ..
+        rm -rf mdk-sdk/{bin,lib}/arm*
+        tar Jcvf ../mdk-sdk-${{ env.TARGET_OS }}-x64.tar.xz mdk-sdk
     - name: Archieve SDK
       uses: actions/upload-artifact@v3
       with:
         name: mdk-sdk-${{ env.TARGET_OS }}-${{ matrix.config }}
-        path: mdk-sdk-${{ env.TARGET_OS }}.tar.xz
+        path: mdk-sdk-${{ env.TARGET_OS }}*.tar.xz
     - name: Upload to SourceForge
       if: ${{ matrix.config == 'MinSizeRel' }}
       shell: bash
-      run: sshpass -p ${SF_PW} scp -o StrictHostKeyChecking=no mdk-sdk-${TARGET_OS}.tar.xz ${SF_USER}@frs.sourceforge.net:/home/frs/project/mdk-sdk/nightly/
+      run: |
+        sshpass -p ${SF_PW} scp -o StrictHostKeyChecking=no mdk-sdk-${TARGET_OS}.tar.xz ${SF_USER}@frs.sourceforge.net:/home/frs/project/mdk-sdk/nightly/
+        sshpass -p ${SF_PW} scp -o StrictHostKeyChecking=no mdk-sdk-${TARGET_OS}-x64.tar.xz ${SF_USER}@frs.sourceforge.net:/home/frs/project/mdk-sdk/nightly/
 
   Android:
     runs-on: ubuntu-latest
