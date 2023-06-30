@@ -1,6 +1,24 @@
 Change log:
 
-0.21.0 - 2023-05-31
+## 0.21.1 - 2023-06-30
+
+- Fix loop fails in some ranges
+- Raspberry pi: enable eglimage reuse by default to improve 0-copy rendering performance
+- API: allow construct Player object from existing ptr
+- Android: support assets, via url scheme 'assets', for example `player.setMedia("assets://flutter_assets/assets/test.mp4")`
+- Improve av sync
+- Braw:
+    - upgrade to version 3.1
+    - Support iOS
+    - Enable 0-copy for cuda
+- FFmpeg:
+    - Add vulkan decoder `FFmpeg:hwcontext=vulkan:copy=1`, or select another device index `FFmpeg:hwcontext=vulkan:copy=1:hwdevice=1`
+    - Fix hwaccel_flags is not correctly applied
+
+* New project: [fvp](https://pub.dev/packages/fvp) is a plugin for flutter [video_player](https://pub.dev/packages/video_player) to support all platforms via libmdk. Add `fvp` as a dependency, and add 2 lines of code, then you can benefit from the power of libmdk. You can try prebuilt example from [artifacts of github actions](https://github.com/wang-bin/fvp/actions)
+
+
+## 0.21.0 - 2023-05-31
 
 - New D3D12 renderer via `D3D12RenderAPI`. Support all decoders. Performance is similar to D3D11. Optimal texture upload for iGPU, env var "GPU_OPTIMAL_UPLOAD=0" can disale optimal upload to compare performance. You can try [Qt6 QML example](https://github.com/wang-bin/mdk-examples/blob/master/Qt/qmlrhi/VideoTextureNodePub.cpp#L143) or `./glfwplay -d3d12 video_file`.
 - D3D11:
@@ -141,7 +159,7 @@ Change log:
     - Fix filter is initialized twice
     - Fix frame pts abi
     - Improve encoder
-- New [Flutter desktop example](https://github.com/wang-bin/fvp)
+- New [Flutter desktop example](https://pub.dev/packages/fvp)
 
 
 0.16.0 - 2022-08-28
