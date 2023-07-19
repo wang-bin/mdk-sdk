@@ -10,8 +10,8 @@ on:
 
 env:
   FF_VER: master
-  LLVM_VER: 16
-  VC_LTL_VER: 5.0.5
+  LLVM_VER: ${{ vars.LLVM_VER }}
+  VC_LTL_VER: ${{ vars.VC_LTL_VER }}
   NINJA_STATUS: '[%f/%t %e %r]'
   SF_PW: ${{ secrets.SF_PW }}
   SF_USER: ${{ secrets.SF_USER }}
@@ -35,7 +35,7 @@ jobs:
       with:
         repository: wang-bin/mdk
         path: mdk
-        ref: master
+        ref: master # TODO: dispatch ref
         fetch-depth: 1
         token: ${{ secrets.CLONE_PAT }}
         submodules: 'recursive'
@@ -49,7 +49,7 @@ jobs:
           ./mdk/external
           !./mdk/external/lib/macOS/libvulkan.tbd
           !./mdk/external/lib/libdav1d.tbd
-        key: external-dep-${{ env.TARGET_OS }}-ffmpeg-${{ env.FF_VER }}-${{ secrets.FF_SDK_ID }}-dav1d${{ secrets.DAV1D_ID }}
+        key: external-dep-${{ env.TARGET_OS }}-ffmpeg-${{ env.FF_VER }}-${{ vars.FF_SDK_ID }}-dav1d${{ vars.DAV1D_ID }}
 # why may failed to cache/restore /usr/local/bin/sshpass?
 # no build cache because build dir content changes but key should not, then no cache save.
     - name: Create Build Environment
@@ -125,7 +125,7 @@ jobs:
         path: |
           ./mdk/external
           !./mdk/external/lib/libdav1d.tbd
-        key: external-dep-${{ env.TARGET_OS }}-ffmpeg-${{ env.FF_VER }}-${{ secrets.FF_SDK_ID }}-dav1d${{ secrets.DAV1D_ID }}
+        key: external-dep-${{ env.TARGET_OS }}-ffmpeg-${{ env.FF_VER }}-${{ vars.FF_SDK_ID }}-dav1d${{ vars.DAV1D_ID }}
 # why may failed to cache/restore /usr/local/bin/sshpass?
 # no build cache because build dir content changes but key should not, then no cache save.
     - name: Create Build Environment
@@ -190,7 +190,7 @@ jobs:
           ./mdk/external
           !./mdk/external/lib/macOS/libvulkan.tbd
           !./mdk/external/lib/libdav1d.tbd
-        key: external-dep-${{ env.TARGET_OS }}-ffmpeg-${{ env.FF_VER }}-${{ secrets.FF_SDK_ID }}-dav1d${{ secrets.DAV1D_ID }}
+        key: external-dep-${{ env.TARGET_OS }}-ffmpeg-${{ env.FF_VER }}-${{ vars.FF_SDK_ID }}-dav1d${{ vars.DAV1D_ID }}
 # why may failed to cache/restore /usr/local/bin/sshpass?
 # no build cache because build dir content changes but key should not, then no cache save.
     - name: Create Build Environment
@@ -261,7 +261,7 @@ jobs:
           ./mdk/external
           !./mdk/external/lib/macOS/libvulkan.tbd
           !./mdk/external/lib/libdav1d.tbd
-        key: external-dep-${{ env.TARGET_OS }}-ffmpeg-${{ env.FF_VER }}-${{ secrets.FF_SDK_ID }}-dav1d${{ secrets.DAV1D_ID }}
+        key: external-dep-${{ env.TARGET_OS }}-ffmpeg-${{ env.FF_VER }}-${{ vars.FF_SDK_ID }}-dav1d${{ vars.DAV1D_ID }}
 # why may failed to cache/restore /usr/local/bin/sshpass?
 # no build cache because build dir content changes but key should not, then no cache save.
     - name: Create Build Environment
@@ -416,13 +416,13 @@ jobs:
       uses: actions/cache@v3
       with:
         path: ./mdk/external
-        key: external-dep-${{ env.TARGET_OS }}-ffmpeg-${{ env.FF_VER }}-${{ secrets.FF_SDK_ID }}-dav1d${{ secrets.DAV1D_ID }}
+        key: external-dep-${{ env.TARGET_OS }}-ffmpeg-${{ env.FF_VER }}-${{ vars.FF_SDK_ID }}-dav1d${{ vars.DAV1D_ID }}
     - name: 'Restore sysroot cache'
       id: sysroot-cache
       uses: actions/cache@v3
       with:
         path: ./mdk/sysroot
-        key: sysroot-${{ env.TARGET_OS }}-${{ secrets.RPI_SYSROOT_ID }}
+        key: sysroot-${{ env.TARGET_OS }}-${{ vars.RPI_SYSROOT_ID }}
     - name: Create Build Environment
       shell: bash
       env:
@@ -436,7 +436,7 @@ jobs:
       working-directory: mdk
       run: |
         pwd
-        cmake -DUSE_LTO=thin -DCMAKE_C_COMPILER=clang-${LLVM_VER} -DCMAKE_CXX_COMPILER=clang++-${LLVM_VER} -DCMAKE_TOOLCHAIN_FILE=$PWD/cmake/tools/${TARGET_OS/r*pi/rpi}.clang.cmake -DLINUX_SYSROOT=$PWD/sysroot -GNinja -H$PWD -B$PWD/build/${TARGET_OS} -DCMAKE_BUILD_TYPE=${{ matrix.config }} -DCMAKE_INSTALL_PREFIX=$PWD/mdk-sdk  -DCMAKE_VERBOSE_MAKEFILE=1
+        cmake -DUSE_LTO=thin -DCMAKE_C_COMPILER=clang-${LLVM_VER:-17} -DCMAKE_CXX_COMPILER=clang++-${LLVM_VER:-17} -DCMAKE_TOOLCHAIN_FILE=$PWD/cmake/tools/${TARGET_OS/r*pi/rpi}.clang.cmake -DLINUX_SYSROOT=$PWD/sysroot -GNinja -H$PWD -B$PWD/build/${TARGET_OS} -DCMAKE_BUILD_TYPE=${{ matrix.config }} -DCMAKE_INSTALL_PREFIX=$PWD/mdk-sdk  -DCMAKE_VERBOSE_MAKEFILE=1
     - name: Build
       shell: bash
       working-directory: mdk
@@ -482,7 +482,7 @@ jobs:
       uses: actions/cache@v3
       with:
         path: ./mdk/external
-        key: external-dep-${{ env.TARGET_OS }}-ffmpeg-${{ env.FF_VER }}-${{ secrets.FF_SDK_ID }}-dav1d${{ secrets.DAV1D_ID }}
+        key: external-dep-${{ env.TARGET_OS }}-ffmpeg-${{ env.FF_VER }}-${{ vars.FF_SDK_ID }}-dav1d${{ vars.DAV1D_ID }}
     - name: Create Build Environment
       shell: bash
       env:
@@ -575,7 +575,7 @@ jobs:
       uses: actions/cache@v3
       with:
         path: ./mdk/external
-        key: external-dep-${{ env.TARGET_OS }}-ffmpeg-${{ env.FF_VER }}-${{ secrets.FF_SDK_ID }}-dav1d${{ secrets.DAV1D_ID }}
+        key: external-dep-${{ env.TARGET_OS }}-ffmpeg-${{ env.FF_VER }}-${{ vars.FF_SDK_ID }}-dav1d${{ vars.DAV1D_ID }}
     - name: Create Build Environment
       shell: bash
       env:
@@ -643,13 +643,13 @@ jobs:
       uses: actions/cache@v3
       with:
         path: ./mdk/external
-        key: external-dep-${{ env.TARGET_OS }}-${{ env.CRT_EXTRA }}-ffmpeg-${{ env.FF_VER }}-${{ secrets.FF_SDK_ID }}-dav1d${{ secrets.DAV1D_ID }}
+        key: external-dep-${{ env.TARGET_OS }}-${{ env.CRT_EXTRA }}-ffmpeg-${{ env.FF_VER }}-${{ vars.FF_SDK_ID }}-dav1d${{ vars.DAV1D_ID }}
     - name: 'Restore VC-LTL cache'
       id: ltl-cache
       uses: actions/cache@v3
       with:
         path: ./mdk/cmake/VC-LTL
-        key: ltl-${{ env.VC_LTL_VER }}
+        key: ltl-${{ vars.VC_LTL_VER }}
     - if: ${{ steps.ltl-cache.outputs.cache-hit != 'true' }}
       name: Get VC-LTL
       shell: bash
@@ -726,7 +726,7 @@ jobs:
       uses: actions/cache@v3
       with:
         path: ./mdk/external
-        key: external-dep-${{ env.TARGET_OS }}-ffmpeg-${{ env.FF_VER }}-${{ secrets.FF_SDK_ID }}-dav1d${{ secrets.DAV1D_ID }}
+        key: external-dep-${{ env.TARGET_OS }}-ffmpeg-${{ env.FF_VER }}-${{ vars.FF_SDK_ID }}-dav1d${{ vars.DAV1D_ID }}
     - name: Create Build Environment
       shell: bash
       env:
@@ -810,13 +810,13 @@ jobs:
       uses: actions/cache@v3
       with:
         path: ./mdk/external
-        key: external-dep-${{ env.TARGET_OS }}-ffmpeg-${{ env.FF_VER }}-${{ secrets.FF_SDK_ID }}-dav1d${{ secrets.DAV1D_ID }}
+        key: external-dep-${{ env.TARGET_OS }}-ffmpeg-${{ env.FF_VER }}-${{ vars.FF_SDK_ID }}-dav1d${{ vars.DAV1D_ID }}
     - name: 'Restore sysroot cache'
       id: sysroot-cache
       uses: actions/cache@v3
       with:
         path: /tmp/winsysroot
-        key: sysroot-${{ env.TARGET_OS }}${{ secrets.WINSDKVER }}-vc${{ secrets.VCVER }}
+        key: sysroot-${{ env.TARGET_OS }}${{ vars.WINSDKVER }}-vc${{ vars.VCVER }}
     - name: Create Build Environment
       shell: bash
       env:
@@ -824,7 +824,9 @@ jobs:
         SYSROOT_CACHE_HIT: ${{ steps.sysroot-cache.outputs.cache-hit }}
         EXTERNAL_DEP_CACHE_HIT: ${{ steps.external-dep-cache.outputs.cache-hit }}
       working-directory: mdk
-      run: ../ci-before-build.sh
+      run: |
+        sudo apt remove -y libc++1-14 libc++abi1-14 libunwind-14 python3-lldb-14 # conflict with latest llvm
+        ../ci-before-build.sh
     - name: Configure for win arm64
       shell: bash
       env:
@@ -912,13 +914,13 @@ jobs:
       uses: actions/cache@v3
       with:
         path: ./mdk/external
-        key: external-dep-${{ env.TARGET_OS }}-ffmpeg-${{ env.FF_VER }}-${{ secrets.FF_SDK_ID }}-dav1d${{ secrets.DAV1D_ID }}
+        key: external-dep-${{ env.TARGET_OS }}-ffmpeg-${{ env.FF_VER }}-${{ vars.FF_SDK_ID }}-dav1d${{ vars.DAV1D_ID }}
     - name: 'Restore sysroot cache'
       id: sysroot-cache
       uses: actions/cache@v3
       with:
         path: /tmp/winsysroot
-        key: sysroot-${{ env.TARGET_OS }}${{ secrets.WINSDKVER }}-vc${{ secrets.VCVER }}
+        key: sysroot-${{ env.TARGET_OS }}${{ vars.WINSDKVER }}-vc${{ vars.VCVER }}
     - name: Create Build Environment
       shell: bash
       env:
@@ -926,7 +928,9 @@ jobs:
         SYSROOT_CACHE_HIT: ${{ steps.sysroot-cache.outputs.cache-hit }}
         EXTERNAL_DEP_CACHE_HIT: ${{ steps.external-dep-cache.outputs.cache-hit }}
       working-directory: mdk
-      run: ../ci-before-build.sh
+      run: |
+        sudo apt remove -y libc++1-14 libc++abi1-14 libunwind-14 python3-lldb-14 # conflict with latest llvm
+        ../ci-before-build.sh
     - name: Configure for UWP arm
       if: ${{ matrix.config == 'Release' || matrix.config == 'MinSizeRel' }}
       shell: bash
@@ -995,7 +999,7 @@ jobs:
       uses: actions/download-artifact@v3
       with:
         name: mdk-sdk-vs2022-windows-desktop-MinSizeRel
-    - name: Download win32 vs2022 sdk
+    - name: Download win32 vs2022 ltl sdk
       uses: actions/download-artifact@v3
       with:
         name: mdk-sdk-vs2022-ltl-windows-desktop-MinSizeRel
@@ -1058,13 +1062,13 @@ jobs:
       uses: actions/cache@v3
       with:
         path: ./mdk/external
-        key: external-dep-${{ env.TARGET_OS }}-ffmpeg-${{ env.FF_VER }}-${{ secrets.FF_SDK_ID }}-dav1d${{ secrets.DAV1D_ID }}
+        key: external-dep-${{ env.TARGET_OS }}-ffmpeg-${{ env.FF_VER }}-${{ vars.FF_SDK_ID }}-dav1d${{ vars.DAV1D_ID }}
     - name: 'Restore sysroot cache'
       id: sysroot-cache
       uses: actions/cache@v3
       with:
         path: ./mdk/sysroot
-        key: sysroot-${{ env.TARGET_OS }}-${{ secrets.LINUX_SYSROOT_ID }}
+        key: sysroot-${{ env.TARGET_OS }}-${{ vars.LINUX_SYSROOT_ID }}
     - name: Create Build Environment
       shell: bash
       env:
@@ -1072,7 +1076,9 @@ jobs:
         SYSROOT_CACHE_HIT: ${{ steps.sysroot-cache.outputs.cache-hit }}
         EXTERNAL_DEP_CACHE_HIT: ${{ steps.external-dep-cache.outputs.cache-hit }}
       working-directory: mdk
-      run: ../ci-before-build.sh
+      run: |
+        sudo apt remove -y libc++1-14 libc++abi1-14 libunwind-14 python3-lldb-14 # conflict with latest llvm
+        ../ci-before-build.sh
     - name: Configure for x64
       env:
         ARCH: amd64
@@ -1149,7 +1155,7 @@ jobs:
       uses: actions/cache@v3
       with:
         path: ./mdk/external
-        key: external-dep-${{ env.TARGET_OS }}-ffmpeg-${{ env.FF_VER }}-${{ secrets.FF_SDK_ID }}-dav1d${{ secrets.DAV1D_ID }}
+        key: external-dep-${{ env.TARGET_OS }}-ffmpeg-${{ env.FF_VER }}-${{ vars.FF_SDK_ID }}-dav1d${{ vars.DAV1D_ID }}
     - name: Create Build Environment
       shell: bash
       env:

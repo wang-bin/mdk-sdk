@@ -1,4 +1,3 @@
-LLVER=${LLVM_VER:-16}
 ls -lh build/${TARGET_OS}*
 if [ -f build/${TARGET_OS}/libmdk.so ]; then
   readelf -d build/${TARGET_OS}/libmdk.so
@@ -21,7 +20,7 @@ for s in build/${TARGET_OS}-*; do
   fi
 done
 find mdk-sdk* -name "*.a" -delete
-: ${STRIP:=llvm-strip-$LLVER}
+: ${STRIP:=llvm-strip}
 [ "$TARGET_OS" == "macOS" ] && STRIP=strip
 which $STRIP && find mdk-sdk*/bin -executable -type f -exec $STRIP {} \;
 export XZ_OPT="--threads=`getconf _NPROCESSORS_ONLN`" # -9e. -8/9 will disable mt?

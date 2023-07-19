@@ -1,4 +1,3 @@
-LLVER=${LLVM_VER:-16}
 NDK_HOST=linux
 FF_EXTRA=-clang
 FFPKG_EXT=tar.xz
@@ -25,14 +24,13 @@ if [ `which dpkg` ]; then # TODO: multi arch
     pkgs="sshpass cmake ninja-build p7zip-full"
     #wget https://apt.llvm.org/llvm.sh
     if [[ "$TARGET_OS" != android ]]; then
-      pkgs+=" lld-$LLVER clang-tools-$LLVER" # clang-tools: clang-cl
         #bash -c "$(wget -O - https://apt.llvm.org/llvm.sh)"
         wget https://apt.llvm.org/llvm.sh
         chmod +x llvm.sh
-        sudo ./llvm.sh ${LLVM_VER}
+        sudo ./llvm.sh ${LLVM_VER} all
     fi
     if [ "$TARGET_OS" == "linux" ]; then
-        pkgs+=" libc++-$LLVER-dev libc++abi-$LLVER-dev libegl1-mesa-dev libgles2-mesa-dev libgl1-mesa-dev libgbm-dev libx11-dev libwayland-dev libasound2-dev libopenal-dev libpulse-dev libva-dev libvdpau-dev libglfw3-dev libsdl2-dev"
+        pkgs+=" libegl1-mesa-dev libgles2-mesa-dev libgl1-mesa-dev libgbm-dev libx11-dev libwayland-dev libasound2-dev libopenal-dev libpulse-dev libva-dev libvdpau-dev libglfw3-dev libsdl2-dev"
     elif [ "$TARGET_OS" == "sunxi" -o "$TARGET_OS" == "raspberry-pi" ]; then
         pkgs+=" binutils-arm-linux-gnueabihf"
     fi
