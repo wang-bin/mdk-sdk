@@ -274,7 +274,7 @@ jobs:
     - name: Configure CMake
       shell: bash
       working-directory: mdk
-      run: cmake -GNinja -DUSE_LTO=thin -DCMAKE_SYSTEM_NAME=iOS -DCMAKE_OSX_ARCHITECTURES="x86_64" -DCMAKE_OSX_DEPLOYMENT_TARGET=8.0 -DCMAKE_XCODE_ATTRIBUTE_ONLY_ACTIVE_ARCH=NO -DCMAKE_IOS_INSTALL_COMBINED=YES -DCMAKE_OSX_SYSROOT=iphonesimulator  -Bbuild/${TARGET_OS} -DCMAKE_BUILD_TYPE=${{ matrix.config }} -DCMAKE_INSTALL_PREFIX=$PWD/mdk-sdk -DCMAKE_VERBOSE_MAKEFILE=1 -DFFMPEG_EMBED=1 # FFMPEG_EMBED=0 to copy libffmpeg.5.dylib
+      run: cmake -GNinja -DUSE_LTO=thin -DCMAKE_SYSTEM_NAME=iOS -DCMAKE_OSX_ARCHITECTURES="x86_64;arm64" -DCMAKE_OSX_DEPLOYMENT_TARGET=8.0 -DCMAKE_XCODE_ATTRIBUTE_ONLY_ACTIVE_ARCH=NO -DCMAKE_IOS_INSTALL_COMBINED=YES -DCMAKE_OSX_SYSROOT=iphonesimulator  -Bbuild/${TARGET_OS} -DCMAKE_BUILD_TYPE=${{ matrix.config }} -DCMAKE_INSTALL_PREFIX=$PWD/mdk-sdk -DCMAKE_VERBOSE_MAKEFILE=1 -DFFMPEG_EMBED=1 # FFMPEG_EMBED=0 to copy libffmpeg.5.dylib
     - name: Build
       shell: bash
       working-directory: mdk
