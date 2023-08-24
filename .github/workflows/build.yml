@@ -367,7 +367,8 @@ jobs:
         # ensure bin/* can Find mdk and ffmpeg
         ln -sf ${mdkfw/mdk-sdk/..}/mdk.framework mdk-sdk/Frameworks
         ln -sf ../Frameworks/mdk.framework/Headers mdk-sdk/include/mdk
-        tar Jcvf mdk-sdk-apple.tar.xz mdk-sdk
+        # pod requires a file in tarball
+        tar Jcvf mdk-sdk-apple.tar.xz mdk-sdk README.md
         7z a mdk-sdk-apple.zip mdk-sdk
         tar Jcvf mdk-sdk-macOS.tar.xz -C macOS .
         cd macOS
