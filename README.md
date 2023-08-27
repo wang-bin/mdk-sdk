@@ -15,7 +15,7 @@
 - [0-copy GPU rendering for all platforms and all renderers(Vulkan is WIP.)](https://github.com/wang-bin/mdk-sdk/wiki/Zero-Copy-Renderer)
 - [Dynamic OpenGL](https://github.com/wang-bin/mdk-sdk/wiki/OpenGL-Support-Matrix)
 - [OpenGL, D3D11, D3D12, Vulkan and Metal rendering w/ or w/o user provided context](https://github.com/wang-bin/mdk-sdk/wiki/Render-API)
-- Integrated with any platform native ui apps, gui toolkits or other apps via [OpenGL, D3D11/12, Vulkan and Metal](https://github.com/wang-bin/mdk-sdk/wiki/Render-API) ([OBS](https://github.com/wang-bin/obs-mdk), [Flutter](https://github.com/wang-bin/fvp), [Qt](https://github.com/wang-bin/mdk-examples/tree/master/Qt), [SDL](https://github.com/wang-bin/mdk-examples/tree/master/SDL), [GLFW](https://github.com/wang-bin/mdk-examples/tree/master/GLFW), [SFML](https://github.com/wang-bin/mdk-examples/tree/master/SFML) etc.) easily
+- Integrated with any platform native ui apps, gui toolkits or other apps via [OpenGL, D3D11/12, Vulkan and Metal](https://github.com/wang-bin/mdk-sdk/wiki/Render-API) ([OBS](https://github.com/wang-bin/obs-mdk), [Flutter](https://pub.dev/packages/fvp), [Qt](https://github.com/wang-bin/mdk-examples/tree/master/Qt), [SDL](https://github.com/wang-bin/mdk-examples/tree/master/SDL), [GLFW](https://github.com/wang-bin/mdk-examples/tree/master/GLFW), [SFML](https://github.com/wang-bin/mdk-examples/tree/master/SFML) etc.) easily
 - [HDR display, HDR to SDR and SDR to HDR tone mapping](https://github.com/wang-bin/mdk-sdk/wiki/Player-APIs#player-setcolorspace-value-void-vo_opaque--nullptr)
 - [Seamless/Gapless media and bitrate switch for any media](https://github.com/wang-bin/mdk-sdk/wiki/Player-APIs#player-setcolorspace-value-void-vo_opaque--nullptr)
 - Optimized Continuous seeking. As fast as mpv, but much lower cpu, memory and gpu load. Suitable for [timeline preview](https://github.com/wang-bin/mdk-sdk/wiki/Typical-Usage#timeline-preview)
@@ -79,7 +79,8 @@ Install via [NuGet](https://www.nuget.org/packages/mdk) in Visual Studio for bot
 - [as a qtmultimedia plugin](https://github.com/wang-bin/qtmultimedia-plugins-mdk)
 
 ### Language Bindings
-- [swift binding](https://github.com/wang-bin/mdkSwift)
+- [Swift binding](https://github.com/wang-bin/mdkSwift)
+- [Flutter/Dart](https://pub.dev/packages/fvp)
 
 ## Sponsors
 [![Sportimization](https://www.sportimization.com/assets/images/logo_sportimization_small.png)](https://www.sportimization.com)
@@ -106,8 +107,11 @@ Install via [NuGet](https://www.nuget.org/packages/mdk) in Visual Studio for bot
 
 ## License
 
-- Use for free: make sure your sdk is updated, otherwise you may see an QR image in the last frame. sdk will be released every month.
-- Free for opensource projects, QtAV donors and contributors, non-commercial softwares: you can acquire a key from me.
-- Commercial license: a key for an app for a single platform or multiple platforms.
+- Free for opensource projects, QtAV donors and contributors: you can acquire a key from me. Can be commercial software
+- Free for [Flutter](https://pub.dev/packages/fvp) users. A key is already included. Can be commercial softwares.
+- Free for other non-commercial users: you can acquire a key from me.
+- Commercial license for other users: a key for an app for a single platform or multiple platforms.
+- Other users without a key: make sure your sdk is updated, otherwise you may see an QR image in the last frame.
+
 
 License key generator and validator is [open source](https://github.com/wang-bin/appkey)
