@@ -369,10 +369,7 @@ jobs:
         ln -sf ../Frameworks/mdk.framework/Headers mdk-sdk/include/mdk
         # pod requires a file in tarball
         tar Jcvf mdk-sdk-apple.tar.xz mdk-sdk README.md
-        7z a mdk-sdk-apple.zip mdk-sdk
         tar Jcvf mdk-sdk-macOS.tar.xz -C macOS .
-        cd macOS
-        7z a ../mdk-sdk-macOS.zip mdk-sdk
     - name: Archieve XCFramework SDK
       uses: actions/upload-artifact@v3
       with:
@@ -1135,7 +1132,7 @@ jobs:
     env:
       TARGET_OS: android
       LTO_SUFFIX: -lto
-      MIN_API: 16
+      MIN_API: 19 # android 4.4. ndk25
     strategy:
       fail-fast: false
       matrix:
@@ -1168,6 +1165,7 @@ jobs:
     - name: Configure for armeabi-v7a
       env:
         ARCH: armeabi-v7a
+        # TODO: MIN_API: 19, ndk 25
       shell: bash
       working-directory: mdk
       run: cmake -DUSE_LTO=thin -DANDROID_LD=lld -DANDROID_ABI=${ARCH} -DANDROID_PLATFORM=android-${MIN_API} -DANDROID_TOOLCHAIN=clang -DANDROID_STL=c++_shared -DANDROID_PIE=ON -DCMAKE_TOOLCHAIN_FILE=$ANDROID_NDK_LATEST_HOME/build/cmake/android.toolchain.cmake -GNinja -H$PWD -B$PWD/build/${TARGET_OS}-${ARCH} -DCMAKE_BUILD_TYPE=${{ matrix.config }} -DCMAKE_INSTALL_PREFIX=$PWD/mdk-sdk-${ARCH} -DCMAKE_VERBOSE_MAKEFILE=1
@@ -1191,7 +1189,8 @@ jobs:
     - name: Configure for x86
       env:
         ARCH: x86
-      shell: bash
+        # TODO: MIN_API: 16, ndk 25 $ANDROID_HOME/ndk/25.2.9519653  https://github.com/actions/runner-images/blob/main/images/linux/Ubuntu2204-Readme.md
+        shell: bash
       working-directory: mdk
       run: cmake -DUSE_LTO=thin -DANDROID_LD=lld -DANDROID_ABI=${ARCH} -DANDROID_PLATFORM=android-${MIN_API} -DANDROID_TOOLCHAIN=clang -DANDROID_STL=c++_shared -DANDROID_PIE=ON -DCMAKE_TOOLCHAIN_FILE=$ANDROID_NDK_LATEST_HOME/build/cmake/android.toolchain.cmake -GNinja -H$PWD -B$PWD/build/${TARGET_OS}-${ARCH} -DCMAKE_BUILD_TYPE=${{ matrix.config }} -DCMAKE_INSTALL_PREFIX=$PWD/mdk-sdk-${ARCH} -DCMAKE_VERBOSE_MAKEFILE=1
     - name: Build for x86
