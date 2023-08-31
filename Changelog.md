@@ -1,5 +1,41 @@
 Change log:
 
+## 0.22.0 - 2023-08-31
+
+- Add `Player.onMediaStatus(MediaStatus oldValue, MediaStatus newValue)` to simplify user code. `Player.onMediaStatusChanged` is deprecated.
+- Add player property `avformat.xxx`, `avio.xxx` as as ffmpeg demuxer/io options
+- C api module is opensource: https://github.com/wang-bin/libmdk-capi
+- If `keep_open` property is set, state changes to `State::Paused` when reach EOS. Also reduce cpu load
+- Android:
+    - Fix x86 relocation
+    - Fix planar formats in OpenSL
+- MFT:
+    - Support DV video codec
+    - Continue if no attributes
+- OpenGL: Fix crash if failed to create a context, found in flutter android example
+- VAAPI: Flush before seek, fix invalid surface id and crash
+- VDPAU:
+    - Interop with output surface by default if not nvidia to workaround hevc crash on amd gpus.
+    - Prefer interop2 extension
+- BRAW:
+    - Support build with sdk version 2 and 3
+    - Fix 0-copu glitch
+    - Dead lock before unloaded
+- FFmpeg:
+    - hw decoders do not fallback to sw decoder by default, so can correctly switch to the next decoders set in `setDecoders()`. property `sw_fallback=1` to use old behavior
+    - Use single thread for hwdec when possible
+    - Stop decoding ASAP if hwdec, fix multi-thread hwdec crash on unsupported GPUs, e.g. MX940
+- Fix 'file://' on windows
+- Fix frames drop in decoders
+- Fix loop does not work if audio duration is much smaller than video
+- Fix seek may fail if audio duration is much smaller than video
+- Fix seek callbacks not called
+- Fix `prepare()` fails if previous playback is not finished
+- Fix prepare callback is not called if demuxer open error
+- Fix seek error for a music with cover art
+- Fix crash if unsupported track type is read
+
+
 ## 0.21.1 - 2023-06-30
 
 - Fix loop fails in some ranges

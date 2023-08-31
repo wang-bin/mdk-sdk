@@ -18,7 +18,7 @@
 
 ## About SDK for Windows Store
 SDK is built by
-- clang-cl 16.0, with Windows SDK 10.0.19041.0, MSVC CRT 14.28.29333, [FFmpeg](https://sourceforge.net/projects/avbuild/files/uwp/ffmpeg-master-uwp-vs2022-lite.tar.xz/download)
+- clang-cl 17, with Windows SDK 10.0.19041.0, MSVC CRT 14.28.29333, [FFmpeg](https://sourceforge.net/projects/avbuild/files/uwp/ffmpeg-master-uwp-vs2022-lite.tar.xz/download)
 - latest VS2022 with [FFmpeg](https://sourceforge.net/projects/avbuild/files/uwp/ffmpeg-master-uwp-vs2022-lite.tar.xz/download)
 
 ### Use in Visual Studio
@@ -66,4 +66,4 @@ Optional:
 - [R3D RAW](https://github.com/wang-bin/mdk-r3d)
 
 Copyright (c) 2016-2023 WangBin(the author of QtAV) <wbsecg1 at gmail.com>
-Free for opensource softwares, non-commercial softwares, QtAV donors and contributors.
+Free for opensource softwares, non-commercial softwares, flutter, QtAV donors and contributors.

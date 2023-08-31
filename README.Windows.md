@@ -21,7 +21,7 @@
 
 ## About SDK for Windows Desktop
 SDK is built by
-- clang-cl 16.0, with Windows SDK 10.0.19041.0, MSVC CRT 14.28.29333, [FFmpeg](https://sourceforge.net/projects/avbuild/files/windows-store/ffmpeg-master-windows-desktop-vs2022-lite.tar.xz/download)
+- clang-cl 17, with Windows SDK 10.0.19041.0, MSVC CRT 14.28.29333, [FFmpeg](https://sourceforge.net/projects/avbuild/files/windows-store/ffmpeg-master-windows-desktop-vs2022-lite.tar.xz/download)
 - latest VS2022 with [FFmpeg](https://sourceforge.net/projects/avbuild/files/windows-store/ffmpeg-master-windows-desktop-vs2022-lite.tar.xz/download)
 
 SDK can be used by any C or C++11 compiler, e.g. vs2015, vs2022, mingw g++, clang
@@ -95,4 +95,4 @@ N videos renderers for 1 player: multiwidnows url
 
 
 Copyright (c) 2016-2023 WangBin(the author of QtAV) <wbsecg1 at gmail.com>
-Free for opensource softwares, non-commercial softwares, QtAV donors and contributors.
+Free for opensource softwares, non-commercial softwares, flutter, QtAV donors and contributors.

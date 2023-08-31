@@ -20,11 +20,11 @@
 - Professional codecs: GPU accelerated [HAP](https://github.com/wang-bin/mdk-sdk/wiki/Decoders#hap) codec rendering, [Blackmagic RAW](https://github.com/wang-bin/mdk-sdk/wiki/Decoders#braw), [R3D](https://github.com/wang-bin/mdk-sdk/wiki/Decoders#r3d)
 
 ## About SDK for Legacy Raspberry Pi
-SDK is cross built by clang 16.0 with
+SDK is cross built by clang 17 with
 - cmake toolchain file https://github.com/wang-bin/cmake-tools/blob/master/raspberry-pi.clang.cmake
 - sysroot: https://sourceforge.net/projects/avbuild/files/raspberry-pi/raspberry-pi-sysroot.tar.xz/download
 - ffmpeg: https://sourceforge.net/projects/avbuild/files/raspberry-pi/ffmpeg-master-raspberry-pi-clang-lite.tar.xz/download
-- libc++ 16.0
+- libc++ 17
 
 SDK can be used by any C or C++11 compiler, e.g. g++, clang
 
@@ -73,4 +73,4 @@ Tested on rpi1 and rpi3.
 - [dav1d decoder module](https://github.com/wang-bin/mdk-dav1d)
 
 Copyright (c) 2016-2023 WangBin(the author of QtAV) <wbsecg1 at gmail.com>
-Free for opensource softwares, non-commercial softwares, QtAV donors and contributors.
+Free for opensource softwares, non-commercial softwares, flutter, QtAV donors and contributors.

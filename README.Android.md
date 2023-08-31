@@ -63,4 +63,4 @@ MediaCodec/AMediaCodec decoder will not be destroyed if app go to background, an
 - [JNI Modern Interface](https://github.com/wang-bin/JMI)
 
 Copyright (c) 2016-2023 WangBin(the author of QtAV) <wbsecg1 at gmail.com>
-Free for opensource softwares, non-commercial softwares, QtAV donors and contributors.
+Free for opensource softwares, non-commercial softwares, flutter, QtAV donors and contributors.

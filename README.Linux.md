@@ -18,9 +18,9 @@
 
 
 ## About SDK for Linux
-SDK is built by clang 16.0 with
+SDK is built by clang 17 with
 - ffmpeg: https://sourceforge.net/projects/avbuild/files/linux/ffmpeg-master-linux-clang-lite.tar.xz/download
-- libc++ 16.0
+- libc++ 17
 
 SDK can be used by any C or C++11 compiler, e.g. g++, clang
 
@@ -98,4 +98,4 @@ N videos renderers for 1 player: multiwidnows url
 - [R3D RAW](https://github.com/wang-bin/mdk-r3d)
 
 Copyright (c) 2016-2023 WangBin(the author of QtAV) <wbsecg1 at gmail.com>
-Free for opensource softwares, non-commercial softwares, QtAV donors and contributors.
+Free for opensource softwares, non-commercial softwares, flutter, QtAV donors and contributors.
