@@ -735,18 +735,6 @@ jobs:
     - uses: seanmiddleditch/gha-setup-ninja@master
     - uses: ilammy/msvc-dev-cmd@v1
       with:
-        arch: amd64_arm
-        uwp: true
-    - name: Configure for uwp arm
-      env:
-        ARCH: arm
-      working-directory: mdk
-      run: cmake -DUSE_LTO=1 -DCMAKE_SYSTEM_PROCESSOR=${{ env.ARCH }} -GNinja -DCMAKE_SYSTEM_NAME=WindowsStore -DCMAKE_SYSTEM_VERSION="10.0"  -Bbuild/${{ env.TARGET_OS }}-${{ env.ARCH }} -DCMAKE_BUILD_TYPE=${{ matrix.config }} -DCMAKE_INSTALL_PREFIX=mdk-sdk-${{ env.ARCH }} -DCMAKE_VERBOSE_MAKEFILE=1 .
-    - name: Build for win arm
-      working-directory: mdk
-      run: cmake --build build/${{ env.TARGET_OS }}-arm
-    - uses: ilammy/msvc-dev-cmd@v1
-      with:
         arch: amd64_arm64
         uwp: true
     - name: Configure for uwp arm64
@@ -887,6 +875,7 @@ jobs:
 
 
   UWP_clang:
+    if: false
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
