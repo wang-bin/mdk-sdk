@@ -38,7 +38,7 @@ if [ `which dpkg` ]; then # TODO: multi arch
 elif [ `which brew` ]; then
     #time brew update --preinstall
     export HOMEBREW_NO_AUTO_UPDATE=1
-    pkgs="p7zip ninja vulkan-headers dav1d" #
+    pkgs="p7zip ninja vulkan-headers dav1d gnu-tar" #
     if [[ "$DEVTOOLS_CACHE_HIT" != "true" ]]; then
         pkgs+=" hudochenkov/sshpass/sshpass"
     fi

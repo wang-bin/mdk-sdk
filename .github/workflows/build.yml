@@ -68,13 +68,13 @@ jobs:
       working-directory: mdk
       run: |
         pwd
-        cmake -DWITH_X11=1 -DR3DSDK=$PWD/external/R3DSDK -DCMAKE_OSX_DEPLOYMENT_TARGET=10.9 -GNinja -Bbuild/${TARGET_OS} -DCMAKE_VERBOSE_MAKEFILE=1 -DCMAKE_BUILD_TYPE=${{ matrix.config }} -DCMAKE_INSTALL_PREFIX=$PWD/mdk-sdk # no dSYM for lto, dsymutil: no debug symbols in executable (-arch x86_64)
+        cmake -DMIN_SIZE=1 -DWITH_X11=1 -DR3DSDK=$PWD/external/R3DSDK -DCMAKE_OSX_DEPLOYMENT_TARGET=10.9 -GNinja -Bbuild/${TARGET_OS} -DCMAKE_VERBOSE_MAKEFILE=1 -DCMAKE_BUILD_TYPE=${{ matrix.config }} -DCMAKE_INSTALL_PREFIX=$PWD/mdk-sdk # no dSYM for lto, dsymutil: no debug symbols in executable (-arch x86_64)
     - name: Configure CMake
       if: ${{ startsWith(matrix.arch, 'arm64') }} # arm64, arm64e
       shell: bash
       working-directory: mdk
       run: |
-        cmake -DR3DSDK=$PWD/external/R3DSDK -DCMAKE_OSX_DEPLOYMENT_TARGET=11.0 -GNinja -DCMAKE_OSX_ARCHITECTURES=${{ matrix.arch }} -Bbuild/${TARGET_OS} -DCMAKE_VERBOSE_MAKEFILE=1 -DCMAKE_BUILD_TYPE=${{ matrix.config }} -DCMAKE_INSTALL_PREFIX=$PWD/mdk-sdk # no dSYM for lto, dsymutil: no debug symbols in executable (-arch x86_64)
+        cmake -DMIN_SIZE=1 -DR3DSDK=$PWD/external/R3DSDK -DCMAKE_OSX_DEPLOYMENT_TARGET=11.0 -GNinja -DCMAKE_OSX_ARCHITECTURES=${{ matrix.arch }} -Bbuild/${TARGET_OS} -DCMAKE_VERBOSE_MAKEFILE=1 -DCMAKE_BUILD_TYPE=${{ matrix.config }} -DCMAKE_INSTALL_PREFIX=$PWD/mdk-sdk # no dSYM for lto, dsymutil: no debug symbols in executable (-arch x86_64)
     - name: Build
       shell: bash
       working-directory: mdk
@@ -91,7 +91,7 @@ jobs:
         name: mdk-sdk-${{ env.TARGET_OS }}-${{ matrix.arch}}-${{ matrix.config }}
         path: mdk-sdk-${{ env.TARGET_OS }}-${{ matrix.arch}}.tar.xz
     - name: Upload to SourceForge
-      if: ${{ matrix.config == 'MinSizeRel' && matrix.arch == 'x86_64' }}
+      if: ${{ matrix.config == 'RelWithDebInfo' && matrix.arch == 'x86_64' }}
       shell: bash
       run: |
         sshpass -p ${SF_PW} scp -o StrictHostKeyChecking=no mdk-sdk-${TARGET_OS}-${{ matrix.arch }}.tar.xz ${SF_USER}@frs.sourceforge.net:/home/frs/project/mdk-sdk/nightly/
@@ -141,7 +141,7 @@ jobs:
       # access regardless of the host operating system
       shell: bash
       working-directory: mdk
-      run: cmake -GNinja -DCMAKE_TOOLCHAIN_FILE=$PWD/cmake/tools/macCatalyst.cmake -DUSE_BITCODE=0 -DCMAKE_OSX_ARCHITECTURES="x86_64;arm64"  -Bbuild/${TARGET_OS} -DCMAKE_VERBOSE_MAKEFILE=1 -DCMAKE_BUILD_TYPE=${{ matrix.config }} -DCMAKE_INSTALL_PREFIX=$PWD/mdk-sdk # no dSYM for lto, dsymutil: no debug symbols in executable (-arch x86_64)
+      run: cmake -GNinja -DMIN_SIZE=1 -DUSE_LTO=0 -DCMAKE_TOOLCHAIN_FILE=$PWD/cmake/tools/macCatalyst.cmake -DUSE_BITCODE=0 -DCMAKE_OSX_ARCHITECTURES="x86_64;arm64"  -Bbuild/${TARGET_OS} -DCMAKE_VERBOSE_MAKEFILE=1 -DCMAKE_BUILD_TYPE=${{ matrix.config }} -DCMAKE_INSTALL_PREFIX=$PWD/mdk-sdk # no dSYM for lto, dsymutil: no debug symbols in executable (-arch x86_64)
     - name: Build
       shell: bash
       working-directory: mdk
@@ -203,7 +203,7 @@ jobs:
     - name: Configure CMake
       shell: bash
       working-directory: mdk
-      run: cmake -GNinja -DWITH_DEB_INFO=0 -DUSE_LTO=thin -DCMAKE_TOOLCHAIN_FILE=$PWD/cmake/tools/ios.cmake -DIOS_DEPLOYMENT_TARGET=8.0 -DIOS_ARCH="arm64" -DIOS_BITCODE=0  -Bbuild/${TARGET_OS} -DCMAKE_BUILD_TYPE=${{ matrix.config }} -DCMAKE_INSTALL_PREFIX=$PWD/mdk-sdk -DCMAKE_VERBOSE_MAKEFILE=1 -DFFMPEG_EMBED=1 # FFMPEG_EMBED=0 to copy libffmpeg.5.dylib
+      run: cmake -GNinja -DMIN_SIZE=1 -DWITH_DEB_INFO=1 -DCMAKE_TOOLCHAIN_FILE=$PWD/cmake/tools/ios.cmake -DIOS_DEPLOYMENT_TARGET=8.0 -DIOS_ARCH="arm64" -DIOS_BITCODE=0  -Bbuild/${TARGET_OS} -DCMAKE_BUILD_TYPE=${{ matrix.config }} -DCMAKE_INSTALL_PREFIX=$PWD/mdk-sdk -DCMAKE_VERBOSE_MAKEFILE=1 -DFFMPEG_EMBED=1 # FFMPEG_EMBED=0 to copy libffmpeg.5.dylib
     - name: Build
       shell: bash
       working-directory: mdk
@@ -222,7 +222,7 @@ jobs:
         if [ -f "$libass" ]; then
           lipo -thin arm64 "$libass" -output "$libass"
         fi
-        tar Jcfv mdk-sdk-$TARGET_OS.tar.xz mdk-sdk
+        gtar Jcfv mdk-sdk-$TARGET_OS.tar.xz mdk-sdk
         mv mdk-sdk*.tar.xz ..
     - name: Archieve SDK
       uses: actions/upload-artifact@v3
@@ -230,7 +230,6 @@ jobs:
         name: mdk-sdk-${{ env.TARGET_OS }}-${{ matrix.config }}
         path: mdk-sdk-${{ env.TARGET_OS }}.tar.xz
     - name: Upload to SourceForge
-      if: ${{ matrix.config == 'MinSizeRel' }}
       shell: bash
       run: sshpass -p ${SF_PW} scp -o StrictHostKeyChecking=no mdk-sdk-${TARGET_OS}.tar.xz ${SF_USER}@frs.sourceforge.net:/home/frs/project/mdk-sdk/nightly/
 
@@ -274,7 +273,7 @@ jobs:
     - name: Configure CMake
       shell: bash
       working-directory: mdk
-      run: cmake -GNinja -DUSE_LTO=thin -DCMAKE_SYSTEM_NAME=iOS -DCMAKE_OSX_ARCHITECTURES="x86_64;arm64" -DCMAKE_OSX_DEPLOYMENT_TARGET=8.0 -DCMAKE_XCODE_ATTRIBUTE_ONLY_ACTIVE_ARCH=NO -DCMAKE_IOS_INSTALL_COMBINED=YES -DCMAKE_OSX_SYSROOT=iphonesimulator  -Bbuild/${TARGET_OS} -DCMAKE_BUILD_TYPE=${{ matrix.config }} -DCMAKE_INSTALL_PREFIX=$PWD/mdk-sdk -DCMAKE_VERBOSE_MAKEFILE=1 -DFFMPEG_EMBED=1 # FFMPEG_EMBED=0 to copy libffmpeg.5.dylib
+      run: cmake -GNinja -DMIN_SIZE=1 -DCMAKE_SYSTEM_NAME=iOS -DCMAKE_OSX_ARCHITECTURES="x86_64;arm64" -DCMAKE_OSX_DEPLOYMENT_TARGET=8.0 -DCMAKE_XCODE_ATTRIBUTE_ONLY_ACTIVE_ARCH=NO -DCMAKE_IOS_INSTALL_COMBINED=YES -DCMAKE_OSX_SYSROOT=iphonesimulator  -Bbuild/${TARGET_OS} -DCMAKE_BUILD_TYPE=${{ matrix.config }} -DCMAKE_INSTALL_PREFIX=$PWD/mdk-sdk -DCMAKE_VERBOSE_MAKEFILE=1 -DFFMPEG_EMBED=1 # FFMPEG_EMBED=0 to copy libffmpeg.5.dylib
     - name: Build
       shell: bash
       working-directory: mdk
@@ -293,7 +292,7 @@ jobs:
         if [ -f "$libass" ]; then
           lipo -thin x86_64 "$libass" -output "$libass"
         fi
-        tar Jcfv mdk-sdk-$TARGET_OS.tar.xz mdk-sdk
+        gtar Jcfv mdk-sdk-$TARGET_OS.tar.xz mdk-sdk
         mv mdk-sdk*.tar.xz ..
     - name: Archieve SDK
       uses: actions/upload-artifact@v3
@@ -328,11 +327,11 @@ jobs:
         name: mdk-sdk-macCatalyst-MinSizeRel
     - name: Install tools
       shell: bash
-      run: brew install p7zip hudochenkov/sshpass/sshpass
+      run: brew install p7zip gnu-tar hudochenkov/sshpass/sshpass
     - name: make XCFramework and SDK
       shell: bash
       run: |
-        export XZ_OPT="-9e --threads=`getconf _NPROCESSORS_ONLN`"
+        export XZ_OPT="-9e -T0"
         mkdir -p macOS iOS iOSSimulator macCatalyst mdk-sdk/{Frameworks,include,lib} macOS-arm64 macOS-x86_64
         tar Jxf mdk-sdk-macOS-x86_64.tar.xz -C macOS-x86_64
         tar Jxf mdk-sdk-macOS-arm64.tar.xz -C macOS-arm64
@@ -368,8 +367,8 @@ jobs:
         ln -sf ${mdkfw/mdk-sdk/..}/mdk.framework mdk-sdk/Frameworks
         ln -sf ../Frameworks/mdk.framework/Headers mdk-sdk/include/mdk
         # pod requires a file in tarball
-        tar Jcvf mdk-sdk-apple.tar.xz mdk-sdk README.md
-        tar Jcvf mdk-sdk-macOS.tar.xz -C macOS .
+        gtar Jcvf mdk-sdk-apple.tar.xz mdk-sdk README.md
+        gtar Jcvf mdk-sdk-macOS.tar.xz -C macOS .
     - name: Archieve XCFramework SDK
       uses: actions/upload-artifact@v3
       with:
@@ -463,7 +462,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        config: [MinSizeRel]
+        config: [RelWithDebInfo]
     steps:
     - uses: actions/checkout@v3
     - name: Checkout source
@@ -496,7 +495,7 @@ jobs:
       env:
         ARCH: arm64
       working-directory: mdk
-      run: cmake -DUSE_LTO=1 -DCMAKE_SYSTEM_PROCESSOR=${{ env.ARCH }} -GNinja  -Bbuild/${{ env.TARGET_OS }}-${{ env.ARCH }} -DCMAKE_BUILD_TYPE=${{ matrix.config }} -DCMAKE_INSTALL_PREFIX=mdk-sdk-${{ env.ARCH }} -DCMAKE_VERBOSE_MAKEFILE=1 .
+      run: cmake -DMIN_SIZE=1 -DUSE_LTO=1 -DCMAKE_SYSTEM_PROCESSOR=${{ env.ARCH }} -GNinja  -Bbuild/${{ env.TARGET_OS }}-${{ env.ARCH }} -DCMAKE_BUILD_TYPE=${{ matrix.config }} -DCMAKE_INSTALL_PREFIX=mdk-sdk-${{ env.ARCH }} -DCMAKE_VERBOSE_MAKEFILE=1 .
     - name: Build for win arm64
       working-directory: mdk
       run: cmake --build build/${{ env.TARGET_OS }}-arm64
@@ -508,7 +507,7 @@ jobs:
         ARCH: x86
         R3DSDK: ${{ github.workspace }}/mdk/external/R3DSDK
       working-directory: mdk
-      run: cmake -DR3DSDK=${{ env.R3DSDK }} -DUSE_LTO=1 -DCMAKE_SYSTEM_PROCESSOR=${{ env.ARCH }} -DCMAKE_SYSTEM_VERSION="6.0" -GNinja  -Bbuild/${{ env.TARGET_OS }}-${{ env.ARCH }} -DCMAKE_BUILD_TYPE=${{ matrix.config }} -DCMAKE_INSTALL_PREFIX=mdk-sdk-${{ env.ARCH }} -DCMAKE_VERBOSE_MAKEFILE=1 .
+      run: cmake -DR3DSDK=${{ env.R3DSDK }} -DMIN_SIZE=1 -DUSE_LTO=1 -DCMAKE_SYSTEM_PROCESSOR=${{ env.ARCH }} -DCMAKE_SYSTEM_VERSION="6.0" -GNinja  -Bbuild/${{ env.TARGET_OS }}-${{ env.ARCH }} -DCMAKE_BUILD_TYPE=${{ matrix.config }} -DCMAKE_INSTALL_PREFIX=mdk-sdk-${{ env.ARCH }} -DCMAKE_VERBOSE_MAKEFILE=1 .
     - name: Build for win x86
       working-directory: mdk
       run: cmake --build build/${{ env.TARGET_OS }}-x86
@@ -520,7 +519,7 @@ jobs:
         ARCH: x64
         R3DSDK: ${{ github.workspace }}/mdk/external/R3DSDK
       working-directory: mdk
-      run: cmake -DR3DSDK=${{ env.R3DSDK }} -DUSE_LTO=1 -DCMAKE_SYSTEM_PROCESSOR=${{ env.ARCH }} -DCMAKE_SYSTEM_VERSION="6.0" -GNinja  -Bbuild/${{ env.TARGET_OS }}-${{ env.ARCH }} -DCMAKE_BUILD_TYPE=${{ matrix.config }} -DCMAKE_INSTALL_PREFIX=mdk-sdk-${{ env.ARCH }} -DCMAKE_VERBOSE_MAKEFILE=1 .
+      run: cmake -DR3DSDK=${{ env.R3DSDK }} -DMIN_SIZE=1 -DUSE_LTO=1 -DCMAKE_SYSTEM_PROCESSOR=${{ env.ARCH }} -DCMAKE_SYSTEM_VERSION="6.0" -GNinja  -Bbuild/${{ env.TARGET_OS }}-${{ env.ARCH }} -DCMAKE_BUILD_TYPE=${{ matrix.config }} -DCMAKE_INSTALL_PREFIX=mdk-sdk-${{ env.ARCH }} -DCMAKE_VERBOSE_MAKEFILE=1 .
     - name: Build for win x64
       working-directory: mdk
       run: cmake --build build/${{ env.TARGET_OS }}-x64
@@ -985,7 +984,7 @@ jobs:
     - name: Download win32 vs2022 sdk
       uses: actions/download-artifact@v3
       with:
-        name: mdk-sdk-vs2022-windows-desktop-MinSizeRel
+        name: mdk-sdk-vs2022-windows-desktop-RelWithDebInfo
     - name: Download win32 vs2022 ltl sdk
       uses: actions/download-artifact@v3
       with:
@@ -1003,7 +1002,6 @@ jobs:
         7z x mdk-sdk-windows-desktop-vs2022.7z
         7z x mdk-sdk-uwp-vs2022.7z -o"uwp"
         mkdir mdk-sdk/bin/UAP
-        cp -af uwp/mdk-sdk/lib/arm mdk-sdk/lib
         cp -af uwp/mdk-sdk/bin/* mdk-sdk/bin/UAP
         cp nuget/mdk.nuspec mdk-sdk
         cp -avf nuget/README.md mdk-sdk

@@ -23,12 +23,15 @@ find mdk-sdk* -name "*.a" -delete
 : ${STRIP:=llvm-strip}
 [ "$TARGET_OS" == "macOS" ] && STRIP=strip
 which $STRIP && find mdk-sdk*/bin -executable -type f -exec $STRIP {} \;
-export XZ_OPT="--threads=`getconf _NPROCESSORS_ONLN`" # -9e. -8/9 will disable mt?
+export XZ_OPT="-T0" # -9e. -8/9 will disable mt?
 if [[ "$TARGET_OS" == "win"* || "$TARGET_OS" == "uwp"* || "$TARGET_OS" == "android" ]]; then
   7z a -ssc -m0=lzma2 -mx=9 -ms=on -mf=off mdk-sdk-${TARGET_OS}.7z mdk-sdk
   ls -lh mdk-sdk-${TARGET_OS}.7z
 else
-  tar Jcvf mdk-sdk-${TARGET_OS}.tar.xz mdk-sdk
+  TAR=tar
+# brew install gnu-tar. gtar result is 1/3 much smaller, but 1/2 slower, also no hidden files(GNUSparseFile.0). T0 is 2x faster than bsdtar
+  which gtar && TAR=gtar
+  $TAR Jcvf mdk-sdk-${TARGET_OS}.tar.xz mdk-sdk
   ls -lh mdk-sdk-${TARGET_OS}.tar.xz
 fi
 #if [ `which sshpass` ]; then
