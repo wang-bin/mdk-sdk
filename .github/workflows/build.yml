@@ -23,15 +23,16 @@ jobs:
     env:
       TARGET_OS: 'macOS'
       TARGET_ARCH: ${{ matrix.arch }}
+      LTO_SUFFIX: -lto
     strategy:
       fail-fast: false
       matrix:
         config: [MinSizeRel]
         arch: [x86_64, arm64]
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - name: Checkout source
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         repository: wang-bin/mdk
         path: mdk
@@ -101,14 +102,15 @@ jobs:
     runs-on: macos-latest
     env:
       TARGET_OS: 'macCatalyst'
+      LTO_SUFFIX: -lto
     strategy:
       fail-fast: false
       matrix:
         config: [MinSizeRel]
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - name: Checkout source
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         repository: wang-bin/mdk
         path: mdk
@@ -167,14 +169,15 @@ jobs:
     runs-on: macos-latest
     env:
       TARGET_OS: iOS
+      LTO_SUFFIX: -lto
     strategy:
       fail-fast: false
       matrix:
         config: [MinSizeRel]
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - name: Checkout source
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         repository: wang-bin/mdk
         path: mdk
@@ -237,14 +240,15 @@ jobs:
     runs-on: macos-latest
     env:
       TARGET_OS: iOSSimulator
+      LTO_SUFFIX: -lto
     strategy:
       fail-fast: false
       matrix:
         config: [MinSizeRel]
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - name: Checkout source
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         repository: wang-bin/mdk
         path: mdk
@@ -304,7 +308,7 @@ jobs:
     runs-on: macos-latest
     needs: [macOS, iOS, iOSSimulator, macCatalyst]
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - name: Download macOS sdk
       uses: actions/download-artifact@v3
       with:
@@ -398,9 +402,9 @@ jobs:
       matrix:
         config: [MinSizeRel]
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - name: Checkout source
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         repository: wang-bin/mdk
         path: mdk
@@ -464,9 +468,9 @@ jobs:
       matrix:
         config: [RelWithDebInfo]
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - name: Checkout source
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         repository: wang-bin/mdk
         path: mdk
@@ -557,9 +561,9 @@ jobs:
       matrix:
         config: [RelWithDebInfo,Debug]
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - name: Checkout source
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         repository: wang-bin/mdk
         path: mdk
@@ -625,9 +629,9 @@ jobs:
       matrix:
         config: [MinSizeRel]
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - name: Checkout source
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         repository: wang-bin/mdk
         path: mdk
@@ -708,9 +712,9 @@ jobs:
       matrix:
         config: [MinSizeRel]
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - name: Checkout source
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         repository: wang-bin/mdk
         path: mdk
@@ -780,9 +784,9 @@ jobs:
       matrix:
         config: [MinSizeRel]
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - name: Checkout source
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         repository: wang-bin/mdk
         path: mdk
@@ -885,9 +889,9 @@ jobs:
       VCDIR: '/tmp/winsysroot/msvcrt-dev'
       WINDOWSSDKDIR: '/tmp/winsysroot/winsdk'
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - name: Checkout source
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         repository: wang-bin/mdk
         path: mdk
@@ -980,7 +984,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: [Windows_VS2022, UWP_VS2022]
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - name: Download win32 vs2022 sdk
       uses: actions/download-artifact@v3
       with:
@@ -1032,9 +1036,9 @@ jobs:
       matrix:
         config: [MinSizeRel]
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - name: Checkout source
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         repository: wang-bin/mdk
         path: mdk
@@ -1125,9 +1129,9 @@ jobs:
       matrix:
         config: [MinSizeRel] # https://github.com/android/ndk/issues/721
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - name: Checkout source
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         repository: wang-bin/mdk
         path: mdk
@@ -1220,9 +1224,9 @@ jobs:
   abi:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - name: Checkout source
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         repository: wang-bin/mdk
         path: mdk
