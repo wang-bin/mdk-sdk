@@ -127,10 +127,3 @@ if [[ "$SYSROOT_CACHE_HIT" != "true" ]]; then
     mv /tmp/android-ndk-${NDK_VERSION:-r25b} ${ANDROID_NDK:-/tmp/android-ndk}
   fi
 fi
-
-if [[ "$EXTERNAL_DEP_CACHE_HIT" != "true" ]]; then
-  curl -kL -o dav1d.deb "https://www.deb-multimedia.org/pool/main/d/dav1d-dmo/libdav1d-dev_1.2.1-dmo1_armhf.deb"
-  7z x -y dav1d.deb
-  tar xvf data.tar
-  mv usr/include/dav1d external/include/
-fi

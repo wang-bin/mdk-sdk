@@ -4,7 +4,7 @@
 
 **Download** [Nightly Build SDK](https://sourceforge.net/projects/mdk-sdk/files/nightly/)
 
-[Changelog](https://github.com/wang-bin/mdk-sdk/blob/master/Changelog.md). 
+[Changelog](https://github.com/wang-bin/mdk-sdk/blob/master/Changelog.md).
 [API](https://github.com/wang-bin/mdk-sdk/wiki/Player-APIs)
 
 ## Features
@@ -28,20 +28,27 @@
 
 ### CMake
 
+```cmake
+  include(${MDK_SDK_DIR}/lib/cmake/FindMDK.cmake)
+  target_link_libraries(your_target PRIVATE mdk)
 ```
-	include(mdk-sdk-dir/lib/cmake/FindMDK.cmake)
-	target_link_libraries(your_target PRIVATE mdk)
+
+### Qt qmake
+```qmake
+include($$MDK_SDK_DIR/mdk.pri)
 ```
 
 ### CocoaPods
+```ruby
+pod 'mdk'
+```
 
-> For macOS and iOS
+Optionally you can use [mdk.xcframework](https://sourceforge.net/projects/mdk-sdk/files/nightly/mdk-sdk-apple.tar.xz/download) directly.
 
-` pod 'mdk'`
-
-Optionally you can use [mdk.xcframework](https://sourceforge.net/projects/mdk-sdk/files/nightly/mdk-sdk-apple.tar.xz/download)
-
-If fail to code sign: In `Build Phase`, add a `New Run Script Phase` with content `[ -n "$CODE_SIGN_IDENTITY" ] && find "$BUILT_PRODUCTS_DIR" -depth -name "libffmpeg*.dylib" -exec codesign -i mdk.framework.ffmpeg -f -vvvv -s"${EXPANDED_CODE_SIGN_IDENTITY}" ${OTHER_CODE_SIGN_FLAGS:-} --preserve-metadata=identifier,entitlements,flags {} \;`
+If fail to code sign: In `Build Phase`, add a `New Run Script Phase` with content
+```bash
+[ -n "$CODE_SIGN_IDENTITY" ] && find "$BUILT_PRODUCTS_DIR" -depth -name "lib*.dylib" -exec codesign -f -vvvv -s"${EXPANDED_CODE_SIGN_IDENTITY}" ${OTHER_CODE_SIGN_FLAGS:-} --preserve-metadata=identifier,entitlements,flags {} \;
+````
 
 ### Nuget
 
@@ -54,17 +61,43 @@ Install via [NuGet](https://www.nuget.org/packages/mdk) in Visual Studio for bot
 - sdk headers
 
 
+### Recommended settings
+
+- macOS, iOS: `player.setDecoders(MediaType::Video, {"VT", "hap", "FFmpeg", "dav1d"});`
+- Windows: `player.setDecoders(MediaType::Video, {"MFT:d3d=11", "D3D11", "CUDA", "hap", "FFmpeg", "dav1d"});`
+- Linux:
+```cpp
+    // XInitThreads(); // If using x11. before any x11 api call. some gui toolkits already call this, e.g. qt, glfw
+    SetGlobalOption("X11Display", DisplayPtr); // If using x11. Requred by VAAPI, VDPAU
+    player.setDecoders(MediaType::Video, {"VAAPI", "VDPAU", "CUDA", "hap", "FFmpeg", "dav1d"});
+```
+- Raspberry Pi: use [mdk-sdk-linux.tar.xz](https://sourceforge.net/projects/mdk-sdk/files/nightly/mdk-sdk-linux.tar.xz/download), delete libffmpeg.so.* to use system ffmpeg to support h264, hevc hardware decoder and 0-copy rendering
+```cpp
+    player.setDecoders(MediaType::Video, {"V4L2M2M", "FFmpeg:hwcontext=drm", "FFmpeg"});
+```
+- Android:
+```cpp
+    SetGlobalOption("JavaVM", JvmPtr); // REQUIRED
+    player.setDecoders(MediaType::Video, {"AMediaCodec", "FFmpeg", "dav1d"});
+````
+
+#### Live streams (RTSP, RTMP etc.) low latency
+```cpp
+player.setProperty("avformat.fflags", "+nobuffer");
+player.setProperty("avformat.analyzeduration", "10000");
+player.setProperty("avformat.probesize", "1000");
+player.setProperty("avformat.fpsprobesize", "0");
+```
 
 ## Open Source
 ### Modules and Dependencies
 - [License generator and validator](https://github.com/wang-bin/appkey)
 - [Android java wrapper and example](https://github.com/wang-bin/mdk-android)
-- [blackmagic raw plugin](https://github.com/wang-bin/mdk-braw)
 - [MediaFoundation decoder module](https://github.com/wang-bin/mdk-mft)
 - [av1 software decoder module](https://github.com/wang-bin/mdk-dav1d)
 - [sunxi decoder + renderer](https://github.com/wang-bin/mdk-sunxi)
 - [GFX surface and render loop](https://github.com/wang-bin/ugs)
-- [Java support](https://github.com/wang-bin/JMI)
+- [JNI C++ api](https://github.com/wang-bin/JMI)
 - [Android java and jni APIs in C++](https://github.com/wang-bin/AND)
 - [C++ TLS](https://github.com/wang-bin/ThreadLocal)
 - [C++ compatibility layer](https://github.com/wang-bin/cppcompat)
@@ -97,6 +130,7 @@ Install via [NuGet](https://www.nuget.org/packages/mdk) in Visual Studio for bot
 [![GyroFlow](https://gyroflow.xyz/assets/logo.png)](https://gyroflow.xyz)
 <a href="https://www.xnview.com/en/xnviewmp"><img class="logo" src="https://www.xnview.com/img/app-xnviewmp-512.webp"  height=120 alt="XnViewMP"></a>
 [![www.connecting-technology](https://static.wixstatic.com/media/85712a_fe1dd2a84e17437e913dcfcdc89f40a4.jpg/v1/fill/w_460,h_240,al_c,q_80,usm_0.66_1.00_0.01,enc_auto/85712a_fe1dd2a84e17437e913dcfcdc89f40a4.jpg)](https://www.connecting-technology.com)
+<a href="https://smartplayer.ru"><img src="https://smartplayer.ru/assets/images/Header/logo.svg" alt="smartplayer"  width=600 height=120  style="background-color:black"></a>
 
 
 [金嵘达科技](http://www.kingroda.com)
