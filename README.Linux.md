@@ -19,8 +19,8 @@
 
 ## About SDK for Linux
 SDK is built by clang 17 with
-- ffmpeg: https://sourceforge.net/projects/avbuild/files/linux/ffmpeg-master-linux-clang-lite.tar.xz/download
-- libc++ 17
+- ffmpeg: https://sourceforge.net/projects/avbuild/files/linux/ffmpeg-master-linux-clang-lite-lto.tar.xz/download
+- libc++ 17. You can use delete libc++.so from sdk and use system libc++
 
 SDK can be used by any C or C++11 compiler, e.g. g++, clang
 
@@ -86,6 +86,18 @@ N videos renderers for 1 player: multiwidnows url
 ```
 	include(mdk-sdk-dir/lib/cmake/FindMDK.cmake)
 	target_link_libraries(your_target PRIVATE mdk)
+```
+
+### Recommended settings
+- Linux:
+```cpp
+    // XInitThreads(); // If using x11. before any x11 api call. some gui toolkits already call this, e.g. qt, glfw
+    SetGlobalOption("X11Display", DisplayPtr); // If using x11. Requred by VAAPI, VDPAU
+    player.setDecoders(MediaType::Video, {"VAAPI", "VDPAU", "CUDA", "hap", "FFmpeg", "dav1d"});
+```
+- Raspberry Pi: use [mdk-sdk-linux.tar.xz](https://sourceforge.net/projects/mdk-sdk/files/nightly/mdk-sdk-linux.tar.xz/download), delete libffmpeg.so.* to use system ffmpeg to support h264, hevc hardware decoder and 0-copy rendering
+```cpp
+    player.setDecoders(MediaType::Video, {"V4L2M2M", "FFmpeg:hwcontext=drm", "FFmpeg"});
 ```
 
 ## Source code:

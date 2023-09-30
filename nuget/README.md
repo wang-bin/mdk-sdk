@@ -23,7 +23,7 @@
 
 ## About SDK for Windows Desktop & UWP
 SDK is built by
-- latest VS2022 with [FFmpeg](https://sourceforge.net/projects/avbuild/files/windows-store/ffmpeg-master-windows-desktop-vs2022-lite.tar.xz/download)
+- latest VS2022 with [FFmpeg](https://sourceforge.net/projects/avbuild/files/windows-desktop/ffmpeg-master-windows-desktop-vs2022-lite.7z/download)
 
 SDK can be used by any C or C++11 compiler, e.g. vs2015, vs2022, mingw g++, clang
 
@@ -33,6 +33,24 @@ SDK can be used by any C or C++11 compiler, e.g. vs2015, vs2022, mingw g++, clan
 	target_link_libraries(your_target PRIVATE mdk)
 ```
 
+### Qt qmake project
+```qmake
+include($$MDK_SDK_DIR/mdk.pri)
+```
+
+
+### Recommended settings
+```cpp
+    player.setDecoders(MediaType::Video, {"MFT:d3d=11", "D3D11", "CUDA", "hap", "FFmpeg", "dav1d"});
+```
+
+#### Live streams (RTSP, RTMP etc.) low latency
+```cpp
+    player.setProperty("avformat.fflags", "+nobuffer");
+    player.setProperty("avformat.analyzeduration", "10000");
+    player.setProperty("avformat.probesize", "1000");
+    player.setProperty("avformat.fpsprobesize", "0");
+```
 
 ### [Runtime Requirements](https://github.com/wang-bin/mdk-sdk/wiki/System-Requirements#windows-desktop)
 - Vista+
@@ -73,4 +91,4 @@ Optional:
 
 
 Copyright (c) 2016-2023 WangBin(the author of QtAV) <wbsecg1 at gmail.com>
-Free for opensource softwares, non-commercial softwares, QtAV donors and contributors.
+Free for opensource softwares, non-commercial softwares, flutter, QtAV donors and contributors.

@@ -27,7 +27,7 @@ https://github.com/wang-bin/swiftMDK
 - Support X11 if runtime libraries exist
 
 SDK is built by Xcode 14 with
-- ffmpeg: https://sourceforge.net/projects/avbuild/files/macOS/ffmpeg-master-macOS-lite.tar.xz/download
+- ffmpeg: https://sourceforge.net/projects/avbuild/files/macOS/ffmpeg-master-macOS-lite-lto.tar.xz/download
 
 ### macOS 10.15+
 Executables download from internet are not able to run. Try
@@ -69,6 +69,10 @@ N videos renderers for 1 player: multiwidnows url
 	include(mdk-sdk-dir/lib/cmake/FindMDK.cmake)
 	target_link_libraries(your_target PRIVATE mdk)
 ```
+
+### Recommended settings
+
+- macOS, iOS: `player.setDecoders(MediaType::Video, {"VT", "hap", "FFmpeg", "dav1d"});`
 
 ### Use in Xcode
 Choose any of

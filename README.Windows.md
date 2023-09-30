@@ -21,8 +21,7 @@
 
 ## About SDK for Windows Desktop
 SDK is built by
-- clang-cl 17, with Windows SDK 10.0.19041.0, MSVC CRT 14.28.29333, [FFmpeg](https://sourceforge.net/projects/avbuild/files/windows-store/ffmpeg-master-windows-desktop-vs2022-lite.tar.xz/download)
-- latest VS2022 with [FFmpeg](https://sourceforge.net/projects/avbuild/files/windows-store/ffmpeg-master-windows-desktop-vs2022-lite.tar.xz/download)
+- latest VS2022 with [FFmpeg](https://sourceforge.net/projects/avbuild/files/windows-desktop/ffmpeg-master-windows-desktop-vs2022-lite.7z/download)
 
 SDK can be used by any C or C++11 compiler, e.g. vs2015, vs2022, mingw g++, clang
 
@@ -43,6 +42,11 @@ Once installed or imported, necessary compile flags and link flags will be added
 ```
 	include(mdk-sdk-dir/lib/cmake/FindMDK.cmake)
 	target_link_libraries(your_target PRIVATE mdk)
+```
+
+### Recommended settings
+```cpp
+    player.setDecoders(MediaType::Video, {"MFT:d3d=11", "D3D11", "CUDA", "hap", "FFmpeg", "dav1d"});
 ```
 
 

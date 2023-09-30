@@ -1,5 +1,33 @@
 Change log:
 
+## 0.22.1 - 2023-09-30
+
+- `VideoFrame.timestamp()` is alway readable. `TimestampEOS` indicates no more frames
+- Add global option `demuxer.max_errors` to continue on error if error count is less than this value
+- MFT:
+    - Ignore h264 level by default
+    - Fix adapter index if `vendor` property is set, e.g. `MFT:d3d=9:vendor=nv`
+- Add `mem` scheme to play from memory, url format is `mem://addr+size`
+- VDPAU:
+    - Add `interop` property, can be `video`, `output` and `pixmap`. Detail: https://github.com/wang-bin/mdk-sdk/wiki/Decoders#vdpau
+    - Use x11 display provided by user except `pixmap` interop
+- VAAPI: [document is updated](https://github.com/wang-bin/mdk-sdk/wiki/Decoders#vaapi)
+    - Support GLX/EGL texture from dri3 pixmap from drm prime, via option `interop=dri3`, or fallback from `interop=x11` failure. For some drivers(intel iHD driver) it's the only 0-copy solution in GLX context because libva-x11 is broken(vaPutSurface error). `VAEntrypointVideoProc` is requred. Recommend to install `intel-media-va-driver-non-free`, because i965 and free iHD driver may lack of `VAEntrypointVideoProc`.
+    - Support `GL_TEXTURE_EXTERNAL_OES` for `dri3` and `x11` interop, via option `external=1`
+- DXGI:
+    - Fix crash in vm, or no gpu driver
+    - Always try rgba8 if fail to create a rgb10a2 swapchain, fix d3d11 feature level 9.3 create render context error
+- Try the next decoder if a decoder does not produce any frame. MFT jpeg decoder may produce nothing but no error.
+- Fix decode error if previous decoder in decoder list failed
+- Fix open a decoder multiple times before trying the next decoder
+- Fix pause at eof then stop dead lock if `keep_open` is set(music with cover art).
+- Fix incorrect seek request count
+- CUDA: fix crash for some unsupported streams, e.g. av1 12bit
+- FFmpeg: fix crash if a codec is not enabled
+- Add `mdk.pri` for qt qmake projects. All you need is including this file
+- Enable full lto to reduce binary size. Thin lto was used in previous versions.
+
+
 ## 0.22.0 - 2023-08-31
 
 - Add `Player.onMediaStatus(MediaStatus oldValue, MediaStatus newValue)` to simplify user code. `Player.onMediaStatusChanged` is deprecated.

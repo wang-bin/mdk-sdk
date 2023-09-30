@@ -18,8 +18,9 @@
 
 ## About SDK for Android
 SDK is built with
-- ffmpeg: https://sourceforge.net/projects/avbuild/files/android/ffmpeg-master-android-clang-lite.tar.xz/download
-- ndk r25, libc++_shared
+- ffmpeg: https://sourceforge.net/projects/avbuild/files/android/ffmpeg-master-android-clang-lite-lto.tar.xz/download
+- ndk r25b for 32bit, ndk 26 for b4bit
+- requires ndk r23 and later because of ndk abi break in r23
 
 SDK can be used by any C or C++11 compiler, e.g. g++, clang
 
@@ -34,7 +35,7 @@ SDK can be used by any C or C++11 compiler, e.g. g++, clang
 ### [Supported Decoders:](https://github.com/wang-bin/mdk-sdk/wiki/Decoders)
 - FFmpeg
 - MediaCodec: FFmpeg mediacodec implementation
-- AMediaCodec: builtin mediacodec implementation, using libmediandk or java api. propertyes: "surface" = "0" or "1", "copy" = "0" or "1" when "surface" is "0", "java" = "0" or "1"(use java or mediandk), "async" = "0" or "1"(android 9.0 is required by async mode)
+- AMediaCodec: builtin mediacodec implementation, using libmediandk or java api
 
 MediaCodec/AMediaCodec decoder will not be destroyed if app go to background, and continues to work when resumed.
 
@@ -43,14 +44,21 @@ MediaCodec/AMediaCodec decoder will not be destroyed if app go to background, an
 - AudioTrack (default)
 
 ### Data Source
-- "content:"
-- "android.resource:"
+- `content:`
+- `android.resource:`
+- `assets:`
 
 ### Use in CMake Projects
 ```
 	include(mdk-sdk-dir/lib/cmake/FindMDK.cmake)
 	target_link_libraries(your_target PRIVATE mdk)
 ```
+
+### Recommended settings
+```cpp
+    SetGlobalOption("JavaVM", JvmPtr); // REQUIRED
+    player.setDecoders(MediaType::Video, {"AMediaCodec", "FFmpeg", "dav1d"});
+````
 
 ## Source code:
 - [some examples using mdk sdk](https://github.com/wang-bin/mdk-examples)

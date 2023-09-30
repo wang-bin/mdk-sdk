@@ -21,7 +21,7 @@ https://github.com/wang-bin/swiftMDK
 
 ## About SDK for iOS
 SDK is built by Xcode 14 with
-- ffmpeg: https://sourceforge.net/projects/avbuild/files/iOS/ffmpeg-master-iOS-lite.tar.xz/download
+- ffmpeg: https://sourceforge.net/projects/avbuild/files/iOS/ffmpeg-master-iOS-lite-lto.tar.xz/download
 - Minimal system: iOS 8.0
 - Support Metal renderer
 
@@ -44,6 +44,11 @@ SDK is built by Xcode 14 with
 Choose any of
 - Add mdk.xcframework to your project(Embed & Sign)
 - install via cocoapods `pod 'mdk'`
+
+
+### Recommended settings
+
+- macOS, iOS: `player.setDecoders(MediaType::Video, {"VT", "hap", "FFmpeg", "dav1d"});`
 
 #### Code Sign
 Choose any of
