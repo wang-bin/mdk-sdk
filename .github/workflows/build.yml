@@ -354,6 +354,7 @@ jobs:
         for b in `ls macOS-arm64/mdk-sdk/bin`; do # exes exist in both archs
           lipo -create macOS-{arm,x86_}64/mdk-sdk/bin/$b -output macOS/mdk-sdk/bin/$b
         done
+        codesign --force  --sign - --deep --timestamp macOS/mdk-sdk/lib/mdk.framework
 
         libffmpeg=$(find macCatalyst/mdk-sdk/lib/mdk.framework -name "libffmpeg*.dylib")
         # xcrun bitcode_strip -r $libffmpeg -o $libffmpeg
@@ -369,6 +370,7 @@ jobs:
         # ensure bin/* can Find mdk and ffmpeg
         ln -sf ${mdkfw/mdk-sdk/..}/mdk.framework mdk-sdk/Frameworks
         ln -sf ../Frameworks/mdk.framework/Headers mdk-sdk/include/mdk
+        codesign --force  --sign - --deep --timestamp mdk-sdk/lib/mdk.xcframework
         # pod requires a file in tarball
         gtar Jcvf mdk-sdk-apple.tar.xz mdk-sdk README.md
         gtar Jcvf mdk-sdk-macOS.tar.xz -C macOS .

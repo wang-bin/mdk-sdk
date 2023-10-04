@@ -9,6 +9,7 @@ fi
 if [ -f mdk-sdk/lib/mdk.framework/mdk ]; then
   otool -l mdk-sdk/lib/mdk.framework/mdk
   otool -L mdk-sdk/lib/mdk.framework/mdk
+  codesign --force  --sign - --deep --timestamp mdk-sdk/lib/mdk.framework
 fi
 for s in build/${TARGET_OS}-*; do
   echo "sdk: $s"
