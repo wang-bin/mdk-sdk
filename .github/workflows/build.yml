@@ -1217,7 +1217,7 @@ jobs:
       if: ${{ matrix.config == 'MinSizeRel' }}
       shell: bash
       run: |
-        7z d -ssc -m0=lzma2 -mx=9 -ms=on -mf=off mdk-sdk-${TARGET_OS}.7z mdk-sdk/lib/{armeabi-v7a,x86,x86_64}/libmdk.so.dsym
+        7z d -ssc -m0=lzma2 -mx=9 -ms=on -mf=off mdk-sdk-${TARGET_OS}.7z mdk-sdk/lib/{x86,x86_64}/libmdk.so.dsym
         sshpass -p ${SF_PW} scp -o StrictHostKeyChecking=no mdk-sdk-${TARGET_OS}.7z ${SF_USER}@frs.sourceforge.net:/home/frs/project/mdk-sdk/nightly/
         sshpass -p ${SF_PW} scp -o StrictHostKeyChecking=no mdk/build/android-arm64-v8a/video/libqtav-mediacodec.so ${SF_USER}@frs.sourceforge.net:/home/frs/project/qtav/depends/mediacodec/arm64-v8a
 
