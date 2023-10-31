@@ -1,5 +1,35 @@
 Change log:
 
+## 0.23.0 - 2023-10-31
+
+- HDR
+    - Support scRGB, via `player.set(ColorSpaceSCRGB)`, recommended for windows HDR screen, same experience as system player. You can try it in [QtQuick](https://github.com/wang-bin/mdk-examples/blob/master/Qt/qmlrhi/VideoTextureNodePriv.cpp#L66) app via env var `QSG_RHI_HDR=scrgb`, or in OBS Studio via [the plugin](https://github.com/wang-bin/obs-mdk)
+    - Add global option "sdr.white", SDR white level. Default is 203. Can be a different value, e.g. Qt is 100. OBS Studio default is 300 and can be changed by user in settings dialog.
+    - Add global option "hdr10.format", Metal only. Metal use rgba16f for HDR10 by default. This can [let QtQuick apps support perfect HDR playback on macOS](https://github.com/wang-bin/mdk-examples/blob/master/Qt/qmlrhi/VideoTextureNodePriv.cpp)
+    - Add ColorSpaceSCRGB, ColorSpaceExtendedLinearDisplayP3
+    - Fix linear target trc
+- Metal: use HLG metadata. use scRGB if requested hdr is not supported.
+- Raspberry pi: fix hevc 0-copy OpenGL renderer crash on debian 12. It's a driver bug.
+- Decoder options can be set via `player.set("video.decoder", "key1=val1:key2=val2")`
+- AMediaCodec:
+    - Fix crash if image=1 on api level < 26
+    - Do not acquire an image if releaseOutputBuffer error, fix long wait after seek/stop
+- Add SeekFlag::SeekFlag for KeyFrame seeking. This can fix EPERM error for some videos.
+- `Player.position()` is the last seek request target position when seeking. Previously if seeking is frequent may go back to a previous seek result position then the final position.
+- Improve seeking, fix seek request not processed, fix seek callback may be called multiple times
+- Fix onFrame() callback sometimes can't get an EOS frame when playback finished or stopped by some reason.
+- Fix gpu VideoFrame.to() not in host memory if target format, size is the same as input
+- Fix `Player.prepare()` from a position > 0 wrong result if the first decoder fails.
+- Fix `waitFor()` dead lock
+- Fix PGS subtitle frame duration
+- VAAPI: fix undefined symbol on old systems, e.g. ubuntu 16.04
+- FFmpeg:
+    - Fix audio timestamp if a packet has no pts
+- BRAW:
+    - Fix crash when destroying player if cuda 0-copy is used
+    - Fix OpenCL pipeline, by AdrianEddy
+
+
 ## 0.22.1 - 2023-09-30
 
 - `VideoFrame.timestamp()` is alway readable. `TimestampEOS` indicates no more frames

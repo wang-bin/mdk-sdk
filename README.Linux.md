@@ -10,7 +10,7 @@
 - [Dynamic OpenGL](https://github.com/wang-bin/mdk-sdk/wiki/OpenGL-Support-Matrix)
 - [OpenGL, D3D11, Vulkan and Metal rendering w/ or w/o user provided context](https://github.com/wang-bin/mdk-sdk/wiki/Render-API)
 - Integrated with any platform native ui apps, gui toolkits or other apps via [OpenGL, D3D11, Vulkan and Metal](https://github.com/wang-bin/mdk-sdk/wiki/Render-API) ([OBS](https://github.com/wang-bin/obs-mdk), [Flutter](https://pub.dev/packages/fvp), [Qt](https://github.com/wang-bin/mdk-examples/tree/master/Qt), [SDL](https://github.com/wang-bin/mdk-examples/tree/master/SDL), [GLFW](https://github.com/wang-bin/mdk-examples/tree/master/GLFW), [SFML](https://github.com/wang-bin/mdk-examples/tree/master/SFML) etc.) easily
-- [HDR display, HDR to SDR and SDR to HDR tone mapping](https://github.com/wang-bin/mdk-sdk/wiki/Player-APIs#player-setcolorspace-value-void-vo_opaque--nullptr)
+- [HDR display, HDR to SDR and SDR to HDR tone mapping](https://github.com/wang-bin/mdk-sdk/wiki/Player-APIs#player-setcolorspace-value-void-vo_opaque--nullptr). You can use HDR display in [Qt6(6.6+ for macOS, 6.x for windows)](https://github.com/wang-bin/mdk-examples/tree/master/Qt/qmlrhi), [OBS Studio](https://github.com/wang-bin/obs-mdk) and more.
 - [Seamless/Gapless media and bitrate switch for any media](https://github.com/wang-bin/mdk-sdk/wiki/Player-APIs#player-setcolorspace-value-void-vo_opaque--nullptr)
 - Optimized Continuous seeking. As fast as mpv, but much lower cpu, memory and gpu load. Suitable for [timeline preview](https://github.com/wang-bin/mdk-sdk/wiki/Typical-Usage#timeline-preview)
 - [Smart FFmpeg runtime, dynamic load, compatible with 4.x~6.x abi](https://github.com/wang-bin/mdk-sdk/wiki/FFmpeg-Runtime)
@@ -64,9 +64,11 @@ Optional:
 - command line: -c:v decodername
 
 ### DRM Prime
-RaspberryPi OS system ffmpeg provides hevc and v4l2m2m drm_prime frame output, you can use system ffmpeg(delete libffmpeg.so.* in sdk package) with OpenGLES(desktop GL does not support hevc) contexts created from EGL to get maximum performance. glfwplay option to test: -c:v V4L2M2M,FFmpeg:hwcontext=drm -gl. It's recommend to call `SetGlobalOption("eglimage.reuse", 1)` or decoder option `reuse=1` to get better performance, glfwplay option is `-eglimage.reuse 1`.
+RaspberryPi OS system ffmpeg provides hevc and v4l2m2m drm_prime frame output, you can use system ffmpeg(delete libffmpeg.so.* in sdk package) with OpenGLES(desktop GL does not support hevc) contexts created from EGL to get maximum performance. glfwplay option to test:
+ - x11: `./glfwplay -c:v V4L2M2M,FFmpeg:hwcontext=drm:sw_fallback=1 -gl test.mp4`
+ - wayland: `./glfwplay -c:v V4L2M2M,FFmpeg:hwcontext=drm:sw_fallback=1 -es test.mp4`, you have to install glfw `sudo apt install libglfw3-wayland`
 
-RaspberryPi OS rendering performance is poor, you may have to disable log, log to file or minimize terminal to get higher fps, otherwise rendering log may slow down video rendering.
+RaspberryPi OS rendering performance is poor, you may have to disable log, log to file or minimize terminal to get higher fps, otherwise rendering log may slow down video rendering. wayland environment has better performance
 
 ### Examples
 GL Context
