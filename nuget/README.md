@@ -47,8 +47,6 @@ include($$MDK_SDK_DIR/mdk.pri)
 #### Live streams (RTSP, RTMP etc.) low latency
 ```cpp
     player.setProperty("avformat.fflags", "+nobuffer");
-    player.setProperty("avformat.analyzeduration", "10000");
-    player.setProperty("avformat.probesize", "1000");
     player.setProperty("avformat.fpsprobesize", "0");
 ```
 

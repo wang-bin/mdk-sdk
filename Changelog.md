@@ -1,5 +1,25 @@
 Change log:
 
+## 0.23.1 - 2023-11-30
+
+- HDR
+    - Fix scRGB white level scale
+    - Add ColorSpaceExtendedSRGB and ColorSpaceExtendedLinearSRGB. scRGB is used on windows, lumiance is scene referred, while ExtendedLinearSRGB(used on apple) is display referred
+- Vulkan:
+    - Compress built-in spv via smol-v
+    - Add spv for scRGB output
+    - Support build shader via shaderc shared library(shaderc_shared.dll, libshaderc_shared.so{,.1}, libshaderc_shared{.1,}.dynamic) if no built-in spv found.
+- Add `VideoStreamInfo.image` as audio cover art image
+- Apply rotation in recorded video
+- Add `MediaEvent{track, "decoder.video", "size", {width, height}}` indicates video frame size changed, value in MediaInfo is also updated
+- Add player.setProperty("avcodec.opt_name", "opt_val") to apply AVCodecContext options. For video only codecs, you can also use player.setProperty("video.decoder", "opt_name=opt_val");
+- Do not sync to audio if no audio decoded
+- AMediaCodec: add property "name" to force a codec name, e.g. `AMediaCodec:name=c2.android.hevc.decoder`.
+- MFT: fix d3d=11 driver bug (receive MF_E_TRANSFORM_STREAM_CHANGE endlessly)
+- Fix `setBufferRange()` dropping mode incorrectly drops audio packets
+- Fix some dead locks
+
+
 ## 0.23.0 - 2023-10-31
 
 - HDR
