@@ -4,6 +4,11 @@
 
 **Download** [Nightly Build SDK](https://sourceforge.net/projects/mdk-sdk/files/nightly/)
 
+Sourceforge[![Sourceforge](https://img.shields.io/sourceforge/dt/mdk-sdk)](https://sourceforge.net/projects/mdk-sdk/files)
+Github Releases[![Github Release](https://img.shields.io/github/downloads/wang-bin/mdk-sdk/total)](https://github.com/wang-bin/mdk-sdk/releases)
+NuGet[![NuGet](https://img.shields.io/nuget/dt/mdk)](https://www.nuget.org/packages/mdk)
+
+
 [Changelog](https://github.com/wang-bin/mdk-sdk/blob/master/Changelog.md).
 [API](https://github.com/wang-bin/mdk-sdk/wiki/Player-APIs)
 
@@ -15,7 +20,7 @@
 - [0-copy GPU rendering for all platforms and all renderers(Vulkan is WIP.)](https://github.com/wang-bin/mdk-sdk/wiki/Zero-Copy-Renderer)
 - [Dynamic OpenGL](https://github.com/wang-bin/mdk-sdk/wiki/OpenGL-Support-Matrix)
 - [OpenGL, D3D11, D3D12, Vulkan and Metal rendering w/ or w/o user provided context](https://github.com/wang-bin/mdk-sdk/wiki/Render-API)
-- Integrated with any platform native ui apps, gui toolkits or other apps via [OpenGL, D3D11/12, Vulkan and Metal](https://github.com/wang-bin/mdk-sdk/wiki/Render-API) ([OBS](https://github.com/wang-bin/obs-mdk), [Flutter](https://pub.dev/packages/fvp), [Qt](https://github.com/wang-bin/mdk-examples/tree/master/Qt), [SDL](https://github.com/wang-bin/mdk-examples/tree/master/SDL), [GLFW](https://github.com/wang-bin/mdk-examples/tree/master/GLFW), [SFML](https://github.com/wang-bin/mdk-examples/tree/master/SFML) etc.) easily
+- Integrated with any platform native ui apps, gui toolkits or other apps via [OpenGL, D3D11/12, Vulkan and Metal](https://github.com/wang-bin/mdk-sdk/wiki/Render-API) ([OBS](https://github.com/wang-bin/obs-mdk), [Flutter](https://pub.dev/packages/fvp), [Qt](https://github.com/wang-bin/mdk-examples/tree/master/Qt), [SDL](https://github.com/wang-bin/mdk-examples/tree/master/SDL), [GLFW](https://github.com/wang-bin/mdk-examples/tree/master/GLFW), [SFML](https://github.com/wang-bin/mdk-examples/tree/master/SFML), [.NET Avalonia](https://github.com/wang-bin/mdk-examples/tree/master/Avalonia) etc.) easily
 - [HDR display, HDR to SDR and SDR to HDR tone mapping](https://github.com/wang-bin/mdk-sdk/wiki/Player-APIs#player-setcolorspace-value-void-vo_opaque--nullptr). You can use HDR display in [Qt6(6.6+ for macOS, 6.x for windows)](https://github.com/wang-bin/mdk-examples/tree/master/Qt/qmlrhi), [OBS Studio](https://github.com/wang-bin/obs-mdk) and more.
 - [Seamless/Gapless media and bitrate switch for any media](https://github.com/wang-bin/mdk-sdk/wiki/Player-APIs#player-setcolorspace-value-void-vo_opaque--nullptr)
 - Optimized Continuous seeking. As fast as mpv, but much lower cpu, memory and gpu load. Suitable for [timeline preview](https://github.com/wang-bin/mdk-sdk/wiki/Typical-Usage#timeline-preview)
@@ -54,6 +59,12 @@ If fail to code sign: In `Build Phase`, add a `New Run Script Phase` with conten
 
 Install via [NuGet](https://www.nuget.org/packages/mdk) in Visual Studio for both Windows desktop and UWP
 
+## Distribute
+- mdk(libmdk.so.0/ibmdk.dylib/mdk.dll) and ffmpeg library(or standard ffmpeg libraries) are always REQUIRED
+- libass.dll/libass.dylib can be optional if not using subtitle rendering
+- mdk-braw.dll/libmdk-braw.{so,dylib}: optional, for blackmagic raw videos
+- mdk-r3d.dll/libmdk-r3d.{so,dylib}: optional, for RED raw videos
+- mdk.pdb/libmdk.so*.dsym: debug symbols.
 
 ## Documents
 
@@ -112,6 +123,7 @@ player.setProperty("avformat.fpsprobesize", "0");
 ### Language Bindings
 - [Swift binding](https://github.com/wang-bin/mdkSwift)
 - [Flutter/Dart](https://pub.dev/packages/fvp)
+- [C#](https://github.com/axojhf/MDK.SDK.NET)
 
 ## Sponsors
 [![Sportimization](https://www.sportimization.com/assets/images/logo_sportimization_small.png)](https://www.sportimization.com)

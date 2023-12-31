@@ -1,5 +1,42 @@
 Change log:
 
+## 0.24.0 - 2023-12-31
+
+- OpenGL:
+    - GLRenderAPI.getProcAddress now works, can be provided by user. If not provided, will try to use standard GL library names
+    - Support hardware decoder rendering in multiple renderers and multiple threads.
+- Vulkan:
+    - Support hdr metadata if render context is created in the library via `updateNativeSurface`
+    - Support scRGB swapchain
+    - Fix invalid framebuffer after resetting render pass(resize error in qmlrhi example).
+- Ensure swapchain bufferfs are cleared after stop. Previously only clear once, may result in showing blank image and the last frame repeatly.
+- Improve audio/video track switch `Player.setActiveTracks()`, fast and accurate
+- Improve (mpegts) program switch `Player.setActiveTracks(MediaType::Unknown, )`, fast and accurate
+- If use `updateNativeSurface()`, vo_opaque must be the `surface` parameter.
+- VT: Support mpeg4
+- AMediaCodec/MediaCodec:
+    - property "surface" and "window" to enable tunnel mode, the value is `Surface` jobject and `ANativeWindow*` value string(Previously "surface" value was `ANativeWindow*`).
+    - Increase image queue size to reduce acquire errors. max images can be set via decoder property "images=N" or `player.setProperty("video.decoder", "N")`, where N > 1
+- Player.record will choose a suitable format if the format guessed from url does not support all codecs. Select correct format for rtmp and rtsp.
+- Recorded timestamp is continious and monotonicity by default, required by live streaming. Previous behavior can be enabled by `Player.setProperty("recorder.copyts", "1")`
+- Add `MediaEvent{track, "video", "size", {width, height}}` to indicate video track size change, `MediaInfo.video[track].width/height` also change changes
+- Improve decoder change event `MediaEvent{track, "decoder.video", decoderName, stream}`, decoderName of hardware decoders is the alias name(e.g. VAAPI), software decoder name is always "FFmpeg". Previously hardware decoderName may be FFmpeg
+- Improve packet drop
+- iOS: try to load ass.framework and dav1d.framework instead of .dylib
+- Subtitle: ignore invalid ass images to fix crash
+- Fix crash if audio channels > 8
+- Fix thread safe issues for callback setting apis.
+- Fix scRGB map in DX and apple
+- Fix mpeg4 mosaic after seek
+- Fix cmake3.28 xcframework error
+- FFmpeg:
+    - Add `D3D12` decoder, alias of `FFmpeg:hwcontext=d3d12va`
+    - `D3D12` decoder supports 0-copy rendering in a d3d12 renderer
+    - Fix wrong audio time base of filter output
+    - Fix a potential crash in hw decoder copy mode
+- New [.NET binding](https://github.com/axojhf/MDK.SDK.NET/tree/main) and [Avalonia example](https://github.com/wang-bin/mdk-examples/tree/master/Avalonia)
+
+
 ## 0.23.1 - 2023-11-30
 
 - HDR
