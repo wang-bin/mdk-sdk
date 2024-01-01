@@ -13,7 +13,7 @@ tolower(){
 
 crt_extra=$(tolower ${CRT_EXTRA})
 
-if [[ "$TARGET_OS" == mac* || "$TARGET_OS" == iOS* || "$TARGET_OS" == android ]]; then
+if [[ "$TARGET_OS" == mac* || "$TARGET_OS" == iOS* || "$TARGET_OS" == tvOS* || "$TARGET_OS" == android ]]; then
     FF_EXTRA=
 fi
 if [[ "$TARGET_OS" == "win"* || "$TARGET_OS" == "uwp"* ]]; then
@@ -56,7 +56,7 @@ OS=${TARGET_OS/r*pi/rpi}
 OS=${OS/*store/WinRT}
 OS=${OS/*uwp*/WinRT}
 OS=${OS%%-*}
-OS=${OS/Simulator/}
+#OS=${OS/Simulator/} #
 [ "$TARGET_OS" == "linux" ] && OS=Linux
 mkdir -p external/{bin,lib}/$OS
 
@@ -73,6 +73,9 @@ if [[ "$EXTERNAL_DEP_CACHE_HIT" != "true" ]]; then
   cp -af ${FFPKG}/lib/* external/lib/$OS
   cp -af ${FFPKG}/include external/
   cp -af ${FFPKG}/bin/* external/bin/$OS # ffmpeg dll
+
+  echo "OS: $OS"
+  find external
 
   if [ "$TARGET_OS" == "sunxi" ]; then
       mkdir -p external/lib/sunxi/armv7
