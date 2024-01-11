@@ -14,6 +14,7 @@ env:
   NINJA_STATUS: '[%f/%t %e %r]'
   SF_PW: ${{ secrets.SF_PW }}
   SF_USER: ${{ secrets.SF_USER }}
+  SF_UPLOAD: ${{ github.event_name != 'repository_dispatch' ||  github.event.client_payload.ref == 'master' }}
 
 jobs:
   macOS:
@@ -91,7 +92,7 @@ jobs:
         name: mdk-sdk-${{ env.TARGET_OS }}-${{ matrix.arch}}-${{ matrix.config }}
         path: mdk-sdk-${{ env.TARGET_OS }}-${{ matrix.arch}}.tar.xz
     - name: Upload to SourceForge
-      if: ${{ matrix.config == 'RelWithDebInfo' && matrix.arch == 'x86_64' }}
+      if: ${{ matrix.config == 'RelWithDebInfo' && matrix.arch == 'x86_64' && env.SF_UPLOAD == 'true' }}
       shell: bash
       run: |
         sshpass -p ${SF_PW} scp -o StrictHostKeyChecking=no mdk-sdk-${TARGET_OS}-${{ matrix.arch }}.tar.xz ${SF_USER}@frs.sourceforge.net:/home/frs/project/mdk-sdk/nightly/
@@ -159,6 +160,7 @@ jobs:
         name: mdk-sdk-${{ env.TARGET_OS }}-${{ matrix.config }}
         path: mdk-sdk-${{ env.TARGET_OS }}.tar.xz
     - name: Upload to SourceForge
+      if: ${{ env.SF_UPLOAD == 'true' }}
       shell: bash
       run: |
         sshpass -p ${SF_PW} scp -o StrictHostKeyChecking=no mdk-sdk-${TARGET_OS}.tar.xz ${SF_USER}@frs.sourceforge.net:/home/frs/project/mdk-sdk/nightly/
@@ -233,6 +235,7 @@ jobs:
         name: mdk-sdk-${{ env.TARGET_OS }}-${{ matrix.config }}
         path: mdk-sdk-${{ env.TARGET_OS }}.tar.xz
     - name: Upload to SourceForge
+      if: ${{ env.SF_UPLOAD == 'true' }}
       shell: bash
       run: sshpass -p ${SF_PW} scp -o StrictHostKeyChecking=no mdk-sdk-${TARGET_OS}.tar.xz ${SF_USER}@frs.sourceforge.net:/home/frs/project/mdk-sdk/nightly/
 
@@ -401,6 +404,7 @@ jobs:
         name: mdk-sdk-macOS
         path: mdk-sdk-macOS.tar.xz
     - name: Upload to SourceForge
+      if: ${{ env.SF_UPLOAD == 'true' }}
       shell: bash
       run: |
         make -f upload.mk
@@ -471,7 +475,7 @@ jobs:
         name: mdk-sdk-${{ env.TARGET_OS }}-${{ matrix.config }}
         path: mdk-sdk-${{ env.TARGET_OS }}.tar.xz
     - name: Upload to SourceForge
-      if: ${{ matrix.config == 'MinSizeRel' }}
+      if: ${{ matrix.config == 'MinSizeRel' && env.SF_UPLOAD == 'true' }}
       shell: bash
       run: sshpass -p ${SF_PW} scp -o StrictHostKeyChecking=no mdk-sdk-${TARGET_OS}.tar.xz ${SF_USER}@frs.sourceforge.net:/home/frs/project/mdk-sdk/nightly/
 
@@ -558,7 +562,7 @@ jobs:
         name: mdk-sdk-vs2022-${{ env.TARGET_OS }}-${{ matrix.config }}
         path: mdk-sdk-${{ env.TARGET_OS }}-vs2022*.7z
 #    - name: Upload to SourceForge
-#      if: ${{ matrix.config == 'MinSizeRel' }}
+#      if: ${{ matrix.config == 'MinSizeRel' && env.SF_UPLOAD == 'true' }}
 #      uses: garygrossgarten/github-action-scp@release
 #      with:
 #        host: 'frs.sourceforge.net'
@@ -890,7 +894,7 @@ jobs:
         name: mdk-sdk-clang-${{ env.TARGET_OS }}-${{ matrix.config }}
         path: mdk-sdk-${{ env.TARGET_OS }}-clang.7z
     - name: Upload to SourceForge
-      if: ${{ matrix.config == 'MinSizeRel' }}
+      if: ${{ matrix.config == 'MinSizeRel' && env.SF_UPLOAD == 'true' }}
       shell: bash
       run: sshpass -p ${SF_PW} scp -o StrictHostKeyChecking=no mdk-sdk-${TARGET_OS}-clang.7z ${SF_USER}@frs.sourceforge.net:/home/frs/project/mdk-sdk/nightly/
 
@@ -993,7 +997,7 @@ jobs:
         name: mdk-sdk-clang-${{ env.TARGET_OS }}-${{ matrix.config }}
         path: mdk-sdk-${{ env.TARGET_OS }}-clang.7z
     - name: Upload to SourceForge
-      if: ${{ matrix.config == 'MinSizeRel' }}
+      if: ${{ matrix.config == 'MinSizeRel' && env.SF_UPLOAD == 'true' }}
       shell: bash
       run: sshpass -p ${SF_PW} scp -o StrictHostKeyChecking=no mdk-sdk-${TARGET_OS}-clang.7z ${SF_USER}@frs.sourceforge.net:/home/frs/project/mdk-sdk/nightly/
 
@@ -1036,6 +1040,7 @@ jobs:
         name: mdk-nuget
         path: 'mdk*.nupkg'
     - name: Upload to SourceForge
+      if: ${{ env.SF_UPLOAD == 'true' }}
       shell: bash
       run:  |
         sudo apt update
@@ -1130,7 +1135,7 @@ jobs:
         name: mdk-sdk-${{ env.TARGET_OS }}-${{ matrix.config }}
         path: mdk-sdk-${{ env.TARGET_OS }}*.tar.xz
     - name: Upload to SourceForge
-      if: ${{ matrix.config == 'MinSizeRel' }}
+      if: ${{ matrix.config == 'MinSizeRel' && env.SF_UPLOAD == 'true' }}
       shell: bash
       run: |
         sshpass -p ${SF_PW} scp -o StrictHostKeyChecking=no mdk-sdk-${TARGET_OS}.tar.xz ${SF_USER}@frs.sourceforge.net:/home/frs/project/mdk-sdk/nightly/
@@ -1231,7 +1236,7 @@ jobs:
         name: mdk-sdk-${{ env.TARGET_OS }}-${{ matrix.config }}
         path: mdk-sdk-${{ env.TARGET_OS }}.7z
     - name: Upload to SourceForge
-      if: ${{ matrix.config == 'MinSizeRel' }}
+      if: ${{ matrix.config == 'MinSizeRel' && env.SF_UPLOAD == 'true' }}
       shell: bash
       run: |
         7z d -ssc -m0=lzma2 -mx=9 -ms=on -mf=off mdk-sdk-${TARGET_OS}.7z mdk-sdk/lib/{x86,x86_64}/libmdk.so.dsym
@@ -1261,3 +1266,6 @@ jobs:
       with:
         name: mdk-abi-sdk
         path: mdk-sdk/
+    - name: test
+      if: ${{ env.SF_UPLOAD == 'true' }}
+      run: echo bye
