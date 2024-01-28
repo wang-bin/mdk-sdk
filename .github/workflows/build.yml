@@ -44,7 +44,7 @@ jobs:
    #   run: sudo xcode-select -s /Applications/Xcode_12.4.app
     - name: 'Restore External Dep cache'
       id: external-dep-cache
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: |
           ./mdk/external
@@ -87,7 +87,7 @@ jobs:
         ../ci-after-build.sh
         mv mdk-sdk*.tar.xz ../mdk-sdk-${{ env.TARGET_OS }}-${{ matrix.arch }}.tar.xz
     - name: Archieve SDK
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: mdk-sdk-${{ env.TARGET_OS }}-${{ matrix.arch}}-${{ matrix.config }}
         path: mdk-sdk-${{ env.TARGET_OS }}-${{ matrix.arch}}.tar.xz
@@ -122,7 +122,7 @@ jobs:
    #   run: sudo xcode-select -s /Applications/Xcode_12.4.app
     - name: 'Restore External Dep cache'
       id: external-dep-cache
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: |
           ./mdk/external
@@ -155,7 +155,7 @@ jobs:
         ../ci-after-build.sh
         mv mdk-sdk*.tar.xz ../mdk-sdk-${{ env.TARGET_OS }}.tar.xz
     - name: Archieve SDK
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: mdk-sdk-${{ env.TARGET_OS }}-${{ matrix.config }}
         path: mdk-sdk-${{ env.TARGET_OS }}.tar.xz
@@ -189,7 +189,7 @@ jobs:
         submodules: 'recursive'
     - name: 'Restore External Dep cache'
       id: external-dep-cache
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: |
           ./mdk/external
@@ -230,7 +230,7 @@ jobs:
         gtar Jcfv mdk-sdk-$TARGET_OS.tar.xz mdk-sdk
         mv mdk-sdk*.tar.xz ..
     - name: Archieve SDK
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: mdk-sdk-${{ env.TARGET_OS }}-${{ matrix.config }}
         path: mdk-sdk-${{ env.TARGET_OS }}.tar.xz
@@ -262,7 +262,7 @@ jobs:
         submodules: 'recursive'
     - name: 'Restore External Dep cache'
       id: external-dep-cache
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: |
           ./mdk/external
@@ -307,7 +307,7 @@ jobs:
         gtar Jcfv mdk-sdk-$TARGET_OS.tar.xz mdk-sdk
         mv mdk-sdk*.tar.xz ..
     - name: Archieve SDK
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: mdk-sdk-${{ env.TARGET_OS }}-${{ matrix.config }}
         path: mdk-sdk-${{ env.TARGET_OS }}.tar.xz
@@ -318,31 +318,31 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     - name: Download macOS sdk
-      uses: actions/download-artifact@v3
+      uses: actions/download-artifact@v4
       with:
         name: mdk-sdk-macOS-x86_64-MinSizeRel
     - name: Download macOS sdk
-      uses: actions/download-artifact@v3
+      uses: actions/download-artifact@v4
       with:
         name: mdk-sdk-macOS-arm64-MinSizeRel
     - name: Download iOS sdk
-      uses: actions/download-artifact@v3
+      uses: actions/download-artifact@v4
       with:
         name: mdk-sdk-iOS-MinSizeRel
     - name: Download iOSSimulator sdk
-      uses: actions/download-artifact@v3
+      uses: actions/download-artifact@v4
       with:
         name: mdk-sdk-iOSSimulator-MinSizeRel
     - name: Download tvOS sdk
-      uses: actions/download-artifact@v3
+      uses: actions/download-artifact@v4
       with:
         name: mdk-sdk-tvOS-MinSizeRel
     - name: Download tvOSSimulator sdk
-      uses: actions/download-artifact@v3
+      uses: actions/download-artifact@v4
       with:
         name: mdk-sdk-tvOSSimulator-MinSizeRel
     - name: Download macCatalyst sdk
-      uses: actions/download-artifact@v3
+      uses: actions/download-artifact@v4
       with:
         name: mdk-sdk-macCatalyst-MinSizeRel
     - name: Install tools
@@ -394,12 +394,12 @@ jobs:
         gtar Jcvf mdk-sdk-apple.tar.xz mdk-sdk README.md
         gtar Jcvf mdk-sdk-macOS.tar.xz -C macOS .
     - name: Archieve XCFramework SDK
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: mdk-sdk-apple
         path: mdk-sdk-apple.tar.xz
     - name: Archieve macOS SDK
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: mdk-sdk-macOS
         path: mdk-sdk-macOS.tar.xz
@@ -435,13 +435,13 @@ jobs:
         submodules: 'recursive'
     - name: 'Restore External Dep cache'
       id: external-dep-cache
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: ./mdk/external
         key: external-dep-${{ env.TARGET_OS }}-ffmpeg-${{ env.FF_VER }}-${{ vars.FF_SDK_ID }}
     - name: 'Restore sysroot cache'
       id: sysroot-cache
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: ./mdk/sysroot
         key: sysroot-${{ env.TARGET_OS }}-${{ vars.RPI_SYSROOT_ID }}
@@ -470,7 +470,7 @@ jobs:
         ../ci-after-build.sh
         mv mdk-sdk*.tar.xz ..
     - name: Archieve SDK
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: mdk-sdk-${{ env.TARGET_OS }}-${{ matrix.config }}
         path: mdk-sdk-${{ env.TARGET_OS }}.tar.xz
@@ -501,7 +501,7 @@ jobs:
         submodules: 'recursive'
     - name: 'Restore External Dep cache'
       id: external-dep-cache
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: ./mdk/external
         key: external-dep-${{ env.TARGET_OS }}-ffmpeg-${{ env.FF_VER }}-${{ vars.FF_SDK_ID }}
@@ -557,7 +557,7 @@ jobs:
         rm -rf mdk-sdk/bin/{x86,arm*}
         7z a -ssc -m0=lzma2 -mx=9 -ms=on -mf=off ../mdk-sdk-${{ env.TARGET_OS }}-vs2022-x64.7z mdk-sdk
     - name: Archieve SDK
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: mdk-sdk-vs2022-${{ env.TARGET_OS }}-${{ matrix.config }}
         path: mdk-sdk-${{ env.TARGET_OS }}-vs2022*.7z
@@ -595,7 +595,7 @@ jobs:
         submodules: 'recursive'
     - name: 'Restore External Dep cache'
       id: external-dep-cache
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: ./mdk/external
         key: external-dep-${{ env.TARGET_OS }}-ffmpeg-${{ env.FF_VER }}-${{ vars.FF_SDK_ID }}
@@ -635,7 +635,7 @@ jobs:
         date +%m%d
         7z a -p${{ secrets.SRC_USER }}`date +%m%d` -mhe ../mdk-src-${{ env.TARGET_OS }}-vs2022.7z mdk-sdk-${{ env.ARCH }}
     - name: Archieve SDK
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: mdk-src-vs2022-${{ env.TARGET_OS }}-${{ matrix.config }}
         path: mdk-src-${{ env.TARGET_OS }}-vs2022.7z
@@ -663,13 +663,13 @@ jobs:
         submodules: 'recursive'
     - name: 'Restore External Dep cache'
       id: external-dep-cache
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: ./mdk/external
         key: external-dep-${{ env.TARGET_OS }}-${{ env.CRT_EXTRA }}-ffmpeg-${{ env.FF_VER }}-${{ vars.FF_SDK_ID }}
     - name: 'Restore VC-LTL cache'
       id: ltl-cache
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: ./mdk/cmake/VC-LTL
         key: ltl-${{ vars.VC_LTL_VER }}
@@ -719,7 +719,7 @@ jobs:
         ../ci-after-build.sh
         mv mdk-sdk-*.7z ../mdk-sdk-${{ env.TARGET_OS }}-vs2022-ltl.7z
     - name: Archieve SDK
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: mdk-sdk-vs2022-ltl-${{ env.TARGET_OS }}-${{ matrix.config }}
         path: mdk-sdk-${{ env.TARGET_OS }}-vs2022-ltl.7z
@@ -746,7 +746,7 @@ jobs:
         submodules: 'recursive'
     - name: 'Restore External Dep cache'
       id: external-dep-cache
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: ./mdk/external
         key: external-dep-${{ env.TARGET_OS }}-ffmpeg-${{ env.FF_VER }}-${{ vars.FF_SDK_ID }}
@@ -789,7 +789,7 @@ jobs:
         ../ci-after-build.sh
         mv mdk-sdk-*.7z ../mdk-sdk-${{ env.TARGET_OS }}-vs2022.7z
     - name: Archieve SDK
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: mdk-sdk-vs2022-${{ env.TARGET_OS }}-${{ matrix.config }}
         path: mdk-sdk-${{ env.TARGET_OS }}-vs2022.7z
@@ -818,13 +818,13 @@ jobs:
         submodules: 'recursive'
     - name: 'Restore External Dep cache'
       id: external-dep-cache
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: ./mdk/external
         key: external-dep-${{ env.TARGET_OS }}-ffmpeg-${{ env.FF_VER }}-${{ vars.FF_SDK_ID }}
     - name: 'Restore sysroot cache'
       id: sysroot-cache
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: /tmp/winsysroot
         key: sysroot-${{ env.TARGET_OS }}${{ vars.WINSDKVER }}-vc${{ vars.VCVER }}
@@ -889,7 +889,7 @@ jobs:
         fi
         mv mdk-sdk-*.7z ../mdk-sdk-${{ env.TARGET_OS }}-clang.7z
     - name: Archieve SDK
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: mdk-sdk-clang-${{ env.TARGET_OS }}-${{ matrix.config }}
         path: mdk-sdk-${{ env.TARGET_OS }}-clang.7z
@@ -923,13 +923,13 @@ jobs:
         submodules: 'recursive'
     - name: 'Restore External Dep cache'
       id: external-dep-cache
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: ./mdk/external
         key: external-dep-${{ env.TARGET_OS }}-ffmpeg-${{ env.FF_VER }}-${{ vars.FF_SDK_ID }}
     - name: 'Restore sysroot cache'
       id: sysroot-cache
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: /tmp/winsysroot
         key: sysroot-${{ env.TARGET_OS }}${{ vars.WINSDKVER }}-vc${{ vars.VCVER }}
@@ -992,7 +992,7 @@ jobs:
         ../ci-after-build.sh
         mv mdk-sdk-*.7z ../mdk-sdk-${{ env.TARGET_OS }}-clang.7z
     - name: Archieve SDK
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: mdk-sdk-clang-${{ env.TARGET_OS }}-${{ matrix.config }}
         path: mdk-sdk-${{ env.TARGET_OS }}-clang.7z
@@ -1008,15 +1008,15 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     - name: Download win32 vs2022 sdk
-      uses: actions/download-artifact@v3
+      uses: actions/download-artifact@v4
       with:
         name: mdk-sdk-vs2022-windows-desktop-RelWithDebInfo
     - name: Download win32 vs2022 ltl sdk
-      uses: actions/download-artifact@v3
+      uses: actions/download-artifact@v4
       with:
         name: mdk-sdk-vs2022-ltl-windows-desktop-MinSizeRel
     - name: Download uwp vs2022 sdk
-      uses: actions/download-artifact@v3
+      uses: actions/download-artifact@v4
       with:
         name: mdk-sdk-vs2022-uwp-MinSizeRel
     - name: update build version
@@ -1035,7 +1035,7 @@ jobs:
         nuget pack mdk.nuspec
         mv *.nupkg ../mdk-vs2022.nupkg
     - name: Archieve SDK
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: mdk-nuget
         path: 'mdk*.nupkg'
@@ -1071,13 +1071,13 @@ jobs:
         submodules: 'recursive'
     - name: 'Restore External Dep cache'
       id: external-dep-cache
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: ./mdk/external
         key: external-dep-${{ env.TARGET_OS }}-ffmpeg-${{ env.FF_VER }}-${{ vars.FF_SDK_ID }}
     - name: 'Restore sysroot cache'
       id: sysroot-cache
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: ./mdk/sysroot
         key: sysroot-${{ env.TARGET_OS }}-${{ vars.LINUX_SYSROOT_ID }}
@@ -1130,7 +1130,7 @@ jobs:
         rm -rf mdk-sdk/{bin,lib}/arm*
         tar Jcvf ../mdk-sdk-${{ env.TARGET_OS }}-x64.tar.xz mdk-sdk
     - name: Archieve SDK
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: mdk-sdk-${{ env.TARGET_OS }}-${{ matrix.config }}
         path: mdk-sdk-${{ env.TARGET_OS }}*.tar.xz
@@ -1164,7 +1164,7 @@ jobs:
         submodules: 'recursive'
     - name: 'Restore External Dep cache'
       id: external-dep-cache
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: ./mdk/external
         key: external-dep-${{ env.TARGET_OS }}-ffmpeg-${{ env.FF_VER }}-${{ vars.FF_SDK_ID }}
@@ -1231,7 +1231,7 @@ jobs:
         ../ci-after-build.sh
         mv mdk-sdk-*.7z ..
     - name: Archieve SDK
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: mdk-sdk-${{ env.TARGET_OS }}-${{ matrix.config }}
         path: mdk-sdk-${{ env.TARGET_OS }}.7z
@@ -1262,7 +1262,7 @@ jobs:
         mkdir -p mdk-sdk/include/abi/mdk
         cp -avf mdk/include/mdk/{AudioFormat,AudioFrame,Buffer,ColorSpace,FrameReader,global,MediaInfo,Property,VideoBuffer,VideoFormat,VideoFrame,MediaIO}.h mdk-sdk/include/abi/mdk
     - name: Archieve SDK
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: mdk-abi-sdk
         path: mdk-sdk/
