@@ -4,6 +4,7 @@
 
 **Download** [Nightly Build SDK](https://sourceforge.net/projects/mdk-sdk/files/nightly/)
 
+
 Sourceforge[![Sourceforge](https://img.shields.io/sourceforge/dt/mdk-sdk)](https://sourceforge.net/projects/mdk-sdk/files)
 Github Releases[![Github Release](https://img.shields.io/github/downloads/wang-bin/mdk-sdk/total)](https://github.com/wang-bin/mdk-sdk/releases)
 NuGet[![NuGet](https://img.shields.io/nuget/dt/mdk)](https://www.nuget.org/packages/mdk)
@@ -140,7 +141,8 @@ player.setProperty("avformat.fpsprobesize", "0");
 [![GyroFlow](https://gyroflow.xyz/assets/logo.png)](https://gyroflow.xyz)
 <a href="https://www.xnview.com/en/xnviewmp"><img class="logo" src="https://www.xnview.com/img/app-xnviewmp-512.webp"  height=120 alt="XnViewMP"></a>
 [![www.connecting-technology](https://static.wixstatic.com/media/85712a_fe1dd2a84e17437e913dcfcdc89f40a4.jpg/v1/fill/w_460,h_240,al_c,q_80,usm_0.66_1.00_0.01,enc_auto/85712a_fe1dd2a84e17437e913dcfcdc89f40a4.jpg)](https://www.connecting-technology.com)
-<a href="https://smartplayer.ru"><img src="https://smartplayer.ru/assets/images/Header/logo.svg" alt="smartplayer"  width=600 height=120  style="background-color:black"></a>
+<a href="https://apps.apple.com/us/app/kalismart/id1530155654"><img src="http://www.kalimind.com/assets/images/kalimind_logo.svg" alt="kalismart" height=120></a>
+<a href="https://smartplayer.org"><img src="https://smartplayer.ru/assets/images/Header/logo.svg" alt="smartplayer"  width=600 height=120  style="background-color:black"></a>
 
 
 [金嵘达科技](http://www.kingroda.com)

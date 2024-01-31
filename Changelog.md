@@ -1,5 +1,29 @@
 Change log:
 
+# 0.25.0
+
+- D3D11:
+    - Improve gpu and cpu 0-copy rendering. Some AMD gpus are disabled because the result is wrong. Can be disabled by environment var `D3D11_ZERO_COPY=0`
+    - Improve sync if copy, decode, draw device contexts are different
+    - Enable shader_resource in D3D11 decoder by default to support gpu 0-copy rendering, lower gpu load.
+    - limit highest feature level to 12.1 to fix device create error
+    - Support set a global device via SetGlobalOption("d3d11.device", devPtr) for both decoders and renderers, then 0-copy will be enabled without issues in cross device 0-copy, but performance may be lower than cross device 0-copy
+- D3D12: sync between D3D12/MFT:d3d=12 decoder and renderer
+- MFT: enable shader_resource in MFT:d3d=11 to support better 0-copy rendering
+- VideoFrame can import an existing d3d11 or d3d9 resources
+- Support tvOS
+- VT decoder: enable av1, not tested
+- CUDA decoder: skip av1C header to fix parse error
+- OpenGL: Support GL_EXT_YUV_target, used by android hardware decoder rendering, can be enabled via env var `GL_YUV_SAMPLER=1`
+- Fix dead lock if output too many frames in 1 decode
+- Fix video size event not triggered for custom readers, e.g. braw and r3d
+- Improve overlay rendering
+- Wayland: support xdg-shell
+- Set subtitle fonts dir and default font file via global option
+- Android: add libass.so in sdk, and will be bundled into your app if use FindMDK.cmake. Remove libass.so from sdk if you don't need it
+- Linux: libc++18 compatible
+
+
 ## 0.24.0 - 2023-12-31
 
 - OpenGL:

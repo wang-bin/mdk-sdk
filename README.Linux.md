@@ -18,9 +18,9 @@
 
 
 ## About SDK for Linux
-SDK is built by clang 17 with
+SDK is built by clang 18 with
 - ffmpeg: https://sourceforge.net/projects/avbuild/files/linux/ffmpeg-master-linux-clang-lite-lto.tar.xz/download
-- libc++ 17. You can use delete libc++.so from sdk and use system libc++
+- libc++ 18. You can use delete libc++.so from sdk and use system libc++
 
 SDK can be used by any C or C++11 compiler, e.g. g++, clang
 
