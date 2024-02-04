@@ -19,7 +19,7 @@ env:
 jobs:
   macOS:
     # See: https://docs.github.com/en/actions/configuring-and-managing-workflows/configuring-a-workflow#configuring-a-build-matrix
-    runs-on: macos-13
+    runs-on: macos-14
     env:
       TARGET_OS: 'macOS'
       TARGET_ARCH: ${{ matrix.arch }}
@@ -40,8 +40,8 @@ jobs:
         fetch-depth: 1
         token: ${{ secrets.CLONE_PAT }}
         submodules: 'recursive'
-   # - name: Setup Xcode
-   #   run: sudo xcode-select -s /Applications/Xcode_12.4.app
+    - name: Setup Xcode
+      run: sudo xcode-select -s /Applications/Xcode_15.2.app
     - name: 'Restore External Dep cache'
       id: external-dep-cache
       uses: actions/cache@v4
@@ -99,7 +99,7 @@ jobs:
 
 
   macCatalyst:
-    runs-on: macos-13
+    runs-on: macos-14
     env:
       TARGET_OS: 'macCatalyst'
       LTO_SUFFIX: -lto
@@ -118,8 +118,8 @@ jobs:
         fetch-depth: 1
         token: ${{ secrets.CLONE_PAT }}
         submodules: 'recursive'
-   # - name: Setup Xcode
-   #   run: sudo xcode-select -s /Applications/Xcode_12.4.app
+    - name: Setup Xcode
+      run: sudo xcode-select -s /Applications/Xcode_15.2.app
     - name: 'Restore External Dep cache'
       id: external-dep-cache
       uses: actions/cache@v4
@@ -167,7 +167,7 @@ jobs:
 
 
   iOS:
-    runs-on: macos-13
+    runs-on: macos-14
     env:
       TARGET_OS: ${{ matrix.os }}
       LTO_SUFFIX: -lto
@@ -187,6 +187,8 @@ jobs:
         fetch-depth: 1
         token: ${{ secrets.CLONE_PAT }}
         submodules: 'recursive'
+    - name: Setup Xcode
+      run: sudo xcode-select -s /Applications/Xcode_15.2.app
     - name: 'Restore External Dep cache'
       id: external-dep-cache
       uses: actions/cache@v4
@@ -240,7 +242,7 @@ jobs:
       run: sshpass -p ${SF_PW} scp -o StrictHostKeyChecking=no mdk-sdk-${TARGET_OS}.tar.xz ${SF_USER}@frs.sourceforge.net:/home/frs/project/mdk-sdk/nightly/
 
   iOSSimulator:
-    runs-on: macos-13
+    runs-on: macos-14
     env:
       TARGET_OS: ${{ matrix.os }}Simulator
       LTO_SUFFIX: -lto
@@ -260,6 +262,8 @@ jobs:
         fetch-depth: 1
         token: ${{ secrets.CLONE_PAT }}
         submodules: 'recursive'
+    - name: Setup Xcode
+      run: sudo xcode-select -s /Applications/Xcode_15.2.app
     - name: 'Restore External Dep cache'
       id: external-dep-cache
       uses: actions/cache@v4
