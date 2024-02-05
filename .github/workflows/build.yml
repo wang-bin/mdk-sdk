@@ -69,7 +69,7 @@ jobs:
       working-directory: mdk
       run: |
         pwd
-        cmake -DMIN_SIZE=1 -DUSE_LTO=1 -DWITH_X11=1 -DR3DSDK=$PWD/external/R3DSDK -DCMAKE_OSX_DEPLOYMENT_TARGET=10.9 -GNinja -Bbuild/${TARGET_OS} -DCMAKE_VERBOSE_MAKEFILE=1 -DCMAKE_BUILD_TYPE=${{ matrix.config }} -DCMAKE_INSTALL_PREFIX=$PWD/mdk-sdk # no dSYM for lto, dsymutil: no debug symbols in executable (-arch x86_64)
+        cmake -DMIN_SIZE=1 -DUSE_LTO=1 -DWITH_X11=0 -DR3DSDK=$PWD/external/R3DSDK -DCMAKE_OSX_DEPLOYMENT_TARGET=10.9 -GNinja -DCMAKE_OSX_ARCHITECTURES=${{ matrix.arch }} -Bbuild/${TARGET_OS} -DCMAKE_VERBOSE_MAKEFILE=1 -DCMAKE_BUILD_TYPE=${{ matrix.config }} -DCMAKE_INSTALL_PREFIX=$PWD/mdk-sdk # no dSYM for lto, dsymutil: no debug symbols in executable (-arch x86_64)
     - name: Configure CMake
       if: ${{ startsWith(matrix.arch, 'arm64') }} # arm64, arm64e
       shell: bash
@@ -365,7 +365,7 @@ jobs:
         tar Jxf mdk-sdk-tvOSSimulator.tar.xz -C tvOSSimulator
         tar Jxf mdk-sdk-macCatalyst.tar.xz -C macCatalyst
         find .
-        cp -af macOS-x86_64/mdk-sdk macOS/ # libffmpeg is already fat
+        cp -af macOS-$(uname -m)/mdk-sdk macOS/ # libffmpeg is already fat
         lipo -create macOS-{arm,x86_}64/mdk-sdk/lib/mdk.framework/mdk -output macOS/mdk-sdk/lib/mdk.framework/Versions/Current/mdk
         lipo -create macOS-{arm,x86_}64/mdk-sdk/lib/mdk.framework.dSYM/Contents/Resources/DWARF/mdk -output macOS/mdk-sdk/lib/mdk.framework.dSYM/Contents/Resources/DWARF/mdk
         if [ -f macOS-arm64/mdk-sdk/lib/mdk.framework/Versions/Current/libmdk-braw.dylib -a -f macOS-x86_64/mdk-sdk/lib/mdk.framework/Versions/Current/libmdk-braw.dylib ]; then
@@ -375,7 +375,9 @@ jobs:
           lipo -create macOS-{arm,x86_}64/mdk-sdk/lib/mdk.framework/Versions/Current/libmdk-r3d.dylib -output macOS/mdk-sdk/lib/mdk.framework/Versions/Current/libmdk-r3d.dylib
         fi
         for b in `ls macOS-arm64/mdk-sdk/bin`; do # exes exist in both archs
-          lipo -create macOS-{arm,x86_}64/mdk-sdk/bin/$b -output macOS/mdk-sdk/bin/$b
+          if [ -f macOS-x86_64/mdk-sdk/bin/$b ]; then
+            lipo -create macOS-{arm,x86_}64/mdk-sdk/bin/$b -output macOS/mdk-sdk/bin/$b
+          fi
         done
         codesign --force  --sign - --deep --timestamp macOS/mdk-sdk/lib/mdk.framework
 
