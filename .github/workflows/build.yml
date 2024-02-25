@@ -1181,7 +1181,9 @@ jobs:
 #        SYSROOT_CACHE_HIT: ${{ steps.sysroot-cache.outputs.cache-hit }}
         EXTERNAL_DEP_CACHE_HIT: ${{ steps.external-dep-cache.outputs.cache-hit }}
       working-directory: mdk
-      run: ../ci-before-build.sh
+      run: |
+        sudo apt update
+        ../ci-before-build.sh
     - name: Configure for armeabi-v7a
       env:
         ARCH: armeabi-v7a
