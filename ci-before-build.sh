@@ -13,7 +13,11 @@ tolower(){
 
 crt_extra=$(tolower ${CRT_EXTRA})
 
-if [[ "$TARGET_OS" == mac* || "$TARGET_OS" == iOS* || "$TARGET_OS" == tvOS* || "$TARGET_OS" == android ]]; then
+if [[ "$TARGET_OS" == xr* || "$TARGET_OS" == vision* ]]; then
+# FIXME: llvm-17 can't correctly merge visionOS lto libs(libavformat.a)
+  LTO_SUFFIX=
+fi
+if [[ "$TARGET_OS" == mac* || "$TARGET_OS" == iOS* || "$TARGET_OS" == tvOS* || "$TARGET_OS" == xr* || "$TARGET_OS" == vision* || "$TARGET_OS" == android ]]; then
     FF_EXTRA=
 fi
 if [[ "$TARGET_OS" == "win"* || "$TARGET_OS" == "uwp"* ]]; then
@@ -36,9 +40,11 @@ if [ `which dpkg` ]; then # TODO: multi arch
     fi
     sudo apt install -y $pkgs
 elif [ `which brew` ]; then
-    #time brew update --preinstall
+    export HOMEBREW_NO_AUTO_UPDATE=true
+    time brew update #--preinstall
     export HOMEBREW_NO_AUTO_UPDATE=1
     pkgs="p7zip ninja vulkan-headers dav1d gnu-tar" #
+    pkgs+=" cmake" # visionOS simulator requires cmake 3.28.4
     if [[ "$DEVTOOLS_CACHE_HIT" != "true" ]]; then
         pkgs+=" hudochenkov/sshpass/sshpass"
     fi
@@ -49,6 +55,7 @@ elif [ `which brew` ]; then
         }
     fi
     time brew install $pkgs
+    type -a cmake
     NDK_HOST=darwin
 fi
 

@@ -8,7 +8,7 @@ on:
   repository_dispatch:
 
 env:
-  FF_VER: master
+  FF_VER: 6.1  # master is 7.0 but not released
   LLVM_VER: ${{ vars.LLVM_VER }}
   VC_LTL_VER: ${{ vars.VC_LTL_VER }}
   NINJA_STATUS: '[%f/%t %e %r]'
@@ -169,13 +169,14 @@ jobs:
   iOS:
     runs-on: macos-14
     env:
-      TARGET_OS: ${{ matrix.os }}
+      TARGET_OS: ${{ matrix.os }}${{ matrix.simulator }}
       LTO_SUFFIX: -lto
     strategy:
       fail-fast: false
       matrix:
-        os: [iOS, tvOS]
+        os: [iOS, tvOS, visionOS]
         config: [MinSizeRel]
+        simulator: ['', Simulator]
     steps:
     - uses: actions/checkout@v4
     - name: Checkout source
@@ -210,7 +211,22 @@ jobs:
     - name: Configure CMake
       shell: bash
       working-directory: mdk
-      run: cmake -GNinja -DMIN_SIZE=1 -DUSE_LTO=1 -DWITH_DEB_INFO=1 -DCMAKE_SYSTEM_NAME=${{ matrix.os }} -DIOS_DEPLOYMENT_TARGET=8.0 -DCMAKE_OSX_ARCHITECTURES=arm64 -DCMAKE_IOS_INSTALL_COMBINED=YES  -Bbuild/${TARGET_OS} -DCMAKE_BUILD_TYPE=${{ matrix.config }} -DCMAKE_INSTALL_PREFIX=$PWD/mdk-sdk -DCMAKE_VERBOSE_MAKEFILE=1 -DFFMPEG_EMBED=1 # FFMPEG_EMBED=0 to copy libffmpeg.5.dylib
+      run: |
+        minver=8.0
+        [[ "$TARGET_OS" == *"Simulator" ]] && {
+            archs="arm64;x86_64"
+            sdk=$TARGET_OS
+            sdk=${sdk/iOSS/iphones}
+            sdk=${sdk/tvOSS/appletvs}
+            sdk=${sdk/visionOSS/xrs}
+            sdk=${sdk/xrOSS/xrs}
+            EXTRA_OPTS="-DCMAKE_OSX_SYSROOT=${sdk}"
+        }
+        [[ "$TARGET_OS" == "vision"* ]] && {
+          minver=1.0
+          archs=arm64
+        }
+        cmake -GNinja -DMIN_SIZE=1 -DUSE_LTO=1 -DWITH_DEB_INFO=1 -DCMAKE_SYSTEM_NAME=${{ matrix.os }} $EXTRA_OPTS -DIOS_DEPLOYMENT_TARGET=$minver -DCMAKE_OSX_ARCHITECTURES="$archs" -DCMAKE_IOS_INSTALL_COMBINED=YES -DCMAKE_XCODE_ATTRIBUTE_ONLY_ACTIVE_ARCH=NO -Bbuild/${TARGET_OS} -DCMAKE_BUILD_TYPE=${{ matrix.config }} -DCMAKE_INSTALL_PREFIX=$PWD/mdk-sdk -DCMAKE_VERBOSE_MAKEFILE=1 -DFFMPEG_EMBED=1 # FFMPEG_EMBED=0 to copy libffmpeg.5.dylib
     - name: Build
       shell: bash
       working-directory: mdk
@@ -221,14 +237,6 @@ jobs:
       run: |
         cmake -P build/${TARGET_OS}/cmake_install.cmake
         ../mksdk.sh mdk-sdk || echo done
-        libffmpeg=$(find mdk-sdk/lib/mdk.framework -name "libffmpeg*.dylib")
-        if [ -f "$libffmpeg" ]; then
-          lipo -thin arm64 "$libffmpeg" -output "$libffmpeg"
-        fi
-        libass=$(find mdk-sdk/lib/mdk.framework -name "libass*.dylib")
-        if [ -f "$libass" ]; then
-          lipo -thin arm64 "$libass" -output "$libass"
-        fi
         gtar Jcfv mdk-sdk-$TARGET_OS.tar.xz mdk-sdk
         mv mdk-sdk*.tar.xz ..
     - name: Archieve SDK
@@ -241,85 +249,12 @@ jobs:
       shell: bash
       run: sshpass -p ${SF_PW} scp -o StrictHostKeyChecking=no mdk-sdk-${TARGET_OS}.tar.xz ${SF_USER}@frs.sourceforge.net:/home/frs/project/mdk-sdk/nightly/
 
-  iOSSimulator:
+  Apple:
     runs-on: macos-14
-    env:
-      TARGET_OS: ${{ matrix.os }}Simulator
-      LTO_SUFFIX: -lto
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [iOS, tvOS]
-        config: [MinSizeRel]
+    needs: [macOS, iOS, macCatalyst]
     steps:
-    - uses: actions/checkout@v4
-    - name: Checkout source
-      uses: actions/checkout@v4
-      with:
-        repository: wang-bin/mdk
-        path: mdk
-        ref: ${{ github.event_name == 'repository_dispatch' &&  github.event.client_payload.ref || 'master' }}
-        fetch-depth: 1
-        token: ${{ secrets.CLONE_PAT }}
-        submodules: 'recursive'
     - name: Setup Xcode
       run: sudo xcode-select -s /Applications/Xcode_15.2.app
-    - name: 'Restore External Dep cache'
-      id: external-dep-cache
-      uses: actions/cache@v4
-      with:
-        path: |
-          ./mdk/external
-          !./mdk/external/lib/macOS/libvulkan.tbd
-          !./mdk/external/lib/libdav1d.tbd
-        key: external-dep-${{ env.TARGET_OS }}-ffmpeg-${{ env.FF_VER }}-${{ vars.FF_SDK_ID }}
-# why may failed to cache/restore /usr/local/bin/sshpass?
-# no build cache because build dir content changes but key should not, then no cache save.
-    - name: Create Build Environment
-      shell: bash
-      env:
-        DEVTOOLS_CACHE_HIT: ${{ steps.devtools-cache.outputs.cache-hit }}
-        EXTERNAL_DEP_CACHE_HIT: ${{ steps.external-dep-cache.outputs.cache-hit }}
-      working-directory: mdk
-      run: ../ci-before-build.sh
-    - name: Configure CMake
-      shell: bash
-      working-directory: mdk
-      run: |
-        sdk=$TARGET_OS
-        sdk=${sdk/iOSS/iphones}
-        sdk=${sdk/tvOSS/appletvs}
-        cmake -GNinja -DMIN_SIZE=1 -DUSE_LTO=1 -DWITH_DEB_INFO=1 -DCMAKE_SYSTEM_NAME=${{ matrix.os }} -DCMAKE_OSX_ARCHITECTURES="x86_64;arm64" -DCMAKE_OSX_DEPLOYMENT_TARGET=8.0 -DCMAKE_XCODE_ATTRIBUTE_ONLY_ACTIVE_ARCH=NO -DCMAKE_IOS_INSTALL_COMBINED=YES -DCMAKE_OSX_SYSROOT=${sdk}  -Bbuild/${TARGET_OS} -DCMAKE_BUILD_TYPE=${{ matrix.config }} -DCMAKE_INSTALL_PREFIX=$PWD/mdk-sdk -DCMAKE_VERBOSE_MAKEFILE=1 -DFFMPEG_EMBED=1 # FFMPEG_EMBED=0 to copy libffmpeg.5.dylib
-    - name: Build
-      shell: bash
-      working-directory: mdk
-      run: cmake --build build/${TARGET_OS}
-    - name: Make SDK
-      shell: bash
-      working-directory: mdk
-      run: |
-        cmake -P build/${TARGET_OS}/cmake_install.cmake
-        ../mksdk.sh mdk-sdk || echo done
-        libffmpeg=$(find mdk-sdk/lib/mdk.framework -name "libffmpeg*.dylib")
-        if [ -f "$libffmpeg" ]; then
-          lipo -thin x86_64 "$libffmpeg" -output "$libffmpeg"
-        fi
-        libass=$(find mdk-sdk/lib/mdk.framework -name "libass*.dylib")
-        if [ -f "$libass" ]; then
-          lipo -thin x86_64 "$libass" -output "$libass"
-        fi
-        gtar Jcfv mdk-sdk-$TARGET_OS.tar.xz mdk-sdk
-        mv mdk-sdk*.tar.xz ..
-    - name: Archieve SDK
-      uses: actions/upload-artifact@v4
-      with:
-        name: mdk-sdk-${{ env.TARGET_OS }}-${{ matrix.config }}
-        path: mdk-sdk-${{ env.TARGET_OS }}.tar.xz
-
-  Apple:
-    runs-on: macos-latest
-    needs: [macOS, iOS, iOSSimulator, macCatalyst]
-    steps:
     - uses: actions/checkout@v4
     - name: Download macOS sdk
       uses: actions/download-artifact@v4
@@ -345,6 +280,14 @@ jobs:
       uses: actions/download-artifact@v4
       with:
         name: mdk-sdk-tvOSSimulator-MinSizeRel
+    - name: Download visionOS sdk
+      uses: actions/download-artifact@v4
+      with:
+        name: mdk-sdk-visionOS-MinSizeRel
+    - name: Download visionOSSimulator sdk
+      uses: actions/download-artifact@v4
+      with:
+        name: mdk-sdk-visionOSSimulator-MinSizeRel
     - name: Download macCatalyst sdk
       uses: actions/download-artifact@v4
       with:
@@ -356,13 +299,15 @@ jobs:
       shell: bash
       run: |
         export XZ_OPT="-9e -T0"
-        mkdir -p macOS iOS iOSSimulator tvOS tvOSSimulator macCatalyst mdk-sdk/{Frameworks,include,lib} macOS-arm64 macOS-x86_64
+        mkdir -p macOS iOS iOSSimulator tvOS tvOSSimulator visionOS visionOSSimulator macCatalyst mdk-sdk/{Frameworks,include,lib} macOS-arm64 macOS-x86_64
         tar Jxf mdk-sdk-macOS-x86_64.tar.xz -C macOS-x86_64
         tar Jxf mdk-sdk-macOS-arm64.tar.xz -C macOS-arm64
         tar Jxf mdk-sdk-iOS.tar.xz -C iOS
         tar Jxf mdk-sdk-iOSSimulator.tar.xz -C iOSSimulator
         tar Jxf mdk-sdk-tvOS.tar.xz -C tvOS
         tar Jxf mdk-sdk-tvOSSimulator.tar.xz -C tvOSSimulator
+        tar Jxf mdk-sdk-visionOS.tar.xz -C visionOS
+        tar Jxf mdk-sdk-visionOSSimulator.tar.xz -C visionOSSimulator
         tar Jxf mdk-sdk-macCatalyst.tar.xz -C macCatalyst
         find .
         cp -af macOS-$(uname -m)/mdk-sdk macOS/ # libffmpeg is already fat
@@ -390,7 +335,7 @@ jobs:
         cp -af macOS/mdk-sdk/lib/cmake mdk-sdk/lib/
         cp -af iOS/mdk-sdk/README.md mdk-sdk/README-iOS.md
         # https://developer.apple.com/forums/thread/655768 (error: the path does not point to a valid debug symbols file: macOS/mdk-sdk/lib/mdk.framework.dSYM)
-        xcodebuild -create-xcframework -framework macOS/mdk-sdk/lib/mdk.framework -debug-symbols $PWD/macOS/mdk-sdk/lib/mdk.framework.dSYM -framework iOS/mdk-sdk/lib/mdk.framework -debug-symbols $PWD/iOS/mdk-sdk/lib/mdk.framework.dSYM -framework iOSSimulator/mdk-sdk/lib/mdk.framework  -framework tvOS/mdk-sdk/lib/mdk.framework -framework tvOSSimulator/mdk-sdk/lib/mdk.framework -framework macCatalyst/mdk-sdk/lib/mdk.framework -output mdk-sdk/lib/mdk.xcframework
+        xcodebuild -create-xcframework -framework macOS/mdk-sdk/lib/mdk.framework -debug-symbols $PWD/macOS/mdk-sdk/lib/mdk.framework.dSYM -framework iOS/mdk-sdk/lib/mdk.framework -debug-symbols $PWD/iOS/mdk-sdk/lib/mdk.framework.dSYM -framework iOSSimulator/mdk-sdk/lib/mdk.framework  -framework tvOS/mdk-sdk/lib/mdk.framework -framework tvOSSimulator/mdk-sdk/lib/mdk.framework -framework visionOS/mdk-sdk/lib/mdk.framework -framework visionOSSimulator/mdk-sdk/lib/mdk.framework -framework macCatalyst/mdk-sdk/lib/mdk.framework -output mdk-sdk/lib/mdk.xcframework
         mdkfw=`find mdk-sdk/lib/mdk.xcframework -name "macos-*" -depth 1`
         # ensure bin/* can Find mdk and ffmpeg
         ln -sf ${mdkfw/mdk-sdk/..}/mdk.framework mdk-sdk/Frameworks
