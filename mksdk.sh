@@ -18,8 +18,8 @@ if [ -d $SDK_DIR/lib/mdk.framework ]; then
   [ -d $SDK_INCLUDE ] && rm -rf $SDK_INCLUDE
   [ -L $SDK_INCLUDE ] && rm -f $SDK_INCLUDE
   ln -sfv ../lib/mdk.framework/Headers $SDK_INCLUDE #gln -rsfv $SDK_DIR/lib/mdk.framework/Headers $SDK_INCLUDE
-  mv $SDK_DIR/lib/mdk.framework/Versions/Current/mdk.dSYM $SDK_DIR/lib/mdk.framework.dSYM
-  mv $SDK_DIR/lib/mdk.framework/mdk.dSYM $SDK_DIR/lib/mdk.framework.dSYM
+  mv -v $SDK_DIR/lib/mdk.framework/Versions/Current/mdk.dSYM $SDK_DIR/lib/mdk.framework.dSYM
+  mv -v $SDK_DIR/lib/mdk.framework/mdk.dSYM $SDK_DIR/lib/mdk.framework.dSYM
   ffdso=(`find $SDK_DIR/lib/mdk.framework -name "libffmpeg.*.dylib"`)
   ffdso=${ffdso[$((${#ffdso[@]}-1))]}
   ffdso=${ffdso##*lib/}

@@ -66,16 +66,16 @@ jobs:
       # Use a bash shell so we can use the same syntax for environment variable
       # access regardless of the host operating system
       shell: bash
-      working-directory: mdk
+      working-directory: mdk # TODO: remove
       run: |
         pwd
-        cmake -DMIN_SIZE=1 -DUSE_LTO=1 -DWITH_X11=0 -DR3DSDK=$PWD/external/R3DSDK -DCMAKE_OSX_DEPLOYMENT_TARGET=10.9 -GNinja -DCMAKE_OSX_ARCHITECTURES=${{ matrix.arch }} -Bbuild/${TARGET_OS} -DCMAKE_VERBOSE_MAKEFILE=1 -DCMAKE_BUILD_TYPE=${{ matrix.config }} -DCMAKE_INSTALL_PREFIX=$PWD/mdk-sdk # no dSYM for lto, dsymutil: no debug symbols in executable (-arch x86_64)
+        cmake -DMIN_SIZE=1 -DUSE_LTO=1 -DWITH_X11=0 -DR3DSDK=$PWD/external/R3DSDK -DCMAKE_OSX_DEPLOYMENT_TARGET=10.9 -GNinja -DCMAKE_OSX_ARCHITECTURES=${{ matrix.arch }} -Bbuild/${TARGET_OS} -DCMAKE_VERBOSE_MAKEFILE=1 -DCMAKE_BUILD_TYPE=${{ matrix.config }} -DCMAKE_INSTALL_PREFIX=$PWD/mdk-sdk
     - name: Configure CMake
       if: ${{ startsWith(matrix.arch, 'arm64') }} # arm64, arm64e
       shell: bash
       working-directory: mdk
       run: |
-        cmake -DMIN_SIZE=1 -DUSE_LTO=1 -DR3DSDK=$PWD/external/R3DSDK -DCMAKE_OSX_DEPLOYMENT_TARGET=11.0 -GNinja -DCMAKE_OSX_ARCHITECTURES=${{ matrix.arch }} -Bbuild/${TARGET_OS} -DCMAKE_VERBOSE_MAKEFILE=1 -DCMAKE_BUILD_TYPE=${{ matrix.config }} -DCMAKE_INSTALL_PREFIX=$PWD/mdk-sdk # no dSYM for lto, dsymutil: no debug symbols in executable (-arch x86_64)
+        cmake -DMIN_SIZE=1 -DUSE_LTO=1 -DR3DSDK=$PWD/external/R3DSDK -DCMAKE_OSX_DEPLOYMENT_TARGET=11.0 -GNinja -DCMAKE_OSX_ARCHITECTURES=${{ matrix.arch }} -Bbuild/${TARGET_OS} -DCMAKE_VERBOSE_MAKEFILE=1 -DCMAKE_BUILD_TYPE=${{ matrix.config }} -DCMAKE_INSTALL_PREFIX=$PWD/mdk-sdk
     - name: Build
       shell: bash
       working-directory: mdk
@@ -97,75 +97,6 @@ jobs:
       run: |
         sshpass -p ${SF_PW} scp -o StrictHostKeyChecking=no mdk-sdk-${TARGET_OS}-${{ matrix.arch }}.tar.xz ${SF_USER}@frs.sourceforge.net:/home/frs/project/mdk-sdk/nightly/
 
-
-  macCatalyst:
-    runs-on: macos-14
-    env:
-      TARGET_OS: 'macCatalyst'
-      LTO_SUFFIX: -lto
-    strategy:
-      fail-fast: false
-      matrix:
-        config: [MinSizeRel]
-    steps:
-    - uses: actions/checkout@v4
-    - name: Checkout source
-      uses: actions/checkout@v4
-      with:
-        repository: wang-bin/mdk
-        path: mdk
-        ref: ${{ github.event_name == 'repository_dispatch' &&  github.event.client_payload.ref || 'master' }}
-        fetch-depth: 1
-        token: ${{ secrets.CLONE_PAT }}
-        submodules: 'recursive'
-    - name: Setup Xcode
-      run: sudo xcode-select -s /Applications/Xcode_15.2.app
-    - name: 'Restore External Dep cache'
-      id: external-dep-cache
-      uses: actions/cache@v4
-      with:
-        path: |
-          ./mdk/external
-          !./mdk/external/lib/libdav1d.tbd
-        key: external-dep-${{ env.TARGET_OS }}-ffmpeg-${{ env.FF_VER }}-${{ vars.FF_SDK_ID }}
-# why may failed to cache/restore /usr/local/bin/sshpass?
-# no build cache because build dir content changes but key should not, then no cache save.
-    - name: Create Build Environment
-      shell: bash
-      env:
-        DEVTOOLS_CACHE_HIT: ${{ steps.devtools-cache.outputs.cache-hit }}
-        EXTERNAL_DEP_CACHE_HIT: ${{ steps.external-dep-cache.outputs.cache-hit }}
-      working-directory: mdk
-      run: ../ci-before-build.sh
-
-    - name: Configure CMake
-      # Use a bash shell so we can use the same syntax for environment variable
-      # access regardless of the host operating system
-      shell: bash
-      working-directory: mdk
-      run: cmake -GNinja -DMIN_SIZE=1 -DUSE_LTO=1 -DCMAKE_TOOLCHAIN_FILE=$PWD/cmake/tools/macCatalyst.cmake -DUSE_BITCODE=0 -DCMAKE_OSX_ARCHITECTURES="x86_64;arm64"  -Bbuild/${TARGET_OS} -DCMAKE_VERBOSE_MAKEFILE=1 -DCMAKE_BUILD_TYPE=${{ matrix.config }} -DCMAKE_INSTALL_PREFIX=$PWD/mdk-sdk # no dSYM for lto, dsymutil: no debug symbols in executable (-arch x86_64)
-    - name: Build
-      shell: bash
-      working-directory: mdk
-      run: cmake --build build/${TARGET_OS}
-    - name: Make SDK
-      shell: bash
-      working-directory: mdk
-      run: |
-        ../ci-after-build.sh
-        mv mdk-sdk*.tar.xz ../mdk-sdk-${{ env.TARGET_OS }}.tar.xz
-    - name: Archieve SDK
-      uses: actions/upload-artifact@v4
-      with:
-        name: mdk-sdk-${{ env.TARGET_OS }}-${{ matrix.config }}
-        path: mdk-sdk-${{ env.TARGET_OS }}.tar.xz
-    - name: Upload to SourceForge
-      if: ${{ env.SF_UPLOAD == 'true' }}
-      shell: bash
-      run: |
-        sshpass -p ${SF_PW} scp -o StrictHostKeyChecking=no mdk-sdk-${TARGET_OS}.tar.xz ${SF_USER}@frs.sourceforge.net:/home/frs/project/mdk-sdk/nightly/
-
-
   iOS:
     runs-on: macos-14
     env:
@@ -174,9 +105,12 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [iOS, tvOS, visionOS]
+        os: [iOS, tvOS, visionOS, macCatalyst]
         config: [MinSizeRel]
         simulator: ['', Simulator]
+        exclude:
+          - os: macCatalyst
+            simulator: Simulator
     steps:
     - uses: actions/checkout@v4
     - name: Checkout source
@@ -209,6 +143,7 @@ jobs:
       working-directory: mdk
       run: ../ci-before-build.sh
     - name: Configure CMake
+      if: ${{ matrix.os != 'macCatalyst' }}
       shell: bash
       working-directory: mdk
       run: |
@@ -222,22 +157,26 @@ jobs:
             sdk=${sdk/xrOSS/xrs}
             EXTRA_OPTS="-DCMAKE_OSX_SYSROOT=${sdk}"
         }
+        [[ "$TARGET_OS" == "tv"* ]] && minver=10.2  # VT: 10.2+
         [[ "$TARGET_OS" == "vision"* ]] && {
           minver=1.0
           archs=arm64
         }
-        cmake -GNinja -DMIN_SIZE=1 -DUSE_LTO=1 -DWITH_DEB_INFO=1 -DCMAKE_SYSTEM_NAME=${{ matrix.os }} $EXTRA_OPTS -DIOS_DEPLOYMENT_TARGET=$minver -DCMAKE_OSX_ARCHITECTURES="$archs" -DCMAKE_IOS_INSTALL_COMBINED=YES -DCMAKE_XCODE_ATTRIBUTE_ONLY_ACTIVE_ARCH=NO -Bbuild/${TARGET_OS} -DCMAKE_BUILD_TYPE=${{ matrix.config }} -DCMAKE_INSTALL_PREFIX=$PWD/mdk-sdk -DCMAKE_VERBOSE_MAKEFILE=1 -DFFMPEG_EMBED=1 # FFMPEG_EMBED=0 to copy libffmpeg.5.dylib
+        cmake -GNinja -DFFMPEG_EMBED=1 -DMIN_SIZE=1 -DUSE_LTO=1 -DWITH_DEB_INFO=1 -DCMAKE_SYSTEM_NAME=${{ matrix.os }} $EXTRA_OPTS -DCMAKE_OSX_DEPLOYMENT_TARGET=$minver -DCMAKE_OSX_ARCHITECTURES="$archs" -Bbuild/${TARGET_OS} -DCMAKE_BUILD_TYPE=${{ matrix.config }} -DCMAKE_INSTALL_PREFIX=$PWD/mdk-sdk -DCMAKE_VERBOSE_MAKEFILE=1 -DCMAKE_IOS_INSTALL_COMBINED=YES -DCMAKE_XCODE_ATTRIBUTE_ONLY_ACTIVE_ARCH=NO # FFMPEG_EMBED=0 to copy libffmpeg.5.dylib
+    - name: Configure CMake
+      if: ${{ matrix.os == 'macCatalyst' }}
+      shell: bash
+      working-directory: mdk
+      run: cmake -GNinja -DMIN_SIZE=1 -DUSE_LTO=1 -DCMAKE_TOOLCHAIN_FILE=$PWD/cmake/tools/macCatalyst.cmake -DCMAKE_OSX_ARCHITECTURES="x86_64;arm64"  -Bbuild/${TARGET_OS} -DCMAKE_VERBOSE_MAKEFILE=1 -DCMAKE_BUILD_TYPE=${{ matrix.config }} -DCMAKE_INSTALL_PREFIX=$PWD/mdk-sdk
     - name: Build
       shell: bash
       working-directory: mdk
-      run: cmake --build build/${TARGET_OS}
+      run: cmake --build build/${TARGET_OS} --parallel
     - name: Make SDK
       shell: bash
       working-directory: mdk
       run: |
-        cmake -P build/${TARGET_OS}/cmake_install.cmake
-        ../mksdk.sh mdk-sdk || echo done
-        gtar Jcfv mdk-sdk-$TARGET_OS.tar.xz mdk-sdk
+        ../ci-after-build.sh
         mv mdk-sdk*.tar.xz ..
     - name: Archieve SDK
       uses: actions/upload-artifact@v4
@@ -251,7 +190,7 @@ jobs:
 
   Apple:
     runs-on: macos-14
-    needs: [macOS, iOS, macCatalyst]
+    needs: [macOS, iOS]
     steps:
     - name: Setup Xcode
       run: sudo xcode-select -s /Applications/Xcode_15.2.app
@@ -359,76 +298,6 @@ jobs:
       shell: bash
       run: |
         make -f upload.mk
-
-
-  Legacy_RaspberryPi_libcxx:
-    if: false   # FIXME: std::to_array undeclared if use clang-16 + sysroot libc++8, linux build is fine
-    runs-on: ubuntu-latest
-    env:
-      FF_VER: 5.1 # master build error
-      TARGET_OS: 'raspberry-pi'
-      LTO_SUFFIX: -lto
-      #LLVM_VER: 8
-    strategy:
-      fail-fast: false
-      matrix:
-        config: [MinSizeRel]
-    steps:
-    - uses: actions/checkout@v4
-    - name: Checkout source
-      uses: actions/checkout@v4
-      with:
-        repository: wang-bin/mdk
-        path: mdk
-        ref: ${{ github.event_name == 'repository_dispatch' &&  github.event.client_payload.ref || 'master' }}
-        fetch-depth: 1
-        token: ${{ secrets.CLONE_PAT }}
-        submodules: 'recursive'
-    - name: 'Restore External Dep cache'
-      id: external-dep-cache
-      uses: actions/cache@v4
-      with:
-        path: ./mdk/external
-        key: external-dep-${{ env.TARGET_OS }}-ffmpeg-${{ env.FF_VER }}-${{ vars.FF_SDK_ID }}
-    - name: 'Restore sysroot cache'
-      id: sysroot-cache
-      uses: actions/cache@v4
-      with:
-        path: ./mdk/sysroot
-        key: sysroot-${{ env.TARGET_OS }}-${{ vars.RPI_SYSROOT_ID }}
-    - name: Create Build Environment
-      shell: bash
-      env:
-        DEVTOOLS_CACHE_HIT: ${{ steps.devtools-cache.outputs.cache-hit }}
-        SYSROOT_CACHE_HIT: ${{ steps.sysroot-cache.outputs.cache-hit }}
-        EXTERNAL_DEP_CACHE_HIT: ${{ steps.external-dep-cache.outputs.cache-hit }}
-      working-directory: mdk
-      run: ../ci-before-build.sh
-    - name: Configure CMake
-      shell: bash
-      working-directory: mdk
-      run: |
-        pwd
-        cmake -DUSE_LTO=thin -DCMAKE_C_COMPILER=clang-${LLVM_VER:-17} -DCMAKE_CXX_COMPILER=clang++-${LLVM_VER:-17} -DCMAKE_TOOLCHAIN_FILE=$PWD/cmake/tools/${TARGET_OS/r*pi/rpi}.clang.cmake -DLINUX_SYSROOT=$PWD/sysroot -GNinja -H$PWD -B$PWD/build/${TARGET_OS} -DCMAKE_BUILD_TYPE=${{ matrix.config }} -DCMAKE_INSTALL_PREFIX=$PWD/mdk-sdk  -DCMAKE_VERBOSE_MAKEFILE=1
-    - name: Build
-      shell: bash
-      working-directory: mdk
-      run: cmake --build build/${TARGET_OS}
-    - name: Make SDK
-      shell: bash
-      working-directory: mdk
-      run: |
-        ../ci-after-build.sh
-        mv mdk-sdk*.tar.xz ..
-    - name: Archieve SDK
-      uses: actions/upload-artifact@v4
-      with:
-        name: mdk-sdk-${{ env.TARGET_OS }}-${{ matrix.config }}
-        path: mdk-sdk-${{ env.TARGET_OS }}.tar.xz
-    - name: Upload to SourceForge
-      if: ${{ matrix.config == 'MinSizeRel' && env.SF_UPLOAD == 'true' }}
-      shell: bash
-      run: sshpass -p ${SF_PW} scp -o StrictHostKeyChecking=no mdk-sdk-${TARGET_OS}.tar.xz ${SF_USER}@frs.sourceforge.net:/home/frs/project/mdk-sdk/nightly/
 
 
   Windows_VS2022:
@@ -600,7 +469,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        config: [MinSizeRel]
+        config: [RelWithDebInfo]
     steps:
     - uses: actions/checkout@v4
     - name: Checkout source
@@ -647,7 +516,7 @@ jobs:
         ARCH: x86
         R3DSDK: ${{ github.workspace }}/mdk/external/R3DSDK
       working-directory: mdk
-      run: cmake -DVC_LTL=1 -DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreaded -DR3DSDK=${{ env.R3DSDK }} -DUSE_LTO=1 -DCMAKE_SYSTEM_PROCESSOR=${{ env.ARCH }} -DCMAKE_SYSTEM_VERSION="6.0" -GNinja  -Bbuild/${{ env.TARGET_OS }}-${{ env.ARCH }} -DCMAKE_BUILD_TYPE=${{ matrix.config }} -DCMAKE_INSTALL_PREFIX=mdk-sdk-${{ env.ARCH }} -DCMAKE_VERBOSE_MAKEFILE=1 .
+      run: cmake -DVC_LTL=1 -DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreaded -DR3DSDK=${{ env.R3DSDK }} -DMIN_SIZE=1 -DUSE_LTO=1 -DCMAKE_SYSTEM_PROCESSOR=${{ env.ARCH }} -DCMAKE_SYSTEM_VERSION="6.0" -GNinja  -Bbuild/${{ env.TARGET_OS }}-${{ env.ARCH }} -DCMAKE_BUILD_TYPE=${{ matrix.config }} -DCMAKE_INSTALL_PREFIX=mdk-sdk-${{ env.ARCH }} -DCMAKE_VERBOSE_MAKEFILE=1 .
     - name: Build for win x86
       working-directory: mdk
       run: cmake --build build/${{ env.TARGET_OS }}-x86
@@ -659,7 +528,7 @@ jobs:
         ARCH: x64
         R3DSDK: ${{ github.workspace }}/mdk/external/R3DSDK
       working-directory: mdk
-      run: cmake -DVC_LTL=1 -DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreaded -DR3DSDK=${{ env.R3DSDK }} -DUSE_LTO=1 -DCMAKE_SYSTEM_PROCESSOR=${{ env.ARCH }} -DCMAKE_SYSTEM_VERSION="6.0" -GNinja  -Bbuild/${{ env.TARGET_OS }}-${{ env.ARCH }} -DCMAKE_BUILD_TYPE=${{ matrix.config }} -DCMAKE_INSTALL_PREFIX=mdk-sdk-${{ env.ARCH }} -DCMAKE_VERBOSE_MAKEFILE=1 .
+      run: cmake -DVC_LTL=1 -DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreaded -DR3DSDK=${{ env.R3DSDK }} -DMIN_SIZE=1 -DUSE_LTO=1 -DCMAKE_SYSTEM_PROCESSOR=${{ env.ARCH }} -DCMAKE_SYSTEM_VERSION="6.0" -GNinja  -Bbuild/${{ env.TARGET_OS }}-${{ env.ARCH }} -DCMAKE_BUILD_TYPE=${{ matrix.config }} -DCMAKE_INSTALL_PREFIX=mdk-sdk-${{ env.ARCH }} -DCMAKE_VERBOSE_MAKEFILE=1 .
     - name: Build for win x64
       working-directory: mdk
       run: cmake --build build/${{ env.TARGET_OS }}-x64
@@ -683,7 +552,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        config: [MinSizeRel]
+        config: [RelWithDebInfo]
     steps:
     - uses: actions/checkout@v4
     - name: Checkout source
@@ -717,7 +586,7 @@ jobs:
       env:
         ARCH: arm64
       working-directory: mdk
-      run: cmake -DUSE_LTO=1 -DCMAKE_SYSTEM_PROCESSOR=${{ env.ARCH }} -GNinja -DCMAKE_SYSTEM_NAME=WindowsStore -DCMAKE_SYSTEM_VERSION="10.0"  -Bbuild/${{ env.TARGET_OS }}-${{ env.ARCH }} -DCMAKE_BUILD_TYPE=${{ matrix.config }} -DCMAKE_INSTALL_PREFIX=mdk-sdk-${{ env.ARCH }} -DCMAKE_VERBOSE_MAKEFILE=1 .
+      run: cmake -DMIN_SIZE=1 -DUSE_LTO=1 -DCMAKE_SYSTEM_PROCESSOR=${{ env.ARCH }} -GNinja -DCMAKE_SYSTEM_NAME=WindowsStore -DCMAKE_SYSTEM_VERSION="10.0"  -Bbuild/${{ env.TARGET_OS }}-${{ env.ARCH }} -DCMAKE_BUILD_TYPE=${{ matrix.config }} -DCMAKE_INSTALL_PREFIX=mdk-sdk-${{ env.ARCH }} -DCMAKE_VERBOSE_MAKEFILE=1 .
     - name: Build for win arm64
       working-directory: mdk
       run: cmake --build build/${{ env.TARGET_OS }}-arm64
@@ -729,7 +598,7 @@ jobs:
       env:
         ARCH: x64
       working-directory: mdk
-      run: cmake -DUSE_LTO=1 -DCMAKE_SYSTEM_PROCESSOR=${{ env.ARCH }} -GNinja -DCMAKE_SYSTEM_NAME=WindowsStore -DCMAKE_SYSTEM_VERSION="10.0"  -Bbuild/${{ env.TARGET_OS }}-${{ env.ARCH }} -DCMAKE_BUILD_TYPE=${{ matrix.config }} -DCMAKE_INSTALL_PREFIX=mdk-sdk-${{ env.ARCH }} -DCMAKE_VERBOSE_MAKEFILE=1 .
+      run: cmake -DMIN_SIZE=1 -DUSE_LTO=1 -DCMAKE_SYSTEM_PROCESSOR=${{ env.ARCH }} -GNinja -DCMAKE_SYSTEM_NAME=WindowsStore -DCMAKE_SYSTEM_VERSION="10.0"  -Bbuild/${{ env.TARGET_OS }}-${{ env.ARCH }} -DCMAKE_BUILD_TYPE=${{ matrix.config }} -DCMAKE_INSTALL_PREFIX=mdk-sdk-${{ env.ARCH }} -DCMAKE_VERBOSE_MAKEFILE=1 .
     - name: Build for win x64
       working-directory: mdk
       run: cmake --build build/${{ env.TARGET_OS }}-x64
@@ -749,12 +618,13 @@ jobs:
   Windows_clang:
     runs-on: ubuntu-latest
     env:
-      TARGET_OS: windows-desktop
+      TARGET_OS: ${{ matrix.os }}
       VCDIR: '/tmp/winsysroot/msvcrt-dev'
       WINDOWSSDKDIR: '/tmp/winsysroot/winsdk'
     strategy:
       fail-fast: false
       matrix:
+        os: [windows-desktop]
         config: [MinSizeRel]
     steps:
     - uses: actions/checkout@v4
@@ -849,110 +719,6 @@ jobs:
       shell: bash
       run: sshpass -p ${SF_PW} scp -o StrictHostKeyChecking=no mdk-sdk-${TARGET_OS}-clang.7z ${SF_USER}@frs.sourceforge.net:/home/frs/project/mdk-sdk/nightly/
 
-
-  UWP_clang:
-    if: false
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        config: [MinSizeRel]
-    env:
-      TARGET_OS: uwp
-      VCDIR: '/tmp/winsysroot/msvcrt-dev'
-      WINDOWSSDKDIR: '/tmp/winsysroot/winsdk'
-    steps:
-    - uses: actions/checkout@v4
-    - name: Checkout source
-      uses: actions/checkout@v4
-      with:
-        repository: wang-bin/mdk
-        path: mdk
-        ref: ${{ github.event_name == 'repository_dispatch' &&  github.event.client_payload.ref || 'master' }}
-        fetch-depth: 1
-        token: ${{ secrets.CLONE_PAT }}
-        submodules: 'recursive'
-    - name: 'Restore External Dep cache'
-      id: external-dep-cache
-      uses: actions/cache@v4
-      with:
-        path: ./mdk/external
-        key: external-dep-${{ env.TARGET_OS }}-ffmpeg-${{ env.FF_VER }}-${{ vars.FF_SDK_ID }}
-    - name: 'Restore sysroot cache'
-      id: sysroot-cache
-      uses: actions/cache@v4
-      with:
-        path: /tmp/winsysroot
-        key: sysroot-${{ env.TARGET_OS }}${{ vars.WINSDKVER }}-vc${{ vars.VCVER }}
-    - name: Create Build Environment
-      shell: bash
-      env:
-        DEVTOOLS_CACHE_HIT: ${{ steps.devtools-cache.outputs.cache-hit }}
-        SYSROOT_CACHE_HIT: ${{ steps.sysroot-cache.outputs.cache-hit }}
-        EXTERNAL_DEP_CACHE_HIT: ${{ steps.external-dep-cache.outputs.cache-hit }}
-      working-directory: mdk
-      run: |
-        sudo apt remove -y libc++1-14 libc++abi1-14 libunwind-14 python3-lldb-14 # conflict with latest llvm
-        ../ci-before-build.sh
-    - name: Configure for UWP arm
-      if: ${{ matrix.config == 'Release' || matrix.config == 'MinSizeRel' }}
-      shell: bash
-      env:
-        ARCH: arm
-      working-directory: mdk
-      run: |
-        export WindowsSdkDir=${WINDOWSSDKDIR}
-        export WindowsSDKVersion=$(cat ${WINDOWSSDKDIR}/.version)
-        # MinSizeRel/Release instead of RelWithDebInfo because win arm debug is not supported in clang
-        cmake -DWITH_DEB_INFO=0 -DUWP=1 -DCMAKE_SYSTEM_PROCESSOR=${ARCH} -DCMAKE_TOOLCHAIN_FILE=$PWD/cmake/tools/windows.clang.cmake -GNinja -H$PWD -B$PWD/build/${TARGET_OS}-${ARCH} -DCMAKE_BUILD_TYPE=${{ matrix.config }} -DCMAKE_INSTALL_PREFIX=$PWD/mdk-sdk-${ARCH} -DCMAKE_VERBOSE_MAKEFILE=1
-    - name: Build for UWP arm
-      if: ${{ matrix.config == 'Release' || matrix.config == 'MinSizeRel' }}
-      shell: bash
-      working-directory: mdk
-      run: cmake --build build/${TARGET_OS}-arm
-    - name: Configure for UWP arm64
-      shell: bash
-      env:
-        ARCH: arm64
-      working-directory: mdk
-      run: |
-        export WindowsSdkDir=${WINDOWSSDKDIR}
-        export WindowsSDKVersion=$(cat ${WINDOWSSDKDIR}/.version)
-        cmake  -DUWP=1 -DCMAKE_SYSTEM_PROCESSOR=${ARCH} -DCMAKE_TOOLCHAIN_FILE=$PWD/cmake/tools/windows.clang.cmake -GNinja -H$PWD -B$PWD/build/${TARGET_OS}-${ARCH} -DCMAKE_BUILD_TYPE=${{ matrix.config }} -DCMAKE_INSTALL_PREFIX=$PWD/mdk-sdk-${ARCH} -DCMAKE_VERBOSE_MAKEFILE=1
-    - name: Build for UWP arm64
-      shell: bash
-      working-directory: mdk
-      run: cmake --build build/${TARGET_OS}-arm64
-    - name: Configure for UWP x64
-      shell: bash
-      env:
-        ARCH: x64
-      working-directory: mdk
-      run: |
-        export WindowsSdkDir=${WINDOWSSDKDIR}
-        export WindowsSDKVersion=$(cat ${WINDOWSSDKDIR}/.version)
-        cmake  -DUWP=1 -DCMAKE_SYSTEM_PROCESSOR=${ARCH} -DCMAKE_TOOLCHAIN_FILE=$PWD/cmake/tools/windows.clang.cmake -GNinja -H$PWD -B$PWD/build/${TARGET_OS}-${ARCH} -DCMAKE_BUILD_TYPE=${{ matrix.config }} -DCMAKE_INSTALL_PREFIX=$PWD/mdk-sdk-${ARCH} -DCMAKE_VERBOSE_MAKEFILE=1
-    - name: Build for UWP x64
-      shell: bash
-      working-directory: mdk
-      run: cmake --build build/${TARGET_OS}-x64
-    - name: Make SDK
-      shell: bash
-      working-directory: mdk
-      run: |
-        ../ci-after-build.sh
-        mv mdk-sdk-*.7z ../mdk-sdk-${{ env.TARGET_OS }}-clang.7z
-    - name: Archieve SDK
-      uses: actions/upload-artifact@v4
-      with:
-        name: mdk-sdk-clang-${{ env.TARGET_OS }}-${{ matrix.config }}
-        path: mdk-sdk-${{ env.TARGET_OS }}-clang.7z
-    - name: Upload to SourceForge
-      if: ${{ matrix.config == 'MinSizeRel' && env.SF_UPLOAD == 'true' }}
-      shell: bash
-      run: sshpass -p ${SF_PW} scp -o StrictHostKeyChecking=no mdk-sdk-${TARGET_OS}-clang.7z ${SF_USER}@frs.sourceforge.net:/home/frs/project/mdk-sdk/nightly/
-
-
   NuGet:
     runs-on: ubuntu-latest
     needs: [Windows_VS2022, UWP_VS2022]
@@ -965,11 +731,11 @@ jobs:
     - name: Download win32 vs2022 ltl sdk
       uses: actions/download-artifact@v4
       with:
-        name: mdk-sdk-vs2022-ltl-windows-desktop-MinSizeRel
+        name: mdk-sdk-vs2022-ltl-windows-desktop-RelWithDebInfo
     - name: Download uwp vs2022 sdk
       uses: actions/download-artifact@v4
       with:
-        name: mdk-sdk-vs2022-uwp-MinSizeRel
+        name: mdk-sdk-vs2022-uwp-RelWithDebInfo
     - name: update build version
       shell: bash
       run: sed -i "s,\(.*\.\)[0-9]*\(</version>\),\1${GITHUB_RUN_NUMBER}\2," nuget/mdk.nuspec
@@ -996,9 +762,7 @@ jobs:
       run:  |
         sudo apt update
         sudo apt install -y sshpass
-        for f in mdk-sdk-windows-desktop-vs2022-ltl.7z mdk-sdk-windows-desktop-vs2022*.7z mdk-sdk-uwp-vs2022.7z mdk-vs2022.nupkg; do
-          sshpass -p ${SF_PW} scp -o StrictHostKeyChecking=no $f ${SF_USER}@frs.sourceforge.net:/home/frs/project/mdk-sdk/nightly/
-        done
+        make -f upload.mk
 
   Linux_libcxx:
     runs-on: ubuntu-latest

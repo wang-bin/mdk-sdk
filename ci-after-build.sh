@@ -9,6 +9,7 @@ fi
 if [ -f mdk-sdk/lib/mdk.framework/mdk ]; then
   otool -l mdk-sdk/lib/mdk.framework/mdk
   otool -L mdk-sdk/lib/mdk.framework/mdk
+  echo codesign
   codesign --force  --sign - --deep --timestamp mdk-sdk/lib/mdk.framework
 fi
 for s in build/${TARGET_OS}-*; do
@@ -22,12 +23,13 @@ for s in build/${TARGET_OS}-*; do
 done
 find mdk-sdk* -name "*.a" -delete
 
+echo stripping
 export PATH=$PATH:$ANDROID_NDK_LATEST_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin:$ANDROID_NDK_LATEST_HOME/toolchains/llvm/prebuilt/darwin-x86_64/bin
 : ${STRIP:=llvm-strip-$LLVM_VER}
 which $STRIP || STRIP=llvm-strip
-[ "$TARGET_OS" == "macOS" ] && STRIP=strip
+[ "$TARGET_OS" == "macOS" ] && STRIP=strip && STRIP_ARGS="-u -r"
 ls -lh mdk-sdk*/bin/*
-which $STRIP && find mdk-sdk*/bin -type f -exec $STRIP {} \;
+which $STRIP && find mdk-sdk*/bin -type f -exec $STRIP $STRIP_ARGS {} \;
 ls -lh mdk-sdk*/bin/*
 export XZ_OPT="-T0" # -9e. -8/9 will disable mt?
 if [[ "$TARGET_OS" == "win"* || "$TARGET_OS" == "uwp"* || "$TARGET_OS" == "android" ]]; then
