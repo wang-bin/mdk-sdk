@@ -148,6 +148,9 @@ jobs:
       working-directory: mdk
       run: |
         minver=8.0
+        [[ "$TARGET_OS" == "tv"* ]] && minver=10.2  # VT: 10.2+
+        [[ "$TARGET_OS" == "vision"* ]] && minver=1.0
+        archs=arm64
         [[ "$TARGET_OS" == *"Simulator" ]] && {
             archs="arm64;x86_64"
             sdk=$TARGET_OS
@@ -156,11 +159,6 @@ jobs:
             sdk=${sdk/visionOSS/xrs}
             sdk=${sdk/xrOSS/xrs}
             EXTRA_OPTS="-DCMAKE_OSX_SYSROOT=${sdk}"
-        }
-        [[ "$TARGET_OS" == "tv"* ]] && minver=10.2  # VT: 10.2+
-        [[ "$TARGET_OS" == "vision"* ]] && {
-          minver=1.0
-          archs=arm64
         }
         cmake -GNinja -DFFMPEG_EMBED=1 -DMIN_SIZE=1 -DUSE_LTO=1 -DWITH_DEB_INFO=1 -DCMAKE_SYSTEM_NAME=${{ matrix.os }} $EXTRA_OPTS -DCMAKE_OSX_DEPLOYMENT_TARGET=$minver -DCMAKE_OSX_ARCHITECTURES="$archs" -Bbuild/${TARGET_OS} -DCMAKE_BUILD_TYPE=${{ matrix.config }} -DCMAKE_INSTALL_PREFIX=$PWD/mdk-sdk -DCMAKE_VERBOSE_MAKEFILE=1 -DCMAKE_IOS_INSTALL_COMBINED=YES -DCMAKE_XCODE_ATTRIBUTE_ONLY_ACTIVE_ARCH=NO # FFMPEG_EMBED=0 to copy libffmpeg.5.dylib
     - name: Configure CMake
