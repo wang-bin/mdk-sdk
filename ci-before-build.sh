@@ -15,6 +15,7 @@ crt_extra=$(tolower ${CRT_EXTRA})
 
 if [[ "$TARGET_OS" == xr* || "$TARGET_OS" == vision* ]]; then
 # FIXME: llvm-17 can't correctly merge visionOS lto libs(libavformat.a)
+# FIXME: linking to libffmpeg.a(relocatable obj) by ci results in larger binary size
   LTO_SUFFIX=
 fi
 if [[ "$TARGET_OS" == mac* || "$TARGET_OS" == iOS* || "$TARGET_OS" == tvOS* || "$TARGET_OS" == xr* || "$TARGET_OS" == vision* || "$TARGET_OS" == android ]]; then
@@ -41,7 +42,7 @@ if [ `which dpkg` ]; then # TODO: multi arch
     sudo apt install -y $pkgs
 elif [ `which brew` ]; then
     export HOMEBREW_NO_AUTO_UPDATE=true
-    time brew update #--preinstall
+    time brew update #--preinstall TODO: no update if cmake>=3.28.4
     export HOMEBREW_NO_AUTO_UPDATE=1
     pkgs="p7zip ninja vulkan-headers dav1d gnu-tar" #
     pkgs+=" cmake" # visionOS simulator requires cmake 3.28.4
@@ -76,7 +77,7 @@ if [[ "$EXTERNAL_DEP_CACHE_HIT" != "true" ]]; then
     tar Jxf ffmpeg-${TARGET_OS}.${FFPKG_EXT}
   fi
   #find ${FFPKG}/lib -name "libav*.so*" -o  -name "libsw*.so*" -delete
-
+  find ${FFPKG}/lib -name "libffmpeg.a" -delete # FIXME: linking to libffmpeg.a(relocatable obj) by ci results in larger binary size
   cp -af ${FFPKG}/lib/* external/lib/$OS
   cp -af ${FFPKG}/include external/
   cp -af ${FFPKG}/bin/* external/bin/$OS # ffmpeg dll
