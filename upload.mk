@@ -4,6 +4,8 @@ apple_txz:
 	[ -f mdk-sdk-apple.tar.xz ] && sshpass -p $$SF_PW scp -o StrictHostKeyChecking=no mdk-sdk-apple.tar.xz $${SF_USER}@frs.sourceforge.net:/home/frs/project/mdk-sdk/nightly/ || echo no mdk-sdk-apple.tar.xz
 mac_txz:
 	[ -f mdk-sdk-macOS.tar.xz ] && sshpass -p $${SF_PW} scp -o StrictHostKeyChecking=no mdk-sdk-macOS.tar.xz $${SF_USER}@frs.sourceforge.net:/home/frs/project/mdk-sdk/nightly/ || echo no mdk-sdk-macOS.tar.xz
+apple_zip:
+	[ -f mdk-sdk-apple.zip ] && sshpass -p $$SF_PW scp -o StrictHostKeyChecking=no mdk-sdk-apple.zip $${SF_USER}@frs.sourceforge.net:/home/frs/project/mdk-sdk/nightly/ || echo no mdk-sdk-apple.zip
 upload_win_ltl:
 	[ -f mdk-sdk-windows-desktop-vs2022-ltl.7z ] && sshpass -p $${SF_PW} scp -o StrictHostKeyChecking=no mdk-sdk-windows-desktop-vs2022-ltl.7z $${SF_USER}@frs.sourceforge.net:/home/frs/project/mdk-sdk/nightly/ || echo no mdk-sdk-windows-desktop-vs2022-ltl.7z
 upload_win:

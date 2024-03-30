@@ -28,7 +28,7 @@ jobs:
       fail-fast: false
       matrix:
         config: [MinSizeRel]
-        arch: [x86_64, arm64]
+        arch: [x86_64, arm64] # different minos
     steps:
     - uses: actions/checkout@v4
     - name: Checkout source
@@ -75,7 +75,7 @@ jobs:
       shell: bash
       working-directory: mdk
       run: |
-        cmake -DMIN_SIZE=1 -DUSE_LTO=1 -DR3DSDK=$PWD/external/R3DSDK -DCMAKE_OSX_DEPLOYMENT_TARGET=11.0 -GNinja -DCMAKE_OSX_ARCHITECTURES=${{ matrix.arch }} -Bbuild/${TARGET_OS} -DCMAKE_VERBOSE_MAKEFILE=1 -DCMAKE_BUILD_TYPE=${{ matrix.config }} -DCMAKE_INSTALL_PREFIX=$PWD/mdk-sdk
+        cmake -DMIN_SIZE=1 -DUSE_LTO=1 -DWITH_X11=0 -DR3DSDK=$PWD/external/R3DSDK -DCMAKE_OSX_DEPLOYMENT_TARGET=11.0 -GNinja -DCMAKE_OSX_ARCHITECTURES=${{ matrix.arch }} -Bbuild/${TARGET_OS} -DCMAKE_VERBOSE_MAKEFILE=1 -DCMAKE_BUILD_TYPE=${{ matrix.config }} -DCMAKE_INSTALL_PREFIX=$PWD/mdk-sdk
     - name: Build
       shell: bash
       working-directory: mdk
@@ -281,6 +281,8 @@ jobs:
         # pod requires a file in tarball
         gtar Jcvf mdk-sdk-apple.tar.xz mdk-sdk README.md
         gtar Jcvf mdk-sdk-macOS.tar.xz -C macOS .
+        7z a mdk-sdk-apple.zip mdk-sdk
+        swift package compute-checksum mdk-sdk-apple.zip
     - name: Archieve XCFramework SDK
       uses: actions/upload-artifact@v4
       with:
