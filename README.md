@@ -45,6 +45,8 @@ include($$MDK_SDK_DIR/mdk.pri)
 ```
 
 ### CocoaPods
+
+#### (Objective-)C/C++ Users
 ```ruby
 pod 'mdk'
 ```
@@ -55,6 +57,16 @@ If fail to code sign: In `Build Phase`, add a `New Run Script Phase` with conten
 ```bash
 [ -n "$CODE_SIGN_IDENTITY" ] && find "$BUILT_PRODUCTS_DIR" -depth -name "lib*.dylib" -exec codesign -f -vvvv -s"${EXPANDED_CODE_SIGN_IDENTITY}" ${OTHER_CODE_SIGN_FLAGS:-} --preserve-metadata=identifier,entitlements,flags {} \;
 ````
+
+#### Swift Users
+```ruby
+pod 'swift-mdk'
+```
+
+and add
+```swift
+import swift_mdk
+```
 
 ### Nuget
 
@@ -118,12 +130,12 @@ player.setProperty("avformat.fpsprobesize", "0");
 
 ### Examples and Plugins for Other Frameworks
 - [examples for different platforms and gui toolkits](https://github.com/wang-bin/mdk-examples)
-- [Swift player for macOS](https://github.com/wang-bin/SPV)
+- [Swift player and QuickLook plugin for macOS](https://github.com/wang-bin/SPV)
 - [obs-studio video source plugin](https://github.com/wang-bin/obs-mdk)
 - [as a qtmultimedia plugin](https://github.com/wang-bin/qtmultimedia-plugins-mdk)
 
 ### Language Bindings
-- [Swift binding](https://github.com/wang-bin/mdkSwift)
+- [Swift binding](https://github.com/wang-bin/swift-mdk)
 - [Flutter/Dart](https://pub.dev/packages/fvp)
 - [C#](https://github.com/axojhf/MDK.SDK.NET)
 

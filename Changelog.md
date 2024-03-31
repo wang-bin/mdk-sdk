@@ -1,5 +1,36 @@
 Change log:
 
+# 0.26.0
+
+- Support WinUI3. `updateNativeSurface()` accepts `SwapChainPanel` as surface like [UWP](https://github.com/wang-bin/mdk-examples/blob/d6035e1450039962577ada748a9be37620c6e6c9/WindowsStore/XamlCx/OpenGLESPage.xaml.cpp#L54)
+- Enable UWP features for windows desktop
+- Support visionOS
+- Add metadata change event `MediaEvent{.category = "metadata"}`, new metadata can be read from `Player.mediaInfo().metadata`. Useful to get icy metadata for SHOUTcast.
+- D3D11:
+    - Support sync via kmt, requires env var `D3D11_ZERO_COPY=0` and `D3D11_KMT=1`
+    - Ignore RTV creation error for shader resource, e.g. textures produced by MFT software decoder via `d3d=11`
+- Vulkan:
+    - Enable pipeline cache
+    - Select the 1st physical device provided by vulkan by default, previously try to use a discrete device
+- Fix `Player.WaitFor()` may return wrong value
+- Fix YCgCo rendering
+- Add global option `plugins.dir`
+- Android: link to `libmediandk.so` for 64bit targets
+- macOS: fix audio data dropped when paused and results in wrong playback speed
+- BRAW, R3D:
+    - Fix a crash when stopped
+    - (R3D) Fix crash if seek a video without audio track if the previous media has a audio track
+    - Build with R3DSDK 8.5.1
+    - Support macOS appex, see the [QuickLook plugin](https://github.com/wang-bin/SPV). mdk now weak link to r3d and braw to work in sandbox
+    - Fix failed to play a normal video after braw/r3d in the same player instance
+    - braw sdk now can be loaded from a custom dir from global option `BRAWSDK_DIR`
+    - (BRAW) Fix some memory leaks
+- FFmpeg:
+    - Support FFmpeg 7.0, now supported runtime versions are 4.0~7.0. Default build version is 6.1, you can remove bundled ffmpeg and add 7.0 shared library|ies to try the new version.
+    - Can use avio directly via global option `io.avio=1`, default is via a custom avio
+- [Swift](https://github.com/wang-bin/swift-mdk): support cocoapods and swit package manager
+
+
 # 0.25.0
 
 - D3D11:
@@ -7,9 +38,9 @@ Change log:
     - Improve sync if copy, decode, draw device contexts are different
     - Enable shader_resource in D3D11 decoder by default to support gpu 0-copy rendering, lower gpu load.
     - limit highest feature level to 12.1 to fix device create error
-    - Support set a global device via SetGlobalOption("d3d11.device", devPtr) for both decoders and renderers, then 0-copy will be enabled without issues in cross device 0-copy, but performance may be lower than cross device 0-copy
+    - Support global device via SetGlobalOption("d3d11.device", devPtr) for both decoders and renderers, then gpu 0-copy will be enabled without issues found in cross device 0-copy, but performance may be lower than cross device 0-copy(tested 8k 60fps av1 hdr with RTX3050)
 - D3D12: sync between D3D12/MFT:d3d=12 decoder and renderer
-- MFT: enable shader_resource in MFT:d3d=11 to support better 0-copy rendering
+- MFT: `shader_resource` option default value is `1` for MFT:d3d=11 to support 0-copy rendering
 - VideoFrame can import an existing d3d11 or d3d9 resources
 - Support tvOS
 - VT decoder: enable av1, not tested
@@ -19,7 +50,7 @@ Change log:
 - Fix video size event not triggered for custom readers, e.g. braw and r3d
 - Improve overlay rendering
 - Wayland: support xdg-shell
-- Set subtitle fonts dir and default font file via global option
+- Set subtitle fonts dir and default font file via global option "subtitle.fonts.dir" and "subtitle.fonts.file". Useful for android(lacks of many system fonts). Android subtitle font can be an asset, and then `SetGlobalOption("subtitle.fonts.file", "assets://sub_font_path.ttf")`
 - Android: add libass.so in sdk, and will be bundled into your app if use FindMDK.cmake. Remove libass.so from sdk if you don't need it
 - Linux: libc++18 compatible
 

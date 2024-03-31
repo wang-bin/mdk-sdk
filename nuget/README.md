@@ -6,24 +6,23 @@
 
 ### Features
 - [Simple and powerful API set](https://github.com/wang-bin/mdk-sdk/wiki/Player-APIs)
-- [Cross platform: Windows, UWP, Linux, macOS, Android, iOS, Raspberry Pi](https://github.com/wang-bin/mdk-sdk/wiki/System-Requirements)
+- [Cross platform: Windows, UWP, Linux, macOS, Android, iOS, tvOS, visionOS, Raspberry Pi](https://github.com/wang-bin/mdk-sdk/wiki/System-Requirements)
 - [Hardware accelerated decoders](https://github.com/wang-bin/mdk-sdk/wiki/Decoders)
 - [0-copy GPU rendering for all platforms and all renderers(Vulkan is WIP.)](https://github.com/wang-bin/mdk-sdk/wiki/Zero-Copy-Renderer)
 - [Dynamic OpenGL](https://github.com/wang-bin/mdk-sdk/wiki/OpenGL-Support-Matrix)
 - [OpenGL, D3D11, D3D12, Vulkan and Metal rendering w/ or w/o user provided context](https://github.com/wang-bin/mdk-sdk/wiki/Render-API)
-- Integrated with any platform native ui apps, gui toolkits or other apps via [OpenGL, D3D11/12, Vulkan and Metal](https://github.com/wang-bin/mdk-sdk/wiki/Render-API) ([OBS](https://github.com/wang-bin/obs-mdk), [Flutter](https://pub.dev/packages/fvp), [Qt](https://github.com/wang-bin/mdk-examples/tree/master/Qt), [SDL](https://github.com/wang-bin/mdk-examples/tree/master/SDL), [GLFW](https://github.com/wang-bin/mdk-examples/tree/master/GLFW), [SFML](https://github.com/wang-bin/mdk-examples/tree/master/SFML), [.NET Avalonia](https://github.com/wang-bin/mdk-examples/tree/master/Avalonia) etc.) easily
+- Integrated with any platform native ui apps, gui toolkits or other apps via [OpenGL, D3D11/12, Vulkan and Metal](https://github.com/wang-bin/mdk-sdk/wiki/Render-API) (WinUI3, [OBS](https://github.com/wang-bin/obs-mdk), [Flutter](https://pub.dev/packages/fvp), [Qt](https://github.com/wang-bin/mdk-examples/tree/master/Qt), [SDL](https://github.com/wang-bin/mdk-examples/tree/master/SDL), [GLFW](https://github.com/wang-bin/mdk-examples/tree/master/GLFW), [SFML](https://github.com/wang-bin/mdk-examples/tree/master/SFML), [.NET Avalonia](https://github.com/wang-bin/mdk-examples/tree/master/Avalonia) etc.) easily
 - [HDR display, HDR to SDR and SDR to HDR tone mapping](https://github.com/wang-bin/mdk-sdk/wiki/Player-APIs#player-setcolorspace-value-void-vo_opaque--nullptr). You can use HDR display in [Qt6(6.6+ for macOS, 6.x for windows)](https://github.com/wang-bin/mdk-examples/tree/master/Qt/qmlrhi), [OBS Studio](https://github.com/wang-bin/obs-mdk) and more.
 - [Seamless/Gapless media and bitrate switch for any media](https://github.com/wang-bin/mdk-sdk/wiki/Player-APIs#player-setcolorspace-value-void-vo_opaque--nullptr)
-- Subtitle rendering, including ass, plain text, bitmap, closed caption
 - Optimized Continuous seeking. As fast as mpv, but much lower cpu, memory and gpu load. Suitable for [timeline preview](https://github.com/wang-bin/mdk-sdk/wiki/Typical-Usage#timeline-preview)
-- [Smart FFmpeg runtime, dynamic load, compatible with 4.x~6.x abi](https://github.com/wang-bin/mdk-sdk/wiki/FFmpeg-Runtime)
-- Professional codecs: GPU accelerated [HAP](https://github.com/wang-bin/mdk-sdk/wiki/Decoders#hap) codec rendering, [Blackmagic RAW](https://github.com/wang-bin/mdk-sdk/wiki/Decoders#braw), [R3D](https://github.com/wang-bin/mdk-sdk/wiki/Decoders#r3d)
-- Subtitle rendering
+- Subtitle rendering, including ass, plain text, bitmap, closed caption
+- [Smart FFmpeg runtime, dynamic load, compatible with 4.0~7.x abi](https://github.com/wang-bin/mdk-sdk/wiki/FFmpeg-Runtime)
+- Professional codecs: GPU accelerated [HAP](https://github.com/wang-bin/mdk-sdk/wiki/Decoders#hap) codec rendering, [Blackmagic RAW](https://github.com/wang-bin/mdk-braw), [R3D](https://github.com/wang-bin/mdk-r3d)
 
 
 ## About SDK for Windows Desktop & UWP
 SDK is built by
-- latest VS2022 with [FFmpeg](https://sourceforge.net/projects/avbuild/files/windows-desktop/ffmpeg-master-windows-desktop-vs2022-lite.7z/download)
+- latest VS2022 with [FFmpeg win32](https://sourceforge.net/projects/avbuild/files/windows-desktop/ffmpeg-master-windows-desktop-vs2022-lite.7z/download) and [FFmpeg UWP](https://sourceforge.net/projects/avbuild/files/uwp/ffmpeg-master-uwp-vs2022-lite.7z/download)
 
 SDK can be used by any C or C++11 compiler, e.g. vs2015, vs2022, mingw g++, clang
 
@@ -41,7 +40,7 @@ include($$MDK_SDK_DIR/mdk.pri)
 
 ### Recommended settings
 ```cpp
-    player.setDecoders(MediaType::Video, {"MFT:d3d=11", "hap", "D3D11", "CUDA", "FFmpeg", "dav1d"});
+    player.setDecoders(MediaType::Video, {"MFT:d3d=11", "D3D11", "CUDA", "hap", "FFmpeg", "dav1d"});
 ```
 
 #### Live streams (RTSP, RTMP etc.) low latency
@@ -60,6 +59,7 @@ Optional:
 
 ### [Supported Graphics APIs:](https://github.com/wang-bin/mdk-sdk/wiki/Render-API)
 - D3D11: recommended
+- D3D12
 - [OpenGL(No UWP)](https://github.com/wang-bin/mdk-sdk/wiki/OpenGL-Support-Matrix): via WGL. The default if EGL runtime is not found.
 - [OpenGL ES2/3](https://github.com/wang-bin/mdk-sdk/wiki/OpenGL-Support-Matrix): via ANGLE or others. The default if EGL runtime is found.
 - Vulkan(No UWP)
@@ -73,10 +73,10 @@ Optional:
 - [NVDEC](https://github.com/wang-bin/mdk-sdk/wiki/Decoders#nvdec)(No UWP): via FFmpeg
 - CUVID(No UWP): via FFmpeg
 - [QSV](https://github.com/wang-bin/mdk-sdk/wiki/Decoders#qsv)(No UWP): via FFmpeg
-- [VAAPI](https://github.com/wang-bin/mdk-sdk/wiki/Decoders#vaapi)
 - [BRAW](https://github.com/wang-bin/mdk-sdk/wiki/Decoders#braw): Blackmagic RAW
 - [R3D](https://github.com/wang-bin/mdk-sdk/wiki/Decoders#r3d): R3D RAW
 - [hap](https://github.com/wang-bin/mdk-sdk/wiki/Decoders#hap)
+- [VAAPI](https://github.com/wang-bin/mdk-sdk/wiki/Decoders#vaapi)
 
 ## Source code:
 - [some examples using mdk sdk](https://github.com/wang-bin/mdk-examples)

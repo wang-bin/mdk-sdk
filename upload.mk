@@ -1,4 +1,4 @@
-all: apple_txz mac_txz upload_win_ltl upload_win upload_win64 upload_uwp upload_nupkg
+all: apple_txz apple_zip mac_txz upload_win_ltl upload_win upload_win64 upload_uwp upload_nupkg
 
 apple_txz:
 	[ -f mdk-sdk-apple.tar.xz ] && sshpass -p $$SF_PW scp -o StrictHostKeyChecking=no mdk-sdk-apple.tar.xz $${SF_USER}@frs.sourceforge.net:/home/frs/project/mdk-sdk/nightly/ || echo no mdk-sdk-apple.tar.xz
