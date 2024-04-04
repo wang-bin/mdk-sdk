@@ -986,3 +986,30 @@ jobs:
     - name: test
       if: ${{ env.SF_UPLOAD == 'true' }}
       run: echo bye
+
+# https://github.com/orgs/community/discussions/26323#discussioncomment-3251451
+# https://docs.github.com/en/actions/using-workflows/triggering-a-workflow#triggering-a-workflow-from-a-workflow
+# https://github.blog/changelog/2022-09-08-github-actions-use-github_token-with-workflow_dispatch-and-repository_dispatch/
+  Dispatch:
+    runs-on: ubuntu-latest
+    permissions: write-all
+    needs: [NuGet, Apple, Linux, Android]
+    steps:
+#    - name: 'Trigger Workflow'
+#      uses: actions/github-script@v7
+#      with:
+#        script: |
+#          await github.rest.actions.createWorkflowDispatch({
+#            owner: '${{ github.repository_owner }}',
+#            repo: 'mdk-examples',
+#            workflow_id: 'workflows/main.yaml',
+#            ref: 'master',
+#            inputs: {
+#              run_id: ${{ github.run_id }}
+#            }
+#          });
+    - name: Dispatch
+      run: |
+        gh workflow run main.yml --repo wang-bin/mdk-examples # -f run_id=${{ github.run_id }}
+      env:
+        GH_TOKEN: ${{ secrets.ACTION_PAT }} # GITHUB_TOKEN?
