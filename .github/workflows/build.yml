@@ -34,14 +34,14 @@ jobs:
     - name: Checkout source
       uses: actions/checkout@v4
       with:
-        repository: wang-bin/mdk
+        repository: ${{ github.repository_owner }}/mdk
         path: mdk
         ref: ${{ github.event_name == 'repository_dispatch' &&  github.event.client_payload.ref || 'master' }} # https://docs.github.com/en/webhooks/webhook-events-and-payloads#repository_dispatch
         fetch-depth: 1
         token: ${{ secrets.CLONE_PAT }}
         submodules: 'recursive'
     - name: Setup Xcode
-      run: sudo xcode-select -s /Applications/Xcode_15.2.app
+      run: sudo xcode-select -s /Applications/Xcode_15.3.app
     - name: 'Restore External Dep cache'
       id: external-dep-cache
       uses: actions/cache@v4
@@ -116,14 +116,14 @@ jobs:
     - name: Checkout source
       uses: actions/checkout@v4
       with:
-        repository: wang-bin/mdk
+        repository: ${{ github.repository_owner }}/mdk
         path: mdk
         ref: ${{ github.event_name == 'repository_dispatch' &&  github.event.client_payload.ref || 'master' }}
         fetch-depth: 1
         token: ${{ secrets.CLONE_PAT }}
         submodules: 'recursive'
     - name: Setup Xcode
-      run: sudo xcode-select -s /Applications/Xcode_15.2.app
+      run: sudo xcode-select -s /Applications/Xcode_15.3.app
     - name: 'Restore External Dep cache'
       id: external-dep-cache
       uses: actions/cache@v4
@@ -191,7 +191,7 @@ jobs:
     needs: [macOS, iOS]
     steps:
     - name: Setup Xcode
-      run: sudo xcode-select -s /Applications/Xcode_15.2.app
+      run: sudo xcode-select -s /Applications/Xcode_15.3.app
     - uses: actions/checkout@v4
     - name: Download macOS sdk
       uses: actions/download-artifact@v4
@@ -313,7 +313,7 @@ jobs:
     - name: Checkout source
       uses: actions/checkout@v4
       with:
-        repository: wang-bin/mdk
+        repository: ${{ github.repository_owner }}/mdk
         path: mdk
         ref: ${{ github.event_name == 'repository_dispatch' &&  github.event.client_payload.ref || 'master' }}
         fetch-depth: 1
@@ -407,7 +407,7 @@ jobs:
     - name: Checkout source
       uses: actions/checkout@v4
       with:
-        repository: wang-bin/mdk
+        repository: ${{ github.repository_owner }}/mdk
         path: mdk
         ref: ${{ github.event_name == 'repository_dispatch' &&  github.event.client_payload.ref || 'master' }}
         fetch-depth: 1
@@ -475,7 +475,7 @@ jobs:
     - name: Checkout source
       uses: actions/checkout@v4
       with:
-        repository: wang-bin/mdk
+        repository: ${{ github.repository_owner }}/mdk
         path: mdk
         ref: ${{ github.event_name == 'repository_dispatch' &&  github.event.client_payload.ref || 'master' }}
         fetch-depth: 1
@@ -558,7 +558,7 @@ jobs:
     - name: Checkout source
       uses: actions/checkout@v4
       with:
-        repository: wang-bin/mdk
+        repository: ${{ github.repository_owner }}/mdk
         path: mdk
         ref: ${{ github.event_name == 'repository_dispatch' &&  github.event.client_payload.ref || 'master' }}
         fetch-depth: 1
@@ -631,7 +631,7 @@ jobs:
     - name: Checkout source
       uses: actions/checkout@v4
       with:
-        repository: wang-bin/mdk
+        repository: ${{ github.repository_owner }}/mdk
         path: mdk
         ref: ${{ github.event_name == 'repository_dispatch' &&  github.event.client_payload.ref || 'master' }}
         fetch-depth: 1
@@ -778,7 +778,7 @@ jobs:
     - name: Checkout source
       uses: actions/checkout@v4
       with:
-        repository: wang-bin/mdk
+        repository: ${{ github.repository_owner }}/mdk
         path: mdk
         ref: ${{ github.event_name == 'repository_dispatch' &&  github.event.client_payload.ref || 'master' }}
         fetch-depth: 1
@@ -871,7 +871,7 @@ jobs:
     - name: Checkout source
       uses: actions/checkout@v4
       with:
-        repository: wang-bin/mdk
+        repository: ${{ github.repository_owner }}/mdk
         path: mdk
         ref: ${{ github.event_name == 'repository_dispatch' &&  github.event.client_payload.ref || 'master' }}
         fetch-depth: 1
@@ -968,7 +968,7 @@ jobs:
     - name: Checkout source
       uses: actions/checkout@v4
       with:
-        repository: wang-bin/mdk
+        repository: ${{ github.repository_owner }}/mdk
         path: mdk
         ref: ${{ github.event_name == 'repository_dispatch' &&  github.event.client_payload.ref || 'master' }}
         fetch-depth: 1
@@ -983,6 +983,13 @@ jobs:
       with:
         name: mdk-abi-sdk
         path: mdk-sdk/
+    - run: sudo apt install -y sshpass p7zip-full
+    - name: Upload to SourceForge
+      shell: bash
+      run: |
+        7z a mdk-abi-sdk.7z mdk-sdk
+        sshpass -p ${SF_PW} scp -o StrictHostKeyChecking=no mdk-abi-sdk.7z ${SF_USER}@frs.sourceforge.net:/home/frs/project/mdk-sdk/nightly/
+
     - name: test
       if: ${{ env.SF_UPLOAD == 'true' }}
       run: echo bye
@@ -993,7 +1000,7 @@ jobs:
   Dispatch:
     runs-on: ubuntu-latest
     permissions: write-all
-    needs: [NuGet, Apple, Linux, Android]
+    needs: [abi, NuGet, Apple, Linux, Android]
     steps:
 #    - name: 'Trigger Workflow'
 #      uses: actions/github-script@v7
@@ -1010,6 +1017,8 @@ jobs:
 #          });
     - name: Dispatch
       run: |
-        gh workflow run main.yml --repo wang-bin/mdk-examples # -f run_id=${{ github.run_id }}
+        gh workflow run main.yml --repo ${{ github.repository_owner }}/mdk-examples # -f run_id=${{ github.run_id }}
+        gh workflow run build.yml --repo ${{ github.repository_owner }}/SPV # -f run_id=${{ github.run_id }}
+        gh workflow run main.yml --repo ${{ github.repository_owner }}/mdk-braw -f run_id=${{ github.run_id }}
       env:
         GH_TOKEN: ${{ secrets.ACTION_PAT }} # GITHUB_TOKEN?
