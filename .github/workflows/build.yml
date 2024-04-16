@@ -8,7 +8,7 @@ on:
   repository_dispatch:
 
 env:
-  FF_VER: 6.1  # master is 7.0 but not released
+  FF_VER: master  # master is 7.0 but not released
   LLVM_VER: ${{ vars.LLVM_VER }}
   VC_LTL_VER: ${{ vars.VC_LTL_VER }}
   NINJA_STATUS: '[%f/%t %e %r]'
