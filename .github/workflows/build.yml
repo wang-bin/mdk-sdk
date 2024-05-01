@@ -8,7 +8,7 @@ on:
   repository_dispatch:
 
 env:
-  FF_VER: master  # master is 7.0 but not released
+  FF_VER: master
   LLVM_VER: ${{ vars.LLVM_VER }}
   VC_LTL_VER: ${{ vars.VC_LTL_VER }}
   NINJA_STATUS: '[%f/%t %e %r]'
@@ -859,6 +859,7 @@ jobs:
   Android:
     runs-on: ubuntu-latest
     env:
+      FF_VER: 6.1       # 7.0 and master is very slow in avformat_find_stream_info
       TARGET_OS: android
       LTO_SUFFIX: -lto
       MIN_API: 21
@@ -1016,6 +1017,7 @@ jobs:
 #            }
 #          });
     - name: Dispatch
+      if: ${{ env.SF_UPLOAD == 'true' }}
       run: |
         gh workflow run main.yml --repo ${{ github.repository_owner }}/mdk-examples # -f run_id=${{ github.run_id }}
         gh workflow run build.yml --repo ${{ github.repository_owner }}/SPV # -f run_id=${{ github.run_id }}
