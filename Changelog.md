@@ -1,5 +1,33 @@
 Change log:
 
+# 0.27.0
+
+- Dolby Vision profile 5 support:
+    - Works for all renderers: OpenGL, D3D11/12, Metal, Vulkan
+    - Support SDR and HDR10 display
+    - Works for all decoders. For ffmpeg software decoder and hwaccels, dolby vision metadata are parsed by ffmpeg. For other decoders including ffmpeg external decoders and mdk hardware decoders, metadata is parsed in mdk
+- AMediaCodec system dolby vision decoder is disabled by default(previously was enabled). Can turn on via property "dv=1".
+- Improve gpu const buffer/uniform update for all renderers
+- OpenGL: Support UBO. Enabled for OpenGLES >= 3.0, OpenGL >= 3.1 or extension `GL_ARB_uniform_buffer_object` is supported. Can be disabled via global option "gl.ubo=0" or env var "GL_UBO=0"
+- Fix blank display when switching to some videos
+- Fix dx swapchain colorspace support check
+- Reset some callbacks when destroying player
+- Add option "reader.starts_with_key", "0" can decode from non-key. Can be used to reduce latency of network stream
+- C++ API:
+    - Fix callbacks are not thread safe
+    - Fix MediaStatus callback register only once
+    - Fix seek, prepare, snapshot callbacks
+- Fix video with a single frame not decoded until EOS
+- Fix blank display if play another video with only different color primaries
+- Fix packet drop
+- Fix seek after EOS demuxed
+- Use display p3 if hdr10 metadata is invalid
+- Read duration from metadata if stream duration is unknown
+- Set android application context automatically for ffmpeg 7.0+
+- Prefer AudioTrack over OpenSLES
+- FFmpeg: Add avformat.video/audio/subtitle_codec_id options
+
+
 # 0.26.0
 
 - Support WinUI3. `updateNativeSurface()` accepts `SwapChainPanel` as surface like [UWP](https://github.com/wang-bin/mdk-examples/blob/d6035e1450039962577ada748a9be37620c6e6c9/WindowsStore/XamlCx/OpenGLESPage.xaml.cpp#L54)

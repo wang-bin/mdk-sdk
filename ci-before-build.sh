@@ -42,7 +42,7 @@ if [ `which dpkg` ]; then # TODO: multi arch
     sudo apt install -y $pkgs
 elif [ `which brew` ]; then
     export HOMEBREW_NO_AUTO_UPDATE=true
-    time brew update #--preinstall TODO: no update if cmake>=3.28.4
+    #time brew update --preinstall
     export HOMEBREW_NO_AUTO_UPDATE=1
     pkgs="p7zip ninja vulkan-headers dav1d gnu-tar" #
     pkgs+=" cmake" # visionOS simulator requires cmake 3.28.4
@@ -81,9 +81,6 @@ if [[ "$EXTERNAL_DEP_CACHE_HIT" != "true" ]]; then
   cp -af ${FFPKG}/lib/* external/lib/$OS
   cp -af ${FFPKG}/include external/
   cp -af ${FFPKG}/bin/* external/bin/$OS # ffmpeg dll
-
-  echo "OS: $OS"
-  find external
 
   if [ "$TARGET_OS" == "sunxi" ]; then
       mkdir -p external/lib/sunxi/armv7
