@@ -160,6 +160,7 @@ jobs:
             sdk=${sdk/xrOSS/xrs}
             EXTRA_OPTS="-DCMAKE_OSX_SYSROOT=${sdk}"
         }
+        [ ${{ matrix.os }} == visionOS ] && archs=arm64
         cmake -GNinja -DFFMPEG_EMBED=1 -DMIN_SIZE=1 -DUSE_LTO=1 -DWITH_DEB_INFO=1 -DCMAKE_SYSTEM_NAME=${{ matrix.os }} $EXTRA_OPTS -DCMAKE_OSX_DEPLOYMENT_TARGET=$minver -DCMAKE_OSX_ARCHITECTURES="$archs" -Bbuild/${TARGET_OS} -DCMAKE_BUILD_TYPE=${{ matrix.config }} -DCMAKE_INSTALL_PREFIX=$PWD/mdk-sdk -DCMAKE_VERBOSE_MAKEFILE=1 -DCMAKE_IOS_INSTALL_COMBINED=YES -DCMAKE_XCODE_ATTRIBUTE_ONLY_ACTIVE_ARCH=NO # FFMPEG_EMBED=0 to copy libffmpeg.5.dylib
     - name: Configure CMake
       if: ${{ matrix.os == 'macCatalyst' }}
@@ -616,7 +617,7 @@ jobs:
 
 
   ClangCL:
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
     env:
       TARGET_OS: ${{ matrix.os }}
       VCDIR: '/tmp/winsysroot/msvcrt-dev'
@@ -656,11 +657,8 @@ jobs:
         SYSROOT_CACHE_HIT: ${{ steps.sysroot-cache.outputs.cache-hit }}
         EXTERNAL_DEP_CACHE_HIT: ${{ steps.external-dep-cache.outputs.cache-hit }}
       working-directory: mdk
-      run: |
-        sudo apt remove -y libc++1-14 libc++abi1-14 libunwind-14 python3-lldb-14 # conflict with latest llvm
-        ../ci-before-build.sh
+      run: ../ci-before-build.sh
     - name: Configure for win arm64
-      shell: bash
       env:
         ARCH: arm64
       working-directory: mdk
@@ -669,11 +667,9 @@ jobs:
         export WindowsSDKVersion=$(cat ${WINDOWSSDKDIR}/.version)
         cmake -DCMAKE_SYSTEM_PROCESSOR=${ARCH} -DCMAKE_TOOLCHAIN_FILE=$PWD/cmake/tools/windows.clang.cmake -GNinja -H$PWD -B$PWD/build/${TARGET_OS}-${ARCH} -DCMAKE_BUILD_TYPE=${{ matrix.config }} -DCMAKE_INSTALL_PREFIX=$PWD/mdk-sdk-${ARCH} -DCMAKE_VERBOSE_MAKEFILE=1
     - name: Build for arm64
-      shell: bash
       working-directory: mdk
       run: cmake --build build/${TARGET_OS}-arm64
     - name: Configure for win x86
-      shell: bash
       env:
         ARCH: x86
       working-directory: mdk
@@ -682,11 +678,9 @@ jobs:
         export WindowsSDKVersion=$(cat ${WINDOWSSDKDIR}/.version)
         cmake -DR3DSDK=$PWD/external/R3DSDK -DCMAKE_SYSTEM_PROCESSOR=${ARCH} -DCMAKE_TOOLCHAIN_FILE=$PWD/cmake/tools/windows.clang.cmake -GNinja -H$PWD -B$PWD/build/${TARGET_OS}-${ARCH} -DCMAKE_BUILD_TYPE=${{ matrix.config }} -DCMAKE_INSTALL_PREFIX=$PWD/mdk-sdk-${ARCH} -DCMAKE_VERBOSE_MAKEFILE=1
     - name: Build for x86
-      shell: bash
       working-directory: mdk
       run: cmake --build build/${TARGET_OS}-x86
     - name: Configure for win x64
-      shell: bash
       env:
         ARCH: x64
       working-directory: mdk
@@ -695,11 +689,9 @@ jobs:
         export WindowsSDKVersion=$(cat ${WINDOWSSDKDIR}/.version)
         cmake -DR3DSDK=$PWD/external/R3DSDK -DCMAKE_SYSTEM_PROCESSOR=${ARCH} -DCMAKE_TOOLCHAIN_FILE=$PWD/cmake/tools/windows.clang.cmake -GNinja -H$PWD -B$PWD/build/${TARGET_OS}-${ARCH} -DCMAKE_BUILD_TYPE=${{ matrix.config }} -DCMAKE_INSTALL_PREFIX=$PWD/mdk-sdk-${ARCH} -DCMAKE_VERBOSE_MAKEFILE=1
     - name: Build for x64
-      shell: bash
       working-directory: mdk
       run: cmake --build build/${TARGET_OS}-x64
     - name: Make SDK
-      shell: bash
       working-directory: mdk
       run: |
         ../ci-after-build.sh
@@ -716,7 +708,6 @@ jobs:
         path: mdk-sdk-${{ env.TARGET_OS }}-clang.7z
     - name: Upload to SourceForge
       if: ${{ matrix.config == 'MinSizeRel' && env.SF_UPLOAD == 'true' }}
-      shell: bash
       run: sshpass -p ${SF_PW} scp -o StrictHostKeyChecking=no mdk-sdk-${TARGET_OS}-clang.7z ${SF_USER}@frs.sourceforge.net:/home/frs/project/mdk-sdk/nightly/
 
   NuGet:

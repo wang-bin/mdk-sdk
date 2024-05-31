@@ -44,13 +44,13 @@ elif [ `which brew` ]; then
     export HOMEBREW_NO_AUTO_UPDATE=true
     #time brew update --preinstall
     export HOMEBREW_NO_AUTO_UPDATE=1
-    pkgs="p7zip ninja vulkan-headers dav1d gnu-tar" #
-    pkgs+=" cmake" # visionOS simulator requires cmake 3.28.4
+    pkgs="ninja vulkan-headers dav1d" # p7zip  gnu-tar
+    #pkgs+=" cmake" # visionOS simulator requires cmake 3.28.4
     if [[ "$DEVTOOLS_CACHE_HIT" != "true" ]]; then
         pkgs+=" hudochenkov/sshpass/sshpass"
     fi
     if [ "$TARGET_OS" == "macOS" ]; then
-        pkgs+=" glfw3 sdl2"
+        pkgs+=" glfw sdl2"
         echo "$TARGET_ARCH" |grep arm >/dev/null || { # FIXME: arm64 host build
           pkgs+=" xquartz pulseaudio" # no more cask
         }

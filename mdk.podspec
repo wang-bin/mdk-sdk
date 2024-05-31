@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
     s.name              = 'mdk'
-    s.version           = '0.27.0'
+    s.version           = '0.28.0'
     s.summary           = 'Multimedia Development Kit'
     s.homepage          = 'https://github.com/wang-bin/mdk-sdk'
 
@@ -23,6 +23,8 @@ Pod::Spec.new do |s|
     s.visionos.deployment_target = '1.0'
     s.pod_target_xcconfig = { 'EXCLUDED_ARCHS[sdk=*simulator*]' => 'i386'}
     s.user_target_xcconfig = { 'EXCLUDED_ARCHS[sdk=*simulator*]' => 'i386', 'OTHER_CODE_SIGN_FLAGS' => '$(inherited) --deep'}
+    s.visionos.pod_target_xcconfig = { 'EXCLUDED_ARCHS[sdk=*simulator*]' => 'x86_64'} # optional?
+    s.visionos.user_target_xcconfig = { 'EXCLUDED_ARCHS[sdk=*simulator*]' => 'x86_64'}
 #    s.user_target_xcconfig = { 'VALID_ARCHS[sdk=iphonesimulator*]' => '' }
 #    s.pod_target_xcconfig = { 'VALID_ARCHS[sdk=iphonesimulator*]' => '' } # VALID_ARCHS is removed in xcode12.0
     #s.pod_target_xcconfig = { 'ARCHS[sdk=iphonesimulator*]' => '$(ARCHS_STANDARD_64_BIT)' }
