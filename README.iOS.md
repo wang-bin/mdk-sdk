@@ -53,12 +53,6 @@ include($$MDK_SDK_DIR/mdk.pri)
 
 - macOS, iOS: `player.setDecoders(MediaType::Video, {"VT", "hap", "FFmpeg", "dav1d"});`
 
-#### Live streams (RTSP, RTMP etc.) low latency
-```cpp
-    player.setProperty("avformat.fflags", "+nobuffer");
-    player.setProperty("avformat.fpsprobesize", "0");
-```
-
 ### Use in Xcode
 Choose any of
 - Add mdk.xcframework to your project(Embed & Sign)

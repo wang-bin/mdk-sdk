@@ -57,12 +57,6 @@ include($$MDK_SDK_DIR/mdk.pri)
     player.setDecoders(MediaType::Video, {"MFT:d3d=11", "D3D11", "CUDA", "hap", "FFmpeg", "dav1d"});
 ```
 
-#### Live streams (RTSP, RTMP etc.) low latency
-```cpp
-    player.setProperty("avformat.fflags", "+nobuffer");
-    player.setProperty("avformat.fpsprobesize", "0");
-```
-
 ### [Runtime Requirements](https://github.com/wang-bin/mdk-sdk/wiki/System-Requirements#windows-desktop)
 - Vista+
 - ucrt, vc140+ runtime

@@ -71,13 +71,6 @@ include($$MDK_SDK_DIR/mdk.pri)
     player.setDecoders(MediaType::Video, {"AMediaCodec", "FFmpeg", "dav1d"});
 ```
 
-#### Live streams (RTSP, RTMP etc.) low latency
-```cpp
-    player.setProperty("avformat.fflags", "+nobuffer");
-    player.setProperty("avformat.fpsprobesize", "0");
-```
-
-
 ## Source code:
 - [some examples using mdk sdk](https://github.com/wang-bin/mdk-examples)
 - [OBS Studio plugin](https://github.com/wang-bin/obs-mdk)

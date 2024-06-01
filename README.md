@@ -107,12 +107,6 @@ Install via [NuGet](https://www.nuget.org/packages/mdk) in Visual Studio for bot
     player.setDecoders(MediaType::Video, {"AMediaCodec", "FFmpeg", "dav1d"});
 ```
 
-#### Live streams (RTSP, RTMP etc.) low latency
-```cpp
-player.setProperty("avformat.fflags", "+nobuffer");
-player.setProperty("avformat.fpsprobesize", "0");
-```
-
 ## Open Source
 ### Modules and Dependencies
 - [License generator and validator](https://github.com/wang-bin/appkey)
@@ -153,10 +147,12 @@ player.setProperty("avformat.fpsprobesize", "0");
 [![Flyability](https://www.flyability.com/hs-fs/hubfs/Brand_Identity/Flyability%20Logo%20Package/2%20-%20Horizontal/flyability_logo_horizontal_color_trimmed-1.png)](https://www.flyability.com)
 [![Quipu](http://www.quipu.eu/wp-content/uploads/2015/03/logo-quipu-innovative-solutions-in-medical-ultrasound.png)](www.quipu.eu)
 [![GyroFlow](https://gyroflow.xyz/assets/logo.png)](https://gyroflow.xyz)
-<a href="https://www.xnview.com/en/xnviewmp"><img class="logo" src="https://www.xnview.com/img/app-xnviewmp-512.webp"  height=120 alt="XnViewMP"></a>
+<a href="https://www.xnview.com/en/xnviewmp"><img class="logo" src="https://www.xnview.com/img/app-xnviewmp-512.png"  height=120 alt="XnViewMP"></a>
 [![www.connecting-technology](https://static.wixstatic.com/media/85712a_fe1dd2a84e17437e913dcfcdc89f40a4.jpg/v1/fill/w_460,h_240,al_c,q_80,usm_0.66_1.00_0.01,enc_auto/85712a_fe1dd2a84e17437e913dcfcdc89f40a4.jpg)](https://www.connecting-technology.com)
 <a href="https://apps.apple.com/us/app/kalismart/id1530155654"><img src="http://www.kalimind.com/assets/images/kalimind_logo.svg" alt="kalismart" height=120></a>
-<a href="https://smartplayer.ru"><img src="https://smartplayer.ru/assets/images/Header/logo.svg" alt="smartplayer"  width=600 height=120  style="background-color:black"></a>
+<a href="https://smartplayer.ru"><img src="https://static.tildacdn.com/tild3437-3132-4139-b365-373030343131/Group_100.svg" alt="smartplayer"  width=120 height=120  style="background-color:black"></a>
+<a href="https://smartplayer.ru"><img src="https://static.tildacdn.com/tild3730-3634-4463-a464-333634323465/Group_20.svg" alt="smartplayer"  width=400 height=120  style="background-color:black"></a>
+<!-- <a href="https://smartplayer.ru"><img src="https://static.tildacdn.com/tild3431-3533-4461-b365-386335306263/Group_101.svg" alt="smartplayer"  width=600 height=120  style="background-color:black"></a> -->
 
 
 [金嵘达科技](http://www.kingroda.com)

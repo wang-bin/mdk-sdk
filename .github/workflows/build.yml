@@ -232,7 +232,7 @@ jobs:
         name: mdk-sdk-macCatalyst-MinSizeRel
     - name: Install tools
       shell: bash
-      run: brew install p7zip gnu-tar hudochenkov/sshpass/sshpass
+      run: brew install hudochenkov/sshpass/sshpass
     - name: make XCFramework and SDK
       shell: bash
       run: |
@@ -617,7 +617,7 @@ jobs:
 
 
   ClangCL:
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
     env:
       TARGET_OS: ${{ matrix.os }}
       VCDIR: '/tmp/winsysroot/msvcrt-dev'

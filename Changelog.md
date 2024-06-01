@@ -1,4 +1,31 @@
 Change log:
+# 0.28.0
+
+- Support [rendering in a foreign render pass](https://github.com/wang-bin/mdk-sdk/wiki/Render-API#render-in-a-foreign-render-pass) for all renderers. Previously only foreign opengl context are implemented. The performance should be better than rendering to texture. Now it's able to [render in a Qt RHI window](https://github.com/wang-bin/mdk-examples/tree/master/Qt/rhiwindow)
+- Support decoding A53 closed caption in all video decoders. Previously only supported by ffmpeg hwaccels and software decoder. Can be disabled by player property "cc=0".
+- Add new [player properties](https://github.com/wang-bin/mdk-sdk/wiki/Player-APIs#void-setpropertyconst-stdstring-key-const-stdstring-value): "buffer", "audio.decoders", "video.decoders". Convenient to control player in [flutter](https://pub.dev/packages/fvp).
+- Support video frames with negative stride, frames are vertically flipped
+- BRAW: support 4.0 SDK, compatible with 3.0
+- Improve NALU start code and EBP search
+- VT decoder:
+    - fix hevc mpegts decode error after seek
+    - max continuous session restart on error is 1 by default, controlled by property "error=1"
+- MFT: fix mf shutdown too early and crash when releasing a sample after stop
+- Fix CUDA decoder error after seek. It's a regression in the previous release.
+- OpenGL: Fix UBO error, requires glsl150(OpenGL 3.2, ES 3.0)
+- Fix alpha channel value of render target when blending subtitle, now output alpha >= background alpha
+- Fix multiple frames rendered if prepare() without play
+- Fix wrong position() value after prepare() without play
+- Fix buffering progress value
+- Fix play a new media if previously an individual audio track file/url is used
+- Fix endless wait when buffering on apple
+- Fix audio channels on apple
+- Fix no frame decoded if decoder changed when seeking
+- Vulkan: fix wsi extension check
+- Metal: fix layer colorspace and disable EDR for SDR
+- Fix wrong frame height if copy DX9/11 textures to host memory
+- Fix negative duration and start time for live streams, should be 0
+
 
 # 0.27.0
 

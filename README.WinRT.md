@@ -15,7 +15,7 @@
 - [Seamless/Gapless media and bitrate switch for any media](https://github.com/wang-bin/mdk-sdk/wiki/Player-APIs#player-setcolorspace-value-void-vo_opaque--nullptr)
 - Optimized Continuous seeking. As fast as mpv, but much lower cpu, memory and gpu load. Suitable for [timeline preview](https://github.com/wang-bin/mdk-sdk/wiki/Typical-Usage#timeline-preview)
 - Subtitle rendering, including ass, plain text, bitmap, closed caption
-- [Smart FFmpeg runtime, dynamic load, binary compatible with 4.0~7.x abi](https://github.com/wang-bin/mdk-sdk/wiki/FFmpeg-Runtime)
+- [Smart FFmpeg runtime, dynamic load, compatible with 4.0~7.x abi](https://github.com/wang-bin/mdk-sdk/wiki/FFmpeg-Runtime)
 - Professional codecs: GPU accelerated [HAP](https://github.com/wang-bin/mdk-sdk/wiki/Decoders#hap) codec rendering, [Blackmagic RAW](https://github.com/wang-bin/mdk-braw), [R3D](https://github.com/wang-bin/mdk-r3d)
 
 
@@ -54,13 +54,6 @@ include($$MDK_SDK_DIR/mdk.pri)
 ```cpp
     player.setDecoders(MediaType::Video, {"MFT:d3d=11", "D3D11", "hap", "FFmpeg", "dav1d"});
 ```
-
-#### Live streams (RTSP, RTMP etc.) low latency
-```cpp
-    player.setProperty("avformat.fflags", "+nobuffer");
-    player.setProperty("avformat.fpsprobesize", "0");
-```
-
 
 ### [Runtime Requirements](https://github.com/wang-bin/mdk-sdk/wiki/System-Requirements#uwp)
 Optional:
