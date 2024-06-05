@@ -969,7 +969,7 @@ jobs:
       shell: bash
       run: |
         mkdir -p mdk-sdk/include/abi/mdk
-        cp -avf mdk/include/mdk/{AudioFormat,AudioFrame,Buffer,ColorSpace,FrameReader,global,MediaInfo,Property,VideoBuffer,VideoFormat,VideoFrame,MediaIO}.h mdk-sdk/include/abi/mdk
+        cp -avf mdk/include/mdk/{AudioFormat,AudioFrame,Buffer,ColorSpace,FrameReader,global,MediaInfo,Property,VideoBuffer,VideoFormat,VideoFrame,VideoDecoder,Packet,MediaIO}.h mdk-sdk/include/abi/mdk
     - name: Archieve SDK
       uses: actions/upload-artifact@v4
       with:
