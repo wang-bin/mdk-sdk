@@ -153,7 +153,7 @@ Install via [NuGet](https://www.nuget.org/packages/mdk) in Visual Studio for bot
 <a href="https://smartplayer.ru"><img src="https://static.tildacdn.com/tild3437-3132-4139-b365-373030343131/Group_100.svg" alt="smartplayer"  width=120 height=120  style="background-color:black"></a>
 <a href="https://smartplayer.ru"><img src="https://static.tildacdn.com/tild3730-3634-4463-a464-333634323465/Group_20.svg" alt="smartplayer"  width=400 height=120  style="background-color:black"></a>
 <!-- <a href="https://smartplayer.ru"><img src="https://static.tildacdn.com/tild3431-3533-4461-b365-386335306263/Group_101.svg" alt="smartplayer"  width=600 height=120  style="background-color:black"></a> -->
-
+[![](https://teleguard.com/images/logo.png)](https://teleguard.com)
 
 [金嵘达科技](http://www.kingroda.com)
 [爱玩宝](https://www.aiwanbao.com)

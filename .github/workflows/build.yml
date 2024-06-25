@@ -733,6 +733,8 @@ jobs:
     - name: Make nupkg (VS2022)
       run: |
         rm -rf mdk-sdk uwp
+        md5sum mdk-sdk-windows-desktop-vs2022.7z | cut -d ' ' -f1 > mdk-sdk-windows-desktop-vs2022.7z.md5
+        md5sum mdk-sdk-windows-desktop-vs2022-x64.7z | cut -d ' ' -f1 > mdk-sdk-windows-desktop-vs2022-x64.7z.md5
         7z x mdk-sdk-windows-desktop-vs2022.7z
         7z x mdk-sdk-uwp-vs2022.7z -o"uwp"
         mkdir mdk-sdk/bin/UAP
@@ -846,6 +848,9 @@ jobs:
       run: |
         sshpass -p ${SF_PW} scp -o StrictHostKeyChecking=no mdk-sdk-${TARGET_OS}.tar.xz ${SF_USER}@frs.sourceforge.net:/home/frs/project/mdk-sdk/nightly/
         sshpass -p ${SF_PW} scp -o StrictHostKeyChecking=no mdk-sdk-${TARGET_OS}-x64.tar.xz ${SF_USER}@frs.sourceforge.net:/home/frs/project/mdk-sdk/nightly/
+        md5sum mdk-sdk-${TARGET_OS}.tar.xz | cut -d ' ' -f1 > mdk-sdk-${TARGET_OS}.tar.xz.md5
+        md5sum mdk-sdk-${TARGET_OS}-x64.tar.xz | cut -d ' ' -f1 > mdk-sdk-${TARGET_OS}-x64.tar.xz.md5
+        sshpass -p ${SF_PW} scp -o StrictHostKeyChecking=no mdk-*.md5 ${SF_USER}@frs.sourceforge.net:/home/frs/project/mdk-sdk/nightly/
 
   Android:
     runs-on: ubuntu-latest
@@ -951,7 +956,8 @@ jobs:
         7z d -ssc -m0=lzma2 -mx=9 -ms=on -mf=off mdk-sdk-${TARGET_OS}.7z mdk-sdk/lib/{x86,x86_64}/libmdk.so.dsym
         sshpass -p ${SF_PW} scp -o StrictHostKeyChecking=no mdk-sdk-${TARGET_OS}.7z ${SF_USER}@frs.sourceforge.net:/home/frs/project/mdk-sdk/nightly/
         sshpass -p ${SF_PW} scp -o StrictHostKeyChecking=no mdk/build/android-arm64-v8a/video/libqtav-mediacodec.so ${SF_USER}@frs.sourceforge.net:/home/frs/project/qtav/depends/mediacodec/arm64-v8a
-
+        md5sum mdk-sdk-${TARGET_OS}.7z | cut -d ' ' -f1 > mdk-sdk-${TARGET_OS}.7z.md5
+        sshpass -p ${SF_PW} scp -o StrictHostKeyChecking=no mdk-*.md5 ${SF_USER}@frs.sourceforge.net:/home/frs/project/mdk-sdk/nightly/
 
   abi:
     runs-on: ubuntu-latest
@@ -981,6 +987,8 @@ jobs:
       run: |
         7z a mdk-abi-sdk.7z mdk-sdk
         sshpass -p ${SF_PW} scp -o StrictHostKeyChecking=no mdk-abi-sdk.7z ${SF_USER}@frs.sourceforge.net:/home/frs/project/mdk-sdk/nightly/
+        cd mdk && git describe --always >.version
+        sshpass -p ${SF_PW} scp -o StrictHostKeyChecking=no .version ${SF_USER}@frs.sourceforge.net:/home/frs/project/mdk-sdk/nightly/
 
     - name: test
       if: ${{ env.SF_UPLOAD == 'true' }}
@@ -1013,5 +1021,6 @@ jobs:
         gh workflow run main.yml --repo ${{ github.repository_owner }}/mdk-examples # -f run_id=${{ github.run_id }}
         gh workflow run build.yml --repo ${{ github.repository_owner }}/SPV # -f run_id=${{ github.run_id }}
         gh workflow run main.yml --repo ${{ github.repository_owner }}/mdk-braw -f run_id=${{ github.run_id }}
+        gh workflow run main.yml --repo ${{ github.repository_owner }}/mdk-nvjp2k -f run_id=${{ github.run_id }}
       env:
         GH_TOKEN: ${{ secrets.ACTION_PAT }} # GITHUB_TOKEN?
