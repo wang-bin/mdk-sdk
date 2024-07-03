@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
     s.name              = 'mdk'
-    s.version           = '0.28.0'
+    s.version           = '0.29.0'
     s.summary           = 'Multimedia Development Kit'
     s.homepage          = 'https://github.com/wang-bin/mdk-sdk'
 
@@ -17,7 +17,7 @@ Pod::Spec.new do |s|
     s.source            = { :http => 'https://sourceforge.net/projects/mdk-sdk/files/nightly/mdk-sdk-apple.tar.xz' }
     s.vendored_frameworks = 'mdk-sdk/lib/mdk.xcframework'
     s.osx.deployment_target = '10.13'
-#    s.osx.vendored_libraries = 'mdk-sdk/lib/FFmpeg.xcframework/macos-arm64_x86_64/libffmpeg.6.dylib'
+#    s.osx.vendored_libraries = 'mdk-sdk/lib/FFmpeg.xcframework/macos-arm64_x86_64/libffmpeg.7.dylib'
     s.ios.deployment_target = '12.0'
     s.tvos.deployment_target = '12.0'
     s.visionos.deployment_target = '1.0'

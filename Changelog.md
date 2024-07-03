@@ -1,4 +1,34 @@
 Change log:
+
+# 0.29.0
+
+- Support demuxer cache for http(s), can be enabled via `player.setProperty("demux.buffer.ranges", "8"/*or other positive int*/)`. `{count, "cache.ranges"}` event will be triggered when cached time ranges are created, dropped(via LRU cache) or merged. Other protocols can be enabled via player property `player.setProperty("demux.buffer.ranges", "http,https,proto1,proto2");`.
+- Dolby vision: support reading metadata from av1 in all decoders, previously only supported by ffmpeg hwaccels and software decoder.
+- Support pause/resume rtsp stream in `Player.set(State)`. Enable via `player.setProperty("reader.pause", "1");`.
+- Record video from non-key frame if property "reader.starts_with_key" is "0"
+- Support [nvJPEG2000 as a plugin](https://github.com/wang-bin/mdk-nvjp2k/actions)
+- Support planar xyz format, produced by nvJPEG2000
+- Support p012, p212, p412, can be produced by VT decoder(can be tested with VT:fourcc=tv20)
+- OpenGL:
+    - Detect(guess) invalid foreign context, usually in old OSes(ubuntu 20.04) and with `GLRenderAPI.getProcAddress` set by user.
+    - Fix blank display if failed update textures
+- D3D11: fix crash if decoder and renderer adapters are different
+- Metal:
+    - Set layer scale, fix low resolution
+    - Build highest shader version
+- VT: support ProRes without fourcc
+- VAAPI:
+    - Prefer drm display over x11, less errors, better performance
+    - Fix upload unmapped host memory crash
+- Fix wrong channels in recorded pcm
+- Fix prepare callback not invoked if decoder changed
+- Fix rgb48be rendering
+- FFmpeg
+    - Improve abi compatibility, found in x86 32bit ffmpeg 4.x
+    - Fix flipped frame in avfilter
+- Compatible with msvcp 14.40+
+
+
 # 0.28.0
 
 - Support [rendering in a foreign render pass](https://github.com/wang-bin/mdk-sdk/wiki/Render-API#render-in-a-foreign-render-pass) for all renderers. Previously only foreign opengl context are implemented. The performance should be better than rendering to texture. Now it's able to [render in a Qt RHI window](https://github.com/wang-bin/mdk-examples/tree/master/Qt/rhiwindow)

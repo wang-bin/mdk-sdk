@@ -14,7 +14,7 @@
 - [OpenGL, D3D11, D3D12, Vulkan and Metal rendering w/ or w/o user provided context](https://github.com/wang-bin/mdk-sdk/wiki/Render-API)
 - Integrated with any platform native ui apps, gui toolkits or other apps via [OpenGL, D3D11/12, Vulkan and Metal](https://github.com/wang-bin/mdk-sdk/wiki/Render-API) (WinUI3, [OBS](https://github.com/wang-bin/obs-mdk), [Flutter](https://pub.dev/packages/fvp), [Qt](https://github.com/wang-bin/mdk-examples/tree/master/Qt), [SDL](https://github.com/wang-bin/mdk-examples/tree/master/SDL), [GLFW](https://github.com/wang-bin/mdk-examples/tree/master/GLFW), [SFML](https://github.com/wang-bin/mdk-examples/tree/master/SFML), [.NET Avalonia](https://github.com/wang-bin/mdk-examples/tree/master/Avalonia) etc.) easily
 - [HDR display, HDR to SDR and SDR to HDR tone mapping](https://github.com/wang-bin/mdk-sdk/wiki/Player-APIs#player-setcolorspace-value-void-vo_opaque--nullptr). You can use HDR display in [Qt6(6.6+ for macOS, 6.x for windows)](https://github.com/wang-bin/mdk-examples/tree/master/Qt/qmlrhi), [OBS Studio](https://github.com/wang-bin/obs-mdk) and more.
-- Dolby Vision rendering, including Profile 5
+- Dolby Vision rendering, including Profile 5. Support HEVC and AV1.
 - [Seamless/Gapless media and bitrate switch for any media](https://github.com/wang-bin/mdk-sdk/wiki/Player-APIs#player-setcolorspace-value-void-vo_opaque--nullptr)
 - Optimized Continuous seeking. As fast as mpv, but much lower cpu, memory and gpu load. Suitable for [timeline preview](https://github.com/wang-bin/mdk-sdk/wiki/Typical-Usage#timeline-preview)
 - Subtitle rendering, including ass, plain text, bitmap, closed caption
@@ -22,7 +22,7 @@
 - Professional codecs: GPU accelerated [HAP](https://github.com/wang-bin/mdk-sdk/wiki/Decoders#hap) codec rendering, [Blackmagic RAW](https://github.com/wang-bin/mdk-braw), [R3D](https://github.com/wang-bin/mdk-r3d)
 
 ## About SDK for Legacy Raspberry Pi
-SDK is cross built by clang 17 with
+SDK is cross built by clang 19 with
 - cmake toolchain file https://github.com/wang-bin/cmake-tools/blob/master/raspberry-pi.clang.cmake
 - sysroot: https://sourceforge.net/projects/avbuild/files/raspberry-pi/raspberry-pi-sysroot.tar.xz/download
 - ffmpeg: https://sourceforge.net/projects/avbuild/files/raspberry-pi/ffmpeg-master-raspberry-pi-clang-lite.tar.xz/download
@@ -70,12 +70,6 @@ Tested on rpi1 and rpi3.
 ### Qt qmake project
 ```qmake
 include($$MDK_SDK_DIR/mdk.pri)
-```
-
-#### Live streams (RTSP, RTMP etc.) low latency
-```cpp
-    player.setProperty("avformat.fflags", "+nobuffer");
-    player.setProperty("avformat.fpsprobesize", "0");
 ```
 
 
