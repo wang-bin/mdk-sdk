@@ -19,7 +19,7 @@ env:
 jobs:
   macOS:
     # See: https://docs.github.com/en/actions/configuring-and-managing-workflows/configuring-a-workflow#configuring-a-build-matrix
-    runs-on: macos-14
+    runs-on: macos-latest
     env:
       TARGET_OS: 'macOS'
       TARGET_ARCH: ${{ matrix.arch }}
@@ -98,7 +98,7 @@ jobs:
         sshpass -p ${SF_PW} scp -o StrictHostKeyChecking=no mdk-sdk-${TARGET_OS}-${{ matrix.arch }}.tar.xz ${SF_USER}@frs.sourceforge.net:/home/frs/project/mdk-sdk/nightly/
 
   iOS:
-    runs-on: macos-14
+    runs-on: macos-latest
     env:
       TARGET_OS: ${{ matrix.os }}${{ matrix.simulator }}
       LTO_SUFFIX: -lto
@@ -188,7 +188,7 @@ jobs:
       run: sshpass -p ${SF_PW} scp -o StrictHostKeyChecking=no mdk-sdk-${TARGET_OS}.tar.xz ${SF_USER}@frs.sourceforge.net:/home/frs/project/mdk-sdk/nightly/
 
   Apple:
-    runs-on: macos-14
+    runs-on: macos-latest
     needs: [macOS, iOS]
     steps:
     - name: Setup Xcode
@@ -853,7 +853,7 @@ jobs:
         sshpass -p ${SF_PW} scp -o StrictHostKeyChecking=no mdk-*.md5 ${SF_USER}@frs.sourceforge.net:/home/frs/project/mdk-sdk/nightly/
 
   Android:
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
     env:
       FF_VER: 6.1       # 7.0 and master is very slow in avformat_find_stream_info
       TARGET_OS: android
@@ -887,16 +887,14 @@ jobs:
 #        SYSROOT_CACHE_HIT: ${{ steps.sysroot-cache.outputs.cache-hit }}
         EXTERNAL_DEP_CACHE_HIT: ${{ steps.external-dep-cache.outputs.cache-hit }}
       working-directory: mdk
-      run: |
-        sudo apt update
-        ../ci-before-build.sh
+      run: ../ci-before-build.sh
     - name: Configure for armeabi-v7a
       env:
         ARCH: armeabi-v7a
         MIN_API: 19  # android 4.4. ndk25
       shell: bash
       working-directory: mdk
-      run: cmake -DUSE_LTO=1 -DANDROID_LD=lld -DANDROID_ABI=${ARCH} -DANDROID_PLATFORM=android-${MIN_API} -DANDROID_TOOLCHAIN=clang -DANDROID_STL=c++_shared -DANDROID_PIE=ON -DCMAKE_TOOLCHAIN_FILE=$ANDROID_NDK_HOME/build/cmake/android.toolchain.cmake -GNinja -H$PWD -B$PWD/build/${TARGET_OS}-${ARCH} -DCMAKE_BUILD_TYPE=${{ matrix.config }} -DCMAKE_INSTALL_PREFIX=$PWD/mdk-sdk-${ARCH} -DCMAKE_VERBOSE_MAKEFILE=1
+      run: cmake -DUSE_LTO=1 -DANDROID_LD=lld -DANDROID_ABI=${ARCH} -DANDROID_PLATFORM=android-${MIN_API} -DANDROID_TOOLCHAIN=clang -DANDROID_STL=c++_shared -DANDROID_PIE=ON -DCMAKE_TOOLCHAIN_FILE=$ANDROID_HOME/ndk/25.2.9519653/build/cmake/android.toolchain.cmake -GNinja -H$PWD -B$PWD/build/${TARGET_OS}-${ARCH} -DCMAKE_BUILD_TYPE=${{ matrix.config }} -DCMAKE_INSTALL_PREFIX=$PWD/mdk-sdk-${ARCH} -DCMAKE_VERBOSE_MAKEFILE=1
     - name: Build for armeabi-v7a
       shell: bash
       working-directory: mdk
@@ -920,7 +918,7 @@ jobs:
         MIN_API: 19  # android 4.4. ndk25
         shell: bash
       working-directory: mdk
-      run: cmake -DUSE_LTO=1 -DANDROID_LD=lld -DANDROID_ABI=${ARCH} -DANDROID_PLATFORM=android-${MIN_API} -DANDROID_TOOLCHAIN=clang -DANDROID_STL=c++_shared -DANDROID_PIE=ON -DCMAKE_TOOLCHAIN_FILE=$ANDROID_NDK_HOME/build/cmake/android.toolchain.cmake -GNinja -H$PWD -B$PWD/build/${TARGET_OS}-${ARCH} -DCMAKE_BUILD_TYPE=${{ matrix.config }} -DCMAKE_INSTALL_PREFIX=$PWD/mdk-sdk-${ARCH} -DCMAKE_VERBOSE_MAKEFILE=1
+      run: cmake -DUSE_LTO=1 -DANDROID_LD=lld -DANDROID_ABI=${ARCH} -DANDROID_PLATFORM=android-${MIN_API} -DANDROID_TOOLCHAIN=clang -DANDROID_STL=c++_shared -DANDROID_PIE=ON -DCMAKE_TOOLCHAIN_FILE=$ANDROID_HOME/ndk/25.2.9519653/build/cmake/android.toolchain.cmake -GNinja -H$PWD -B$PWD/build/${TARGET_OS}-${ARCH} -DCMAKE_BUILD_TYPE=${{ matrix.config }} -DCMAKE_INSTALL_PREFIX=$PWD/mdk-sdk-${ARCH} -DCMAKE_VERBOSE_MAKEFILE=1
     - name: Build for x86
       shell: bash
       working-directory: mdk
