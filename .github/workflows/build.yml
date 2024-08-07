@@ -855,7 +855,7 @@ jobs:
   Android:
     runs-on: macos-latest
     env:
-      FF_VER: 6.1       # 7.0 and master is very slow in avformat_find_stream_info
+      #FF_VER: 6.1       # 7.0 and master is very slow in avformat_find_stream_info
       TARGET_OS: android
       LTO_SUFFIX: -lto
       MIN_API: 21
