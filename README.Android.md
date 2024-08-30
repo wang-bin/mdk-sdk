@@ -22,7 +22,7 @@
 ## About SDK for Android
 SDK is built with
 - ffmpeg: https://sourceforge.net/projects/avbuild/files/android/ffmpeg-master-android-clang-lite-lto.tar.xz/download
-- ndk r25b for 32bit, ndk 26 for b4bit
+- ndk r25b for 32bit, ndk 27 for b4bit
 - requires ndk r23 and later because of ndk abi break in r23
 
 SDK can be used by any C or C++11 compiler, e.g. g++, clang

@@ -853,7 +853,7 @@ jobs:
         sshpass -p ${SF_PW} scp -o StrictHostKeyChecking=no mdk-*.md5 ${SF_USER}@frs.sourceforge.net:/home/frs/project/mdk-sdk/nightly/
 
   Android:
-    runs-on: macos-latest
+    runs-on: ubuntu-latest # ndk 25 removed
     env:
       #FF_VER: 6.1       # 7.0 and master is very slow in avformat_find_stream_info
       TARGET_OS: android
@@ -888,23 +888,13 @@ jobs:
         EXTERNAL_DEP_CACHE_HIT: ${{ steps.external-dep-cache.outputs.cache-hit }}
       working-directory: mdk
       run: ../ci-before-build.sh
-    - name: Configure for armeabi-v7a
-      env:
-        ARCH: armeabi-v7a
-        MIN_API: 19  # android 4.4. ndk25
-      shell: bash
-      working-directory: mdk
-      run: cmake -DUSE_LTO=1 -DANDROID_LD=lld -DANDROID_ABI=${ARCH} -DANDROID_PLATFORM=android-${MIN_API} -DANDROID_TOOLCHAIN=clang -DANDROID_STL=c++_shared -DANDROID_PIE=ON -DCMAKE_TOOLCHAIN_FILE=$ANDROID_HOME/ndk/25.2.9519653/build/cmake/android.toolchain.cmake -GNinja -H$PWD -B$PWD/build/${TARGET_OS}-${ARCH} -DCMAKE_BUILD_TYPE=${{ matrix.config }} -DCMAKE_INSTALL_PREFIX=$PWD/mdk-sdk-${ARCH} -DCMAKE_VERBOSE_MAKEFILE=1
-    - name: Build for armeabi-v7a
-      shell: bash
-      working-directory: mdk
-      run: cmake --build build/${TARGET_OS}-armeabi-v7a
     - name: Configure for arm64-v8a
       env:
         ARCH: arm64-v8a
       shell: bash
       working-directory: mdk
       run: |
+        ls ${ANDROID_HOME}
         MIN_API_64=21
         [ $MIN_API -gt 21 ] && MIN_API_64=$MIN_API
         cmake -DUSE_LTO=1 -DANDROID_LD=lld -DANDROID_ABI=${ARCH} -DANDROID_PLATFORM=android-${MIN_API_64} -DANDROID_TOOLCHAIN=clang -DANDROID_STL=c++_shared -DANDROID_PIE=ON -DCMAKE_TOOLCHAIN_FILE=$ANDROID_NDK_LATEST_HOME/build/cmake/android.toolchain.cmake -GNinja -H$PWD -B$PWD/build/${TARGET_OS}-${ARCH} -DCMAKE_BUILD_TYPE=${{ matrix.config }} -DCMAKE_INSTALL_PREFIX=$PWD/mdk-sdk-${ARCH} -DCMAKE_VERBOSE_MAKEFILE=1
@@ -912,17 +902,6 @@ jobs:
       shell: bash
       working-directory: mdk
       run: cmake --build build/${TARGET_OS}-arm64-v8a
-    - name: Configure for x86
-      env:
-        ARCH: x86
-        MIN_API: 19  # android 4.4. ndk25
-        shell: bash
-      working-directory: mdk
-      run: cmake -DUSE_LTO=1 -DANDROID_LD=lld -DANDROID_ABI=${ARCH} -DANDROID_PLATFORM=android-${MIN_API} -DANDROID_TOOLCHAIN=clang -DANDROID_STL=c++_shared -DANDROID_PIE=ON -DCMAKE_TOOLCHAIN_FILE=$ANDROID_HOME/ndk/25.2.9519653/build/cmake/android.toolchain.cmake -GNinja -H$PWD -B$PWD/build/${TARGET_OS}-${ARCH} -DCMAKE_BUILD_TYPE=${{ matrix.config }} -DCMAKE_INSTALL_PREFIX=$PWD/mdk-sdk-${ARCH} -DCMAKE_VERBOSE_MAKEFILE=1
-    - name: Build for x86
-      shell: bash
-      working-directory: mdk
-      run: cmake --build build/${TARGET_OS}-x86
     - name: Configure for x86_64
       env:
         ARCH: x86_64
@@ -936,6 +915,35 @@ jobs:
       shell: bash
       working-directory: mdk
       run: cmake --build build/${TARGET_OS}-x86_64
+    - uses: nttld/setup-ndk@v1
+      id: setup-ndk
+      with:
+        ndk-version: r25c
+        local-cache: true
+    - name: Configure for armeabi-v7a
+      env:
+        ARCH: armeabi-v7a
+        MIN_API: 19  # android 4.4. ndk25
+        ANDROID_NDK_HOME: ${{ steps.setup-ndk.outputs.ndk-path }}
+      shell: bash
+      working-directory: mdk
+      run: cmake -DUSE_LTO=1 -DANDROID_LD=lld -DANDROID_ABI=${ARCH} -DANDROID_PLATFORM=android-${MIN_API} -DANDROID_TOOLCHAIN=clang -DANDROID_STL=c++_shared -DANDROID_PIE=ON -DCMAKE_TOOLCHAIN_FILE=$ANDROID_NDK_HOME/build/cmake/android.toolchain.cmake -GNinja -H$PWD -B$PWD/build/${TARGET_OS}-${ARCH} -DCMAKE_BUILD_TYPE=${{ matrix.config }} -DCMAKE_INSTALL_PREFIX=$PWD/mdk-sdk-${ARCH} -DCMAKE_VERBOSE_MAKEFILE=1
+    - name: Build for armeabi-v7a
+      shell: bash
+      working-directory: mdk
+      run: cmake --build build/${TARGET_OS}-armeabi-v7a
+    - name: Configure for x86
+      env:
+        ARCH: x86
+        MIN_API: 19  # android 4.4. ndk25
+        ANDROID_NDK_HOME: ${{ steps.setup-ndk.outputs.ndk-path }}
+      shell: bash
+      working-directory: mdk
+      run: cmake -DUSE_LTO=1 -DANDROID_LD=lld -DANDROID_ABI=${ARCH} -DANDROID_PLATFORM=android-${MIN_API} -DANDROID_TOOLCHAIN=clang -DANDROID_STL=c++_shared -DANDROID_PIE=ON -DCMAKE_TOOLCHAIN_FILE=$ANDROID_NDK_HOME/build/cmake/android.toolchain.cmake -GNinja -H$PWD -B$PWD/build/${TARGET_OS}-${ARCH} -DCMAKE_BUILD_TYPE=${{ matrix.config }} -DCMAKE_INSTALL_PREFIX=$PWD/mdk-sdk-${ARCH} -DCMAKE_VERBOSE_MAKEFILE=1
+    - name: Build for x86
+      shell: bash
+      working-directory: mdk
+      run: cmake --build build/${TARGET_OS}-x86
     - name: Make SDK
       shell: bash
       working-directory: mdk

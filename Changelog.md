@@ -1,8 +1,28 @@
 Change log:
 
+# 0.29.1
+
+- Android 64bit is built with 16KB page size support
+- Supprt GL_EXT_EGL_image_storage for drm, via global option "eglimage.storage=1"
+- VAAPI: prefer x11 display to support both EGL and GLX
+- Add privacy manifest for apple platforms
+- Improve demuxer cache
+- Enable http reconnect
+- Fix OpenGL symbols not resolved on android 15 emulator
+- Fix snapshot in OpenGL renderers
+- Fix snapshot callback not invoked if failed
+- Fix muxer write after close
+- Fix a decoder crash when stopping playback
+- Fix waitFor(State::Stopped)
+- Stop demuxer immediately if io is aborted.
+- Apply ffmmpeg muxer options
+- Prefer ffmpeg dynamic library even if statically linked. mainly used by iOS user provided FFmpeg.framework
+
+
 # 0.29.0
 
 - Support demuxer cache for http(s), can be enabled via `player.setProperty("demux.buffer.ranges", "8"/*or other positive int*/)`. `{count, "cache.ranges"}` event will be triggered when cached time ranges are created, dropped(via LRU cache) or merged. Other protocols can be enabled via player property `player.setProperty("demux.buffer.ranges", "http,https,proto1,proto2");`.
+- Add `Player.bufferedTimeRanges()`
 - Dolby vision: support reading metadata from av1 in all decoders, previously only supported by ffmpeg hwaccels and software decoder.
 - Support pause/resume rtsp stream in `Player.set(State)`. Enable via `player.setProperty("reader.pause", "1");`.
 - Record video from non-key frame if property "reader.starts_with_key" is "0"
