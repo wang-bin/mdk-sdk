@@ -56,7 +56,6 @@ jobs:
     - name: Create Build Environment
       shell: bash
       env:
-        DEVTOOLS_CACHE_HIT: ${{ steps.devtools-cache.outputs.cache-hit }}
         EXTERNAL_DEP_CACHE_HIT: ${{ steps.external-dep-cache.outputs.cache-hit }}
       working-directory: mdk
       run: ../ci-before-build.sh
@@ -138,7 +137,6 @@ jobs:
     - name: Create Build Environment
       shell: bash
       env:
-        DEVTOOLS_CACHE_HIT: ${{ steps.devtools-cache.outputs.cache-hit }}
         EXTERNAL_DEP_CACHE_HIT: ${{ steps.external-dep-cache.outputs.cache-hit }}
       working-directory: mdk
       run: ../ci-before-build.sh
@@ -653,7 +651,6 @@ jobs:
     - name: Create Build Environment
       shell: bash
       env:
-        DEVTOOLS_CACHE_HIT: ${{ steps.devtools-cache.outputs.cache-hit }}
         SYSROOT_CACHE_HIT: ${{ steps.sysroot-cache.outputs.cache-hit }}
         EXTERNAL_DEP_CACHE_HIT: ${{ steps.external-dep-cache.outputs.cache-hit }}
       working-directory: mdk
@@ -792,7 +789,6 @@ jobs:
     - name: Create Build Environment
       shell: bash
       env:
-        DEVTOOLS_CACHE_HIT: ${{ steps.devtools-cache.outputs.cache-hit }}
         SYSROOT_CACHE_HIT: ${{ steps.sysroot-cache.outputs.cache-hit }}
         EXTERNAL_DEP_CACHE_HIT: ${{ steps.external-dep-cache.outputs.cache-hit }}
       working-directory: mdk
@@ -859,6 +855,7 @@ jobs:
       TARGET_OS: android
       LTO_SUFFIX: -lto
       MIN_API: 21
+      NDK_32: r25c
     strategy:
       fail-fast: false
       matrix:
@@ -883,7 +880,6 @@ jobs:
     - name: Create Build Environment
       shell: bash
       env:
-        DEVTOOLS_CACHE_HIT: ${{ steps.devtools-cache.outputs.cache-hit }}
 #        SYSROOT_CACHE_HIT: ${{ steps.sysroot-cache.outputs.cache-hit }}
         EXTERNAL_DEP_CACHE_HIT: ${{ steps.external-dep-cache.outputs.cache-hit }}
       working-directory: mdk
@@ -894,7 +890,7 @@ jobs:
       shell: bash
       working-directory: mdk
       run: |
-        ls ${ANDROID_HOME}
+        ls ${ANDROID_HOME}/ndk
         MIN_API_64=21
         [ $MIN_API -gt 21 ] && MIN_API_64=$MIN_API
         cmake -DUSE_LTO=1 -DANDROID_LD=lld -DANDROID_ABI=${ARCH} -DANDROID_PLATFORM=android-${MIN_API_64} -DANDROID_TOOLCHAIN=clang -DANDROID_STL=c++_shared -DANDROID_PIE=ON -DCMAKE_TOOLCHAIN_FILE=$ANDROID_NDK_LATEST_HOME/build/cmake/android.toolchain.cmake -GNinja -H$PWD -B$PWD/build/${TARGET_OS}-${ARCH} -DCMAKE_BUILD_TYPE=${{ matrix.config }} -DCMAKE_INSTALL_PREFIX=$PWD/mdk-sdk-${ARCH} -DCMAKE_VERBOSE_MAKEFILE=1
@@ -918,8 +914,14 @@ jobs:
     - uses: nttld/setup-ndk@v1
       id: setup-ndk
       with:
-        ndk-version: r25c
-        local-cache: true
+        ndk-version: ${{ env.NDK_32 }}
+        local-cache: false
+    - name: 'Restore ndk cache' # setup-ndk not fully cached
+      id: ndk-cache
+      uses: actions/cache@v4
+      with:
+        path: /opt/hostedtoolcache/ndk/${{ env.NDK_32 }}
+        key: ndk-cache-${{ env.NDK_32 }}
     - name: Configure for armeabi-v7a
       env:
         ARCH: armeabi-v7a
