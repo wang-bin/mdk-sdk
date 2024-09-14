@@ -911,22 +911,22 @@ jobs:
       shell: bash
       working-directory: mdk
       run: cmake --build build/${TARGET_OS}-x86_64
-    - uses: nttld/setup-ndk@v1
-      id: setup-ndk
-      with:
-        ndk-version: ${{ env.NDK_32 }}
-        local-cache: false
-    - name: 'Restore ndk cache' # setup-ndk not fully cached
-      id: ndk-cache
-      uses: actions/cache@v4
-      with:
-        path: /opt/hostedtoolcache/ndk/${{ env.NDK_32 }}
-        key: ndk-cache-${{ env.NDK_32 }}
+#    - uses: nttld/setup-ndk@v1
+#      id: setup-ndk
+#      with:
+#        ndk-version: ${{ env.NDK_32 }}
+#        local-cache: false
+#    - name: 'Restore ndk cache' # setup-ndk not fully cached
+#      id: ndk-cache
+#      uses: actions/cache@v4
+#      with:
+#        path: ${{ runner.tool_cache }}/ndk/${{ env.NDK_32 }} # /opt/hostedtoolcache
+#        key: ndk-cache-${{ runner.os }}-${{ env.NDK_32 }}
     - name: Configure for armeabi-v7a
       env:
         ARCH: armeabi-v7a
-        MIN_API: 19  # android 4.4. ndk25
-        ANDROID_NDK_HOME: ${{ steps.setup-ndk.outputs.ndk-path }}
+        MIN_API: 21  # 19: android 4.4. ndk25
+#        ANDROID_NDK_HOME: ${{ steps.setup-ndk.outputs.ndk-path }}
       shell: bash
       working-directory: mdk
       run: cmake -DUSE_LTO=1 -DANDROID_LD=lld -DANDROID_ABI=${ARCH} -DANDROID_PLATFORM=android-${MIN_API} -DANDROID_TOOLCHAIN=clang -DANDROID_STL=c++_shared -DANDROID_PIE=ON -DCMAKE_TOOLCHAIN_FILE=$ANDROID_NDK_HOME/build/cmake/android.toolchain.cmake -GNinja -H$PWD -B$PWD/build/${TARGET_OS}-${ARCH} -DCMAKE_BUILD_TYPE=${{ matrix.config }} -DCMAKE_INSTALL_PREFIX=$PWD/mdk-sdk-${ARCH} -DCMAKE_VERBOSE_MAKEFILE=1
@@ -937,8 +937,8 @@ jobs:
     - name: Configure for x86
       env:
         ARCH: x86
-        MIN_API: 19  # android 4.4. ndk25
-        ANDROID_NDK_HOME: ${{ steps.setup-ndk.outputs.ndk-path }}
+        MIN_API: 21  # 19: android 4.4. ndk25
+#        ANDROID_NDK_HOME: ${{ steps.setup-ndk.outputs.ndk-path }}
       shell: bash
       working-directory: mdk
       run: cmake -DUSE_LTO=1 -DANDROID_LD=lld -DANDROID_ABI=${ARCH} -DANDROID_PLATFORM=android-${MIN_API} -DANDROID_TOOLCHAIN=clang -DANDROID_STL=c++_shared -DANDROID_PIE=ON -DCMAKE_TOOLCHAIN_FILE=$ANDROID_NDK_HOME/build/cmake/android.toolchain.cmake -GNinja -H$PWD -B$PWD/build/${TARGET_OS}-${ARCH} -DCMAKE_BUILD_TYPE=${{ matrix.config }} -DCMAKE_INSTALL_PREFIX=$PWD/mdk-sdk-${ARCH} -DCMAKE_VERBOSE_MAKEFILE=1
