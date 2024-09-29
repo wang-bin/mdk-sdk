@@ -13,11 +13,6 @@ tolower(){
 
 crt_extra=$(tolower ${CRT_EXTRA})
 
-if [[ "$TARGET_OS" == xr* || "$TARGET_OS" == vision* ]]; then
-# FIXME: llvm-17 can't correctly merge visionOS lto libs(libavformat.a)
-# FIXME: linking to libffmpeg.a(relocatable obj) by ci results in larger binary size
-  LTO_SUFFIX=
-fi
 if [[ "$TARGET_OS" == mac* || "$TARGET_OS" == iOS* || "$TARGET_OS" == tvOS* || "$TARGET_OS" == xr* || "$TARGET_OS" == vision* || "$TARGET_OS" == android ]]; then
     FF_EXTRA=
 fi

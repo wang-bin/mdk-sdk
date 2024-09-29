@@ -41,7 +41,7 @@ jobs:
         token: ${{ secrets.CLONE_PAT }}
         submodules: 'recursive'
     - name: Setup Xcode
-      run: sudo xcode-select -s /Applications/Xcode_15.3.app
+      run: sudo xcode-select -s /Applications/Xcode_${{ vars.XCODE }}.app
     - name: 'Restore External Dep cache'
       id: external-dep-cache
       uses: actions/cache@v4
@@ -122,7 +122,7 @@ jobs:
         token: ${{ secrets.CLONE_PAT }}
         submodules: 'recursive'
     - name: Setup Xcode
-      run: sudo xcode-select -s /Applications/Xcode_15.3.app
+      run: sudo xcode-select -s /Applications/Xcode_${{ vars.XCODE }}.app
     - name: 'Restore External Dep cache'
       id: external-dep-cache
       uses: actions/cache@v4
@@ -190,13 +190,13 @@ jobs:
     needs: [macOS, iOS]
     steps:
     - name: Setup Xcode
-      run: sudo xcode-select -s /Applications/Xcode_15.3.app
+      run: sudo xcode-select -s /Applications/Xcode_${{ vars.XCODE }}.app
     - uses: actions/checkout@v4
-    - name: Download macOS sdk
+    - name: Download macOS x64 sdk
       uses: actions/download-artifact@v4
       with:
         name: mdk-sdk-macOS-x86_64-MinSizeRel
-    - name: Download macOS sdk
+    - name: Download macOS arm64 sdk
       uses: actions/download-artifact@v4
       with:
         name: mdk-sdk-macOS-arm64-MinSizeRel
@@ -1032,3 +1032,79 @@ jobs:
         gh workflow run main.yml --repo ${{ github.repository_owner }}/mdk-nvjp2k -f run_id=${{ github.run_id }}
       env:
         GH_TOKEN: ${{ secrets.ACTION_PAT }} # GITHUB_TOKEN?
+
+  Release:
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/')
+    needs: [Apple, NuGet, Linux, Android, ClangCL]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Download iOS sdk
+        uses: actions/download-artifact@v4
+        with:
+          name: mdk-sdk-iOS-MinSizeRel
+      - name: Download iOSSimulator sdk
+        uses: actions/download-artifact@v4
+        with:
+          name: mdk-sdk-iOSSimulator-MinSizeRel
+      - name: Download tvOS sdk
+        uses: actions/download-artifact@v4
+        with:
+          name: mdk-sdk-tvOS-MinSizeRel
+      - name: Download tvOSSimulator sdk
+        uses: actions/download-artifact@v4
+        with:
+          name: mdk-sdk-tvOSSimulator-MinSizeRel
+      - name: Download visionOS sdk
+        uses: actions/download-artifact@v4
+        with:
+          name: mdk-sdk-visionOS-MinSizeRel
+      - name: Download visionOSSimulator sdk
+        uses: actions/download-artifact@v4
+        with:
+          name: mdk-sdk-visionOSSimulator-MinSizeRel
+      - name: Download macCatalyst sdk
+        uses: actions/download-artifact@v4
+        with:
+          name: mdk-sdk-macCatalyst-MinSizeRel
+      - name: Download macOS sdk
+        uses: actions/download-artifact@v4
+        with:
+          name: mdk-sdk-macOS
+      - name: Download Apple sdk
+        uses: actions/download-artifact@v4
+        with:
+          name: mdk-sdk-apple
+      - name: Download win32 vs2022 sdk
+        uses: actions/download-artifact@v4
+        with:
+          name: mdk-sdk-vs2022-windows-desktop-RelWithDebInfo
+      - name: Download win32 vs2022 ltl sdk
+        uses: actions/download-artifact@v4
+        with:
+          name: mdk-sdk-vs2022-ltl-windows-desktop-RelWithDebInfo
+      - name: Download uwp vs2022 sdk
+        uses: actions/download-artifact@v4
+        with:
+          name: mdk-sdk-vs2022-uwp-RelWithDebInfo
+      - name: Download clang-cl sdk
+        uses: actions/download-artifact@v4
+        with:
+          name: mdk-sdk-clang-windows-desktop-MinSizeRel
+      - name: Download linux sdk
+        uses: actions/download-artifact@v4
+        with:
+          name: mdk-sdk-linux-MinSizeRel
+      - name: Download android sdk
+        uses: actions/download-artifact@v4
+        with:
+          name: mdk-sdk-android-MinSizeRel
+      - name: Release
+        uses: softprops/action-gh-release@v2
+        with:
+          draft: true
+          body_path: Changelog.md
+          files: |
+            *.7z
+            *.xz

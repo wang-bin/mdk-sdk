@@ -54,11 +54,6 @@ pod 'mdk'
 
 Optionally you can use [mdk.xcframework](https://sourceforge.net/projects/mdk-sdk/files/nightly/mdk-sdk-apple.tar.xz/download) directly.
 
-If fail to code sign: In `Build Phase`, add a `New Run Script Phase` with content
-```bash
-[ -n "$CODE_SIGN_IDENTITY" ] && find "$BUILT_PRODUCTS_DIR" -depth -name "lib*.dylib" -exec codesign -f -vvvv -s"${EXPANDED_CODE_SIGN_IDENTITY}" ${OTHER_CODE_SIGN_FLAGS:-} --preserve-metadata=identifier,entitlements,flags {} \;
-````
-
 #### Swift Users
 ```ruby
 pod 'swift-mdk'
@@ -72,6 +67,12 @@ import swift_mdk
 ### Nuget
 
 Install via [NuGet](https://www.nuget.org/packages/mdk) in Visual Studio for both Windows desktop and UWP
+
+## macOS Hardened Runtime
+You may fail to run(or codesign) with default hardened runtime options because there are some dylib files in mdk.framework not signed correctly. You can either select `Disable Library Validation` in `Hardened Runtime` options, or sign dylib(**RECOMMENDED**): In `Build Phase`, add a `New Run Script Phase` with content
+```bash
+[ -n "$CODE_SIGN_IDENTITY" ] && find "$BUILT_PRODUCTS_DIR" -depth -path "*mdk.framework/*" -name "lib*.dylib" -exec codesign -f -vvvv -s"${EXPANDED_CODE_SIGN_IDENTITY}" ${OTHER_CODE_SIGN_FLAGS:-} --preserve-metadata=identifier,entitlements,flags {} \;
+```
 
 ## Distribute
 - mdk(libmdk.so.0/ibmdk.dylib/mdk.dll) and ffmpeg library(or standard ffmpeg libraries) are always REQUIRED
@@ -156,6 +157,7 @@ Install via [NuGet](https://www.nuget.org/packages/mdk) in Visual Studio for bot
 <!-- <a href="https://smartplayer.ru"><img src="https://static.tildacdn.com/tild3431-3533-4461-b365-386335306263/Group_101.svg" alt="smartplayer"  width=600 height=120  style="background-color:black"></a> -->
 [![](https://teleguard.com/images/logo.png)](https://teleguard.com)[!
 ![DaKanji](https://dakanji.app/wp-content/uploads/thegem-logos/logo_a496404d3d63fd29f344146e428d0992_2x.png)](https://dakanji.app)
+[![Fimosa](https://fimosa.app/_next/image?url=%2Flogo_final.png&w=64&q=75)](https://fimosa.app)
 
 
 [金嵘达科技](http://www.kingroda.com)
