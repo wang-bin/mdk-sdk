@@ -15,11 +15,13 @@ env:
   SF_PW: ${{ secrets.SF_PW }}
   SF_USER: ${{ secrets.SF_USER }}
   SF_UPLOAD: ${{ github.event_name != 'repository_dispatch' ||  github.event.client_payload.ref == 'master' }}
+  NVJP2K_SDK_PW: ${{ secrets.NVJP2K_SDK_PW }}
+  CUDA_SDK_PW: ${{ secrets.CUDA_SDK_PW }}
 
 jobs:
   macOS:
     # See: https://docs.github.com/en/actions/configuring-and-managing-workflows/configuring-a-workflow#configuring-a-build-matrix
-    runs-on: macos-latest
+    runs-on: macos-15 # 15. 1 xcode per image
     env:
       TARGET_OS: 'macOS'
       TARGET_ARCH: ${{ matrix.arch }}
@@ -40,8 +42,8 @@ jobs:
         fetch-depth: 1
         token: ${{ secrets.CLONE_PAT }}
         submodules: 'recursive'
-    - name: Setup Xcode
-      run: sudo xcode-select -s /Applications/Xcode_${{ vars.XCODE }}.app
+    #- name: Setup Xcode
+    #  run: sudo xcode-select -s /Applications/Xcode_${{ vars.XCODE }}.app
     - name: 'Restore External Dep cache'
       id: external-dep-cache
       uses: actions/cache@v4
@@ -358,12 +360,19 @@ jobs:
     - uses: ilammy/msvc-dev-cmd@v1
       with:
         arch: x64
+    - name: Get nvJPEG2000 SDK
+      shell: bash
+      run: |
+        curl -kL -o nvjpeg2000.zip  https://github.com/user-attachments/files/17663661/nvjpeg2000.zip
+        7z x -y -p${{ env.NVJP2K_SDK_PW }} nvjpeg2000.zip
+        curl -kL -o cuda.zip  https://github.com/user-attachments/files/17663668/cuda.zip
+        7z x -y -p${{ env.CUDA_SDK_PW }} cuda.zip
     - name: Configure for win x64
       env:
         ARCH: x64
         R3DSDK: ${{ github.workspace }}/mdk/external/R3DSDK
       working-directory: mdk
-      run: cmake -DR3DSDK=${{ env.R3DSDK }} -DMIN_SIZE=1 -DUSE_LTO=1 -DCMAKE_SYSTEM_PROCESSOR=${{ env.ARCH }} -DCMAKE_SYSTEM_VERSION="6.0" -GNinja  -Bbuild/${{ env.TARGET_OS }}-${{ env.ARCH }} -DCMAKE_BUILD_TYPE=${{ matrix.config }} -DCMAKE_INSTALL_PREFIX=mdk-sdk-${{ env.ARCH }} -DCMAKE_VERBOSE_MAKEFILE=1 .
+      run: cmake -DR3DSDK=${{ env.R3DSDK }} -DNVJP2K=1 -DCUDA_SDK_DIR=${{ github.workspace }}/cuda -DNVJPEG2K_PATH=${{ github.workspace }}/nvjpeg2000 -DMIN_SIZE=1 -DUSE_LTO=1 -DCMAKE_SYSTEM_PROCESSOR=${{ env.ARCH }} -DCMAKE_SYSTEM_VERSION="6.0" -GNinja  -Bbuild/${{ env.TARGET_OS }}-${{ env.ARCH }} -DCMAKE_BUILD_TYPE=${{ matrix.config }} -DCMAKE_INSTALL_PREFIX=mdk-sdk-${{ env.ARCH }} -DCMAKE_VERBOSE_MAKEFILE=1 .
     - name: Build for win x64
       working-directory: mdk
       run: cmake --build build/${{ env.TARGET_OS }}-x64
