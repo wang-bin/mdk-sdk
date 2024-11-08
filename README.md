@@ -2,7 +2,7 @@
 
 [![Build Status](https://dev.azure.com/kb137035/mdk/_apis/build/status/mdk-CI-yaml?branchName=master)](https://dev.azure.com/kb137035/mdk/_build/latest?definitionId=2&branchName=master)
 
-**Download** [Nightly Build SDK](https://sourceforge.net/projects/mdk-sdk/files/nightly/)
+**Download** latest [Nightly Build SDK from sourceforge](https://sourceforge.net/projects/mdk-sdk/files/nightly/) or [github actions(not always latest)](https://nightly.link/wang-bin/mdk-sdk/workflows/build/master)
 
 
 Sourceforge[![Sourceforge](https://img.shields.io/sourceforge/dt/mdk-sdk)](https://sourceforge.net/projects/mdk-sdk/files)
@@ -91,14 +91,14 @@ You may fail to run(or codesign) with default hardened runtime options because t
 ### Recommended settings
 
 - macOS, iOS: `player.setDecoders(MediaType::Video, {"VT", "hap", "FFmpeg", "dav1d"});`
-- Windows: `player.setDecoders(MediaType::Video, {"MFT:d3d=11", "D3D11", "CUDA", "hap", "FFmpeg", "dav1d"});`
+- Windows: `player.setDecoders(MediaType::Video, {"MFT:d3d=11", "D3D11", "DXVA", "CUDA", "hap", "FFmpeg", "dav1d"});`
 - Linux:
 ```cpp
     // XInitThreads(); // If using x11. before any x11 api call. some gui toolkits already call this, e.g. qt, glfw
     SetGlobalOption("X11Display", DisplayPtr); // If using x11. Requred by VAAPI, VDPAU
     player.setDecoders(MediaType::Video, {"VAAPI", "VDPAU", "CUDA", "hap", "FFmpeg", "dav1d"});
 ```
-- Raspberry Pi: use [mdk-sdk-linux.tar.xz](https://sourceforge.net/projects/mdk-sdk/files/nightly/mdk-sdk-linux.tar.xz/download), delete libffmpeg.so.* to use system ffmpeg to support h264, hevc hardware decoder and 0-copy rendering
+- Raspberry Pi: use [mdk-sdk-linux.tar.xz](https://sourceforge.net/projects/mdk-sdk/files/nightly/mdk-sdk-linux.tar.xz/download), delete libffmpeg.so.* to use system ffmpeg to support h264, hevc hardware decoder and use OpenGL ES2/3 0-copy rendering
 ```cpp
     player.setDecoders(MediaType::Video, {"V4L2M2M", "FFmpeg:hwcontext=drm", "FFmpeg"});
 ```
@@ -155,11 +155,14 @@ You may fail to run(or codesign) with default hardened runtime options because t
 <a href="https://smartplayer.ru"><img src="https://static.tildacdn.com/tild3437-3132-4139-b365-373030343131/Group_100.svg" alt="smartplayer"  width=120 height=120  style="background-color:black"></a>
 <a href="https://smartplayer.ru"><img src="https://static.tildacdn.com/tild3730-3634-4463-a464-333634323465/Group_20.svg" alt="smartplayer"  width=400 height=120  style="background-color:black"></a>
 <!-- <a href="https://smartplayer.ru"><img src="https://static.tildacdn.com/tild3431-3533-4461-b365-386335306263/Group_101.svg" alt="smartplayer"  width=600 height=120  style="background-color:black"></a> -->
-[![](https://teleguard.com/images/logo.png)](https://teleguard.com)[!
+[![teleguard](https://teleguard.com/images/logo.png)](https://teleguard.com)[!
 ![DaKanji](https://dakanji.app/wp-content/uploads/thegem-logos/logo_a496404d3d63fd29f344146e428d0992_2x.png)](https://dakanji.app)
-[![Fimosa](https://fimosa.app/_next/image?url=%2Flogo_final.png&w=64&q=75)](https://fimosa.app)
+[![Pimosa](https://pimosa.app/_next/image?url=%2Flogo_final.png&w=64&q=75)](https://pimosa.app)
+<a href="https://apidash.dev"><img src="https://apidash.dev/media/apidash.png" alt="API Dash" width=120 height=120  style="background-color:black"></a>
 
 
+[easy live tv](https://github.com/aiyakuaile/easy_tv_live)
+[Kazumi](https://github.com/Predidit/Kazumi)
 [金嵘达科技](http://www.kingroda.com)
 [爱玩宝](https://www.aiwanbao.com)
 

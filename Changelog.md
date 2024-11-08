@@ -1,5 +1,37 @@
 Change log:
 
+# 0.30.0
+
+- API:
+    - Add `Player.appendBuffer()` to play streams with user provided data, for example data is from [websocket](https://github.com/wang-bin/mdk-examples/blob/master/Native/stream.cpp). media protocol is `stream`, i.e. `player.setMedia("stream:empty_or_any_string")`. `setTimeout()` can abort current playback if timedout to read data from user.
+- Plain text subtitle(srt for example) style can be changed by user via [subtitle properties](https://github.com/wang-bin/mdk-sdk/wiki/Player-APIs#subtitle-properties)
+- Multi channels audio rendering, no downmix to stereo
+- Support dolby vision in mpeg ts
+- PulseAudio is the default audio render for linux
+- Improve audio renderer delay and AV sync
+- VT: Fix hardware decoder disabled if hvcC has no PS NALUs
+- D3D11:
+    - Fix UMA check if run x64 on arm64 and failed to create textures
+    - Disable cross context 0-copy for AMD gpus to avoid corrupt result on many gpus
+    - Set usage for swapchain, fix back buffer RTV create error on some win7 devices
+- VAAPI:
+    - Map YUYV fourcc, fix jpeg yuv 422 rendering
+    - Convert to RGB with VPP if DRM to EGLImage is not possible(desktop gl + external only formats)
+- DRM Prime:
+    - Error if no OpenGL ES2/3 context for external only formats, then VAAPI can fallback to suboptimal rendering instead of blank
+    - Map more formats
+- Player property "audio.tracks", "video.tracks" and "subtitle.tracks" is same as `setActiveTracks()`, value is a int list string, e.g. `"0,1"`
+- Reset more callbacks before deleting player object to simplify user code
+- Fix undefined symbol on wayland < 1.10, compatible with more linux distributions, e.g. ubuntu 14.04
+- More packed yuv formats
+- MFT: fix d3d9 not tried if d3d11 is not supported
+- Fix null callback invoked if reset by user
+- Will try to load Ass.framework on apple OS except macOS, to be compatible with media-kit's frameworks
+- FFmpeg: Fix wromg abi version if avfilter is disabled when swresample is loaded and crash, e.g. qt6's ffmpeg dlls
+- Add nvjpeg2000 plugin for windows x64, requires cudart64_12.dll and nvjpeg2k_0.dll
+- Compatible with libc++20
+
+
 # 0.29.1
 
 - Android 64bit is built with 16KB page size support

@@ -29,7 +29,7 @@ https://github.com/wang-bin/swift-mdk
 - Support VP9 on macOS 11+
 - Support X11 if runtime libraries exist
 
-SDK is built by Xcode 15 with
+SDK is built by Xcode 16 with
 - ffmpeg: https://sourceforge.net/projects/avbuild/files/macOS/ffmpeg-master-macOS-lite-lto.tar.xz/download
 
 ### macOS 10.15+

@@ -99,7 +99,7 @@ jobs:
         sshpass -p ${SF_PW} scp -o StrictHostKeyChecking=no mdk-sdk-${TARGET_OS}-${{ matrix.arch }}.tar.xz ${SF_USER}@frs.sourceforge.net:/home/frs/project/mdk-sdk/nightly/
 
   iOS:
-    runs-on: macos-latest
+    runs-on: macos-15
     env:
       TARGET_OS: ${{ matrix.os }}${{ matrix.simulator }}
       LTO_SUFFIX: -lto
@@ -188,7 +188,7 @@ jobs:
       run: sshpass -p ${SF_PW} scp -o StrictHostKeyChecking=no mdk-sdk-${TARGET_OS}.tar.xz ${SF_USER}@frs.sourceforge.net:/home/frs/project/mdk-sdk/nightly/
 
   Apple:
-    runs-on: macos-latest
+    runs-on: macos-15
     needs: [macOS, iOS]
     steps:
     - name: Setup Xcode
@@ -1113,7 +1113,8 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           draft: true
-          body_path: Changelog.md
+          body: "Changelog.md"
+          #body_path: Changelog.md
           files: |
             *.7z
             *.xz
