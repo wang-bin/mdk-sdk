@@ -1,5 +1,13 @@
 Change log:
 
+# 0.30.1
+
+- Fix a crash in audio renderer if get delay
+- renderVideo() before the 1st frame will clear render target with background color. useful if render target content is undefined
+- Fix some global options not applied immediately
+- FFmpeg: prefer new avcodec_get_supported_config()
+
+
 # 0.30.0
 
 - API:
