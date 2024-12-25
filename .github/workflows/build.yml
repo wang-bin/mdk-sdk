@@ -42,8 +42,8 @@ jobs:
         fetch-depth: 1
         token: ${{ secrets.CLONE_PAT }}
         submodules: 'recursive'
-    #- name: Setup Xcode
-    #  run: sudo xcode-select -s /Applications/Xcode_${{ vars.XCODE }}.app
+    - name: Setup Xcode
+      run: sudo xcode-select -s /Applications/Xcode_${{ vars.XCODE }}.app
     - name: 'Restore External Dep cache'
       id: external-dep-cache
       uses: actions/cache@v4
