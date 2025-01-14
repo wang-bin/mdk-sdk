@@ -232,7 +232,7 @@ jobs:
         name: mdk-sdk-macCatalyst-MinSizeRel
     - name: Install tools
       shell: bash
-      run: brew install hudochenkov/sshpass/sshpass
+      run: brew install sshpass
     - name: make XCFramework and SDK
       shell: bash
       run: |
@@ -717,7 +717,7 @@ jobs:
       run: sshpass -p ${SF_PW} scp -o StrictHostKeyChecking=no mdk-sdk-${TARGET_OS}-clang.7z ${SF_USER}@frs.sourceforge.net:/home/frs/project/mdk-sdk/nightly/
 
   NuGet:
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
     needs: [Windows, UWP, Windows_LTL]
     steps:
     - uses: actions/checkout@v4
@@ -735,7 +735,9 @@ jobs:
         name: mdk-sdk-vs2022-uwp-RelWithDebInfo
     - name: update build version
       shell: bash
-      run: sed -i "s,\(.*\.\)[0-9]*\(</version>\),\1${GITHUB_RUN_NUMBER}\2," nuget/mdk.nuspec
+      run: sed -i .bak "s,\(.*\.\)[0-9]*\(</version>\),\1${GITHUB_RUN_NUMBER}\2," nuget/mdk.nuspec
+    - name: install tools
+      run: brew install sshpass nuget 7zip md5sha1sum
     - name: Make nupkg (VS2022)
       run: |
         rm -rf mdk-sdk uwp
@@ -758,10 +760,7 @@ jobs:
     - name: Upload to SourceForge
       if: ${{ env.SF_UPLOAD == 'true' }}
       shell: bash
-      run:  |
-        sudo apt update
-        sudo apt install -y sshpass
-        make -f upload.mk
+      run: make -f upload.mk
 
   Linux:
     runs-on: ubuntu-latest
