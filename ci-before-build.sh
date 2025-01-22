@@ -100,12 +100,12 @@ if [[ "$EXTERNAL_DEP_CACHE_HIT" != "true" ]]; then
     curl -kL -o R3DSDK.7z https://sourceforge.net/projects/mdk-sdk/files/deps/r3d/R3DSDK.7z/download
     7z x R3DSDK.7z -oexternal
   fi
-  #if [[ "$TARGET_OS" == "win"* || "$TARGET_OS" == "uwp"* || "$TARGET_OS" == macOS || "$TARGET_OS" == "linux" ]]; then
-    curl -kL -o dep.7z https://sourceforge.net/projects/mdk-sdk/files/deps/dep.7z/download
-    7z x dep.7z
-    cp -af dep/* external/
-  #fi
 fi
+
+curl -kL -o libmdk-dep.zip https://nightly.link/wang-bin/devpkgs/workflows/build/main/libmdk-dep.zip
+7z x libmdk-dep.zip
+7z x dep.7z
+cp -af dep/* external/
 
 if [[ "$SYSROOT_CACHE_HIT" != "true" ]]; then
   if [[ "$TARGET_OS" == "win"* || "$TARGET_OS" == "uwp"* ]]; then

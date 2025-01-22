@@ -14,7 +14,7 @@
     <description>C/C++ Multimedia Development Kit</description>
     <summary>Cross platform multimedia development kit in C/C++</summary>
     <releaseNotes>https://github.com/wang-bin/mdk-sdk/releases</releaseNotes>
-    <copyright>Copyright 2024</copyright>
+    <copyright>Copyright 2025</copyright>
     <tags>Multimedia MediaPlayer VideoPlayer Video Player Playback HDR DolbyVision FFmpeg CrossPlatform UWP WOA WinUI3 OpenGL Vulkan D3D11 D3D12 BRAW Hap R3D DCP</tags>
     <readme>README.md</readme>
   </metadata>
