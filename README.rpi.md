@@ -80,5 +80,5 @@ include($$MDK_SDK_DIR/mdk.pri)
 - [MFT decoder module](https://github.com/wang-bin/mdk-mft)
 - [dav1d decoder module](https://github.com/wang-bin/mdk-dav1d)
 
-Copyright (c) 2016-2024 WangBin(the author of QtAV) <wbsecg1 at gmail.com>
+Copyright (c) 2016-2025 WangBin(the author of QtAV) <wbsecg1 at gmail.com>
 Free for opensource softwares, non-commercial softwares, flutter, QtAV donors and contributors.

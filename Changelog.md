@@ -1,4 +1,43 @@
 Change log:
+# 0.31.0
+
+- API:
+    - Add color space and dolby vision profile in MediaInfo
+    - Add `VideoEffect::ScaleChannels` and `ShiftChannels`
+    - Add `Player.subtitleText()` to get subtitle text(except bitmap subtitles) with ass style or not, even if subtitle rendering is disabled by `setProperty("subtitle", "0")`. see https://github.com/wang-bin/mdk-sdk/wiki/Player-APIs#stdstring-subtitletextdouble-time---1-int-style--0-const
+- EGL:
+    - Support HDR color spaces. `player.set(ColorSpaceUnknown)` will switch between HDR and SDR color space depending on current rendering video frame. Tested on android, may work on linux
+    - Enable HDR10 metadata pass through, can be disabled by env var `EGL_HDR_METADATA=0`
+    - Prefer rgb10a2 to avoid recreating context when switching between SDR and HDR
+    - Support KHR_no_config_context to avoid recreating context when switching between SDR and HDR
+- Subtitle:
+    - Fix properties not applied if set before play
+    - Support splitting ASS rendered rgba image into several smaller regions when possible to reduce total size and gpu bandwidth. controlled by player property `subtitle.ass.regions.max` or env `ASS_REGIONS_MAX`, value is int. use `subtitle.ass.regions.debug` or env `ASS_REGIONS_DEBUG` to visualize regions and show debug messages.
+    - Keep colorspace the same as video, fix dark in bt2020 pq
+    - Add player property `subtitle.scale` to scale all kind of subtitles. default is 1.0, i.e. no scale
+    - Fix `subtitle.blur` is not applied because of a libass bug
+    - Add player property `subtitle.size`, default value is `video` to render in video frame size, other values will render in video renderer resolution
+    - Redraw subtitle if output resolution changed even if playback is paused, e.g. rendering in renderer resolution, and resize the renderer
+    - Redraw subtitle for any subtitle property change even if playback is paused.
+    - Render earlier
+    - Fix dead lock
+    - Fix unexpected null texture for some timestamp values and blinking
+    - Set ass storage size
+- Dolby vision: Fix shader error if yuv sampler is used for MediaCodec decoder
+- GL: add `glFinish()` before context destroyed
+- D3D11: Improve UMA support check. UMA optimized texture download. can be disabled by env `GPU_OPTIMAL_DOWNLOAD=0`
+- DXGI: Use the 1st screen's HDR capability
+- Metal: Fix rendering mutiple overlayes
+- MFT: return error if output type is not supported
+- Fix wrong start time if `record()` multiple times.
+- Fix buffered packets out of range of the value set by `setBufferRange()`
+- Fix audio not decoded after seek if paused and result in a/v desync(apple only).
+- Fix seek(if not started) callback may be called twice.
+- Fix global subtitle options not applied, regression in 0.30.1
+- FFmpeg:
+    - Support webvtt in mkv. Patch is from avbuild, not merged by upstream.
+    - Workaround aac packets from rtsp have no keyframe if ffmpeg > 7.1
+
 
 # 0.30.1
 

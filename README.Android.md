@@ -81,5 +81,5 @@ include($$MDK_SDK_DIR/mdk.pri)
 - [libmediandk and other java classes implemented in C++](https://github.com/wang-bin/AND)
 - [JNI Modern Interface](https://github.com/wang-bin/JMI)
 
-Copyright (c) 2016-2024 WangBin(the author of QtAV) <wbsecg1 at gmail.com>
+Copyright (c) 2016-2025 WangBin(the author of QtAV) <wbsecg1 at gmail.com>
 Free for opensource softwares, non-commercial softwares, flutter, QtAV donors and contributors.

@@ -2,7 +2,7 @@
 
 [![Build Status](https://dev.azure.com/kb137035/mdk/_apis/build/status/mdk-CI-yaml?branchName=master)](https://dev.azure.com/kb137035/mdk/_build/latest?definitionId=2&branchName=master)
 
-**Download** latest [Nightly Build SDK from sourceforge](https://sourceforge.net/projects/mdk-sdk/files/nightly/) or [github actions(not always latest)](https://nightly.link/wang-bin/mdk-sdk/workflows/build/master)
+**Download** latest [Nightly Build SDK from sourceforge](https://sourceforge.net/projects/mdk-sdk/files/nightly/) or [github actions](https://nightly.link/wang-bin/mdk-sdk/workflows/build/master)
 
 
 Sourceforge[![Sourceforge](https://img.shields.io/sourceforge/dt/mdk-sdk)](https://sourceforge.net/projects/mdk-sdk/files)
@@ -159,7 +159,7 @@ You may fail to run(or codesign) with default hardened runtime options because t
 ![DaKanji](https://dakanji.app/wp-content/uploads/thegem-logos/logo_a496404d3d63fd29f344146e428d0992_2x.png)](https://dakanji.app)
 [![Pimosa](https://pimosa.app/_next/image?url=%2Flogo_final.png&w=64&q=75)](https://pimosa.app)
 <a href="https://apidash.dev"><img src="https://apidash.dev/media/apidash.png" alt="API Dash" width=120 height=120  style="background-color:black"></a>
-
+<a href="https://apps.apple.com/fr/app/iptv-smarters-player-expert/id1641944027"><img src="https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/5b/28/ca/5b28ca83-3685-f6fb-70eb-a0205c6f1a87/AppIcon-0-0-85-220-0-5-0-2x.png/460x0w.webp" width=120 height=120  style="background-color:black"></a>
 
 [easy live tv](https://github.com/aiyakuaile/easy_tv_live)
 [Kazumi](https://github.com/Predidit/Kazumi)

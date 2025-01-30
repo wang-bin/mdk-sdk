@@ -83,5 +83,5 @@ Optional:
 - [R3D RAW](https://github.com/wang-bin/mdk-r3d)
 
 
-Copyright (c) 2016-2024 WangBin(the author of QtAV) <wbsecg1 at gmail.com>
+Copyright (c) 2016-2025 WangBin(the author of QtAV) <wbsecg1 at gmail.com>
 Free for opensource softwares, non-commercial softwares, flutter, QtAV donors and contributors.
