@@ -8,7 +8,7 @@ on:
   repository_dispatch:
 
 env:
-  FF_VER: master
+  FF_VER: ${{ vars.FF_VER }}
   LLVM_VER: ${{ vars.LLVM_VER }}
   VC_LTL_VER: ${{ vars.VC_LTL_VER }}
   NINJA_STATUS: '[%f/%t %e %r]'

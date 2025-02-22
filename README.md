@@ -29,6 +29,7 @@ NuGet[![NuGet](https://img.shields.io/nuget/dt/mdk)](https://www.nuget.org/packa
 - Subtitle rendering, including ass, plain text, bitmap, closed caption
 - [Smart FFmpeg runtime, dynamic load, binary compatible with 4.0~7.x](https://github.com/wang-bin/mdk-sdk/wiki/FFmpeg-Runtime)
 - Professional codecs: GPU accelerated [HAP](https://github.com/wang-bin/mdk-sdk/wiki/Decoders#hap) codec rendering, [Blackmagic RAW](https://github.com/wang-bin/mdk-braw), [R3D](https://github.com/wang-bin/mdk-r3d), [nvJPEG2000](https://github.com/wang-bin/mdk-nvjp2k)
+- VP8/9 alpha channel support for all decoders and renderers
 
 
 ## Install
@@ -80,7 +81,7 @@ You may fail to run(or codesign) with default hardened runtime options because t
 - mdk-braw.dll/libmdk-braw.{so,dylib}: optional, for blackmagic raw videos
 - mdk-r3d.dll/libmdk-r3d.{so,dylib}: optional, for RED raw videos
 - mdk.pdb/libmdk.so*.dsym: debug symbols.
-- Add [libdav1d.dll/libdav1d.dylib/dav1d.framework/libdav1d.so](https://sourceforge.net/projects/mdk-sdk/files/deps/dep.7z/download) from to support av1 software decoding
+- Add [libdav1d.dll/libdav1d.dylib/dav1d.framework/libdav1d.so](https://sourceforge.net/projects/mdk-sdk/files/deps/dep.7z/download) to support av1 software decoding
 
 ## Documents
 
