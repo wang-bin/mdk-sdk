@@ -1,4 +1,41 @@
 Change log:
+
+# 0.32.0
+
+- API:
+    - Add `AudioFrame` and `Player.onFrame<AudioFrame>()`. Example: [obs](https://github.com/wang-bin/obs-mdk/commit/b5027fffa08765626954af8e5ca0566416e50f38)
+    - `VideoFrame.from()` can import CUDA and VAAPI resources
+- **NEW: VP8/9, HEVC with Alpha support.** Maybe it's the 1st player engine supports those standard alpha videos.
+    - VP8/9, HEVC alpha layer decoding for all decoders.
+    - alpha layer rendering in all renderers. Alpha and base layer can be from different decoders and have different strides, and sampler types can be different.
+    - `alpha=0` can disable alpha layer decoding, e.g. `player.setProperty("video.decoder", "alpha=0")`
+- non-standard alpha videos whose alpha data is at bottom or right, enable via decoder property `alpha=right` or `alpha=bottom`. sw decoder or hw decoder copy mode only.
+- MFT: support HEVC base layer decoding if has multiple layers(alpha and MV-HEVC). By default such bitstream is rejected by MFT
+- D3D11: fix downloading from stage texture, previously may crash on amd, arm64
+- CUDA:
+    - Only decode base layer of has multiple layers. By default it decodes all layers(alpha and MV-HEVC).
+    - Add properties `device`, `stream`, `pbo` etc. see https://github.com/wang-bin/mdk-sdk/wiki/Decoders#cuda
+    - Fix a crash when destroying the last frame
+- VT: `RequestedMVHEVCVideoLayerIDs` bug reported by me in 2024 is fixed in macOS 15.4, so remove workaroud for macOS 15.4+
+- VAAPI: add "vpp" property, 1 to convert to rgb via vpp
+- EGL:
+    - Prefer storage extension instead of external image for desktop gl, supported formats is vendor dependent. Works well on raspberry pi, previously only OpenGL ES + external image is supported.
+    - Fix no hdr metadata warnings in system log on android
+    - Support android platform display
+    - Fix HDR display if no colorspace extension(regression in 0.31.0)
+    - Fix crash if no client extension(regression in 0.31.0)
+- Add value "fit" to property "subtitle.size" to scale subtitle to renderer size and keep aspect ratio
+- CMake: add rpath-link for linux libc++
+- Load libshaderc.so instead of libshaderc-shared.so on linux
+- global option videoout.hdr10_metadata=0 can disable hdr10 metadata passthru to display
+- Fix old subtitle rendered if track switched
+- Fix point map if render api changed(default opengl, to another)
+- Don't clear render target if failed to open a decoder
+- FFmpeg:
+    - Add "format" option for sw decoder. used by hevc alpha, for example `format=yuva420p`
+    - "sw_fallback" property applies for codecs w/o hwaccel
+
+
 # 0.31.0
 
 - API:
@@ -94,7 +131,7 @@ Change log:
 - Fix a decoder crash when stopping playback
 - Fix waitFor(State::Stopped)
 - Stop demuxer immediately if io is aborted.
-- Apply ffmmpeg muxer options
+- Apply ffmpeg muxer options
 - Prefer ffmpeg dynamic library even if statically linked. mainly used by iOS user provided FFmpeg.framework
 
 
