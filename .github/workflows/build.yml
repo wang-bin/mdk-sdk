@@ -25,7 +25,7 @@ jobs:
     env:
       TARGET_OS: 'macOS'
       TARGET_ARCH: ${{ matrix.arch }}
-      LTO_SUFFIX: -lto
+      #LTO_SUFFIX: -lto # lto on master branch crashes in avio_open2 if open
     strategy:
       fail-fast: false
       matrix:
@@ -102,7 +102,7 @@ jobs:
     runs-on: macos-15
     env:
       TARGET_OS: ${{ matrix.os }}${{ matrix.simulator }}
-      LTO_SUFFIX: -lto
+      #LTO_SUFFIX: -lto # lto on master branch crashes in avio_open2 if open
     strategy:
       fail-fast: false
       matrix:
@@ -289,6 +289,11 @@ jobs:
       with:
         name: mdk-sdk-apple
         path: mdk-sdk-apple.tar.xz
+    - name: Archieve XCFramework SDK
+      uses: actions/upload-artifact@v4
+      with:
+        name: mdk-sdk-apple-zip
+        path: mdk-sdk-apple.zip
     - name: Archieve macOS SDK
       uses: actions/upload-artifact@v4
       with:
@@ -1080,10 +1085,14 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: mdk-sdk-macOS
-      - name: Download Apple sdk
+      - name: Download Apple sdk txz
         uses: actions/download-artifact@v4
         with:
           name: mdk-sdk-apple
+      - name: Download Apple sdk zip
+        uses: actions/download-artifact@v4
+        with:
+          name: mdk-sdk-apple-zip
       - name: Download win32 vs2022 sdk
         uses: actions/download-artifact@v4
         with:
@@ -1108,6 +1117,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: mdk-sdk-android-MinSizeRel
+      - run: ls -lh
       - name: Release
         uses: softprops/action-gh-release@v2
         with:
@@ -1117,3 +1127,4 @@ jobs:
           files: |
             *.7z
             *.xz
+            mdk-sdk-apple.zip
