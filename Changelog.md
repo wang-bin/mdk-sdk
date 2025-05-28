@@ -1,5 +1,41 @@
 Change log:
 
+# 0.33.0
+
+- API:
+    - Audio/VideoFrame is ref counted
+    - Add `VideoFrame.get(DX11Resource*, ID3D11Device*)` to get underlying dx11 resource, or convert to dx11 textures if device is provided(cuda only)
+- Rockchip rkmpp decoder 10bit output can be directly imported by EGLImage w/o rga format conversion. Maybe it's the only player supports this feature.
+- MFT:
+    - Support async and hardware mft via property `hardware=1` or `async=1`, hardware implies async. jpeg and vp8 can be async decoder
+    - `hardware` property value can be a vendor name, e.g. `nvidia`, `intel`, `amd`, `qcom`
+    - packed yuv format is not preferred
+- D3D11:
+    - Render target D3D11RenderAPI.rtv can be an array texture. array index starts from 0, and increases if renderVideo() draws a new frame, i.e. returns a new timestamp
+    - Expose [IDXSync](https://github.com/wang-bin/mdk-sdk/wiki/Render-API#idxsync) for user, which can be used to sync between contexts if render decoded dx11 resource from `VideoFrame.get(DX11Resource*)` or encode/process dx11 texture rendered by `renderVideo()`. It's also used internally.
+    - Fix signal on a wrong fence
+    - Improve cross device rendering w/o cpu wait
+- OpenGL:
+    - Fix yuv sampler shader
+    - Don't use GL_OES_EGL_image_external for ES3, fix error on some devices(e.g. rk3588 mali driver)
+    - More EGL platform types, and platform extension is used when possible.
+- Metal: render target supports array texture
+- CUDA:
+    - Add decoder property `array=N` or global option `cuda.array` for dx11 to use an array texture as output
+    - Add decoder property `persistent` or global option `cuda.persistent` for gl and dx11 to map as cuda resource only once
+- Dolby vision: support profile 20, used by MV-HEVC
+- Use rgba format for GBM to fix no EGLConfig for rgb. env var `GBM_FORMAT` can force another format, the value is a GBM fourcc, e.g. `AR24`
+- record() without any decoder will remux the media. steps: `setMedia(..., {}) => record(file,...) => set(State::Playing) => waitFor(State::Stopped)`
+- Fix avfilter processed audio format
+- Fix bitmap subtitle display area
+- Fix some subtitle crash
+- Fix mirror for rotated video used by OpenGL FBO
+- build with libc++21
+- lto is disabled for apple platforms because of compiler bug.
+- FFmpeg: support 8.0 abi
+    - Add global option `ffmpeg` and `libffmpeg` to reload all av modules, value can be libffmpeg path or handle
+
+
 # 0.32.0
 
 - API:
@@ -19,7 +55,7 @@ Change log:
 - VT: `RequestedMVHEVCVideoLayerIDs` bug reported by me in 2024 is fixed in macOS 15.4, so remove workaroud for macOS 15.4+
 - VAAPI: add "vpp" property, 1 to convert to rgb via vpp
 - EGL:
-    - Prefer storage extension instead of external image for desktop gl, supported formats is vendor dependent. Works well on raspberry pi, previously only OpenGL ES + external image is supported.
+    - Prefer storage extension for desktop gl. external only formats support is vendor dependent. Works well on all gpus including raspberry pi. previously only OpenGL ES + external image can be used for extenal only formats.
     - Fix no hdr metadata warnings in system log on android
     - Support android platform display
     - Fix HDR display if no colorspace extension(regression in 0.31.0)

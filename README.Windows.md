@@ -19,7 +19,7 @@
 - Subtitle rendering, including ass, plain text, bitmap, closed caption
 - [Seamless/Gapless media and bitrate switch for any media](https://github.com/wang-bin/mdk-sdk/wiki/Player-APIs#player-setcolorspace-value-void-vo_opaque--nullptr)
 - Optimized Continuous seeking. As fast as mpv, but much lower cpu, memory and gpu load. Suitable for [timeline preview](https://github.com/wang-bin/mdk-sdk/wiki/Typical-Usage#timeline-preview)
-- [Smart FFmpeg runtime, dynamic load, binary compatible with 4.0~7.x](https://github.com/wang-bin/mdk-sdk/wiki/FFmpeg-Runtime)
+- [Smart FFmpeg runtime, dynamic load, binary compatible with 4.0~8.x](https://github.com/wang-bin/mdk-sdk/wiki/FFmpeg-Runtime)
 
 
 ## About SDK for Windows Desktop & UWP

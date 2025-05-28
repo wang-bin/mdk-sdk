@@ -16,7 +16,7 @@ NuGet[![NuGet](https://img.shields.io/nuget/dt/mdk)](https://www.nuget.org/packa
 ## Features
 
 - [Simple and powerful API set](https://github.com/wang-bin/mdk-sdk/wiki/Player-APIs)
-- [Cross platform: Windows(x86, arm), UWP, Linux, macOS, Android, iOS, tvOS, visionOS, Raspberry Pi](https://github.com/wang-bin/mdk-sdk/wiki/System-Requirements)
+- [Cross platform: Windows(x86, arm), UWP, Linux, macOS, Android, iOS, tvOS, visionOS, Raspberry Pi, RockChip](https://github.com/wang-bin/mdk-sdk/wiki/System-Requirements)
 - [Hardware accelerated decoders for all platforms](https://github.com/wang-bin/mdk-sdk/wiki/Decoders)
 - [0-copy GPU rendering for all platforms and all renderers(Vulkan is WIP.)](https://github.com/wang-bin/mdk-sdk/wiki/Zero-Copy-Renderer)
 - [Dynamic OpenGL](https://github.com/wang-bin/mdk-sdk/wiki/OpenGL-Support-Matrix)
@@ -29,7 +29,7 @@ NuGet[![NuGet](https://img.shields.io/nuget/dt/mdk)](https://www.nuget.org/packa
 - Subtitle rendering, including ass, plain text, bitmap, closed caption
 - [Seamless/Gapless media and bitrate switch for any media](https://github.com/wang-bin/mdk-sdk/wiki/Player-APIs#player-setcolorspace-value-void-vo_opaque--nullptr)
 - Optimized Continuous seeking. As fast as mpv, but much lower cpu, memory and gpu load. Suitable for [timeline preview](https://github.com/wang-bin/mdk-sdk/wiki/Typical-Usage#timeline-preview)
-- [Smart FFmpeg runtime, dynamic load, binary compatible with 4.0~7.x](https://github.com/wang-bin/mdk-sdk/wiki/FFmpeg-Runtime)
+- [Smart FFmpeg runtime, dynamic load, binary compatible with 4.0~8.x](https://github.com/wang-bin/mdk-sdk/wiki/FFmpeg-Runtime)
 
 
 ## Install
@@ -103,6 +103,14 @@ You may fail to run(or codesign) with default hardened runtime options because t
 ```cpp
     player.setDecoders(MediaType::Video, {"V4L2M2M", "FFmpeg:hwcontext=drm", "FFmpeg"});
 ```
+
+- RockChip: use [mdk-sdk-linux.tar.xz](https://sourceforge.net/projects/mdk-sdk/files/nightly/mdk-sdk-linux.tar.xz/download), delete libffmpeg.so.* and use https://github.com/nyanmisaka/ffmpeg-rockchip to support rkmpp hardware decoders and use OpenGL ES2/3(mali driver only?) 0-copy rendering, including rendering 10bit videos w/o rga filters(the only player supports this feature!)
+
+```cpp
+    SetGlobalOption("gl.yuv_sampler" "1"); // optional
+    player.setDecoders(MediaType::Video, {"rkmpp", "FFmpeg"});
+```
+
 - Android:
 ```cpp
     SetGlobalOption("JavaVM", JvmPtr); // REQUIRED
@@ -160,7 +168,8 @@ You may fail to run(or codesign) with default hardened runtime options because t
 ![DaKanji](https://dakanji.app/wp-content/uploads/thegem-logos/logo_a496404d3d63fd29f344146e428d0992_2x.png)](https://dakanji.app)
 [![Pimosa](https://pimosa.app/_next/image?url=%2Flogo_final.png&w=64&q=75)](https://pimosa.app)
 <a href="https://apidash.dev"><img src="https://apidash.dev/media/apidash.png" alt="API Dash" width=120 height=120  style="background-color:black"></a>
-<a href="https://www.iptv-smarters-expert.app"><img src="https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/5b/28/ca/5b28ca83-3685-f6fb-70eb-a0205c6f1a87/AppIcon-0-0-85-220-0-5-0-2x.png/460x0w.webp" width=120 height=120  style="background-color:black"></a>
+<a href="https://www.iptv-smarters-expert.app"><img src="https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/5b/28/ca/5b28ca83-3685-f6fb-70eb-a0205c6f1a87/AppIcon-0-0-85-220-0-5-0-2x.png/460x0w.webp" alt="IPTV Smarters Expert" width=120 height=120  style="background-color:black"></a>
+<a href="https://app.nextv.fr"><img src="https://app.nextv.fr/images/nextv-logo.svg" alt="NexTv" width=180 height=180  style="background-color:black"></a>
 
 [easy live tv](https://github.com/aiyakuaile/easy_tv_live)
 [Kazumi](https://github.com/Predidit/Kazumi)
