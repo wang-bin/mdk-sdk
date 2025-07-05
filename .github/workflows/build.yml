@@ -511,7 +511,7 @@ jobs:
       shell: bash
       working-directory: mdk/cmake
       run: |
-        curl -kL -o ltl.7z https://github.com/Chuyu-Team/VC-LTL5/releases/download/v${VC_LTL_VER}/VC-LTL-${VC_LTL_VER}-Binary.7z
+        curl -kL -o ltl.7z https://github.com/Chuyu-Team/VC-LTL5/releases/download/v${VC_LTL_VER}/VC-LTL-Binary.7z
         7z x ltl.7z -oVC-LTL
     - name: Create Build Environment
       shell: bash

@@ -1,5 +1,34 @@
 Change log:
 
+# 0.33.1
+
+- Fix global options not applied for decoders output drm objects, except vaapi
+- GL:
+    - Support debug output, via `GLRenderAPI.debug = true` or env var `GL_DEBUG=1`
+    - Prefer EGL platform window
+    - Improve EGL init for GBM
+    - Prefer YUV sampler except [android](https://github.com/wang-bin/mdk-sdk/issues/314)
+    - [Fix immutable storage texture leak when rendering DRM objects](https://github.com/wang-bin/mdk-sdk/issues/304)
+- CUDA:
+    - Use a stream for output
+    - Fix blank lines at bottom if coded height != height
+- VAAPI:
+    - Support wayland display via `SetGlobalOption("wl_display*")`. It's optional because x11 and drm also work in wayland environment
+    - Fix dri3 interop was disabled and unusable long times ago
+    - va display is shared by default to avoid an potential crash in x11, can be disabled by decoder option `shared=0` or `SetGlobalOption("vaapi.shared", 0)`
+- D3D11:
+    - Fix RTV leak in 0.33.0
+    - Disable `IDXSync` introduced in 0.33.0 for D3D11RenderAPI.rtv because a leak issue not yet fixed
+- Fix high cpu load on linux when EOF is read
+- Fix a mem leak: drmGetFormatModifierName, pulse audio init
+- Apple: fix audio renderer recursive init
+- BRAW: support 4.5+ SDK
+- R3D: support 9.0+ SDK and N-RAW. But still built with 8.6 SDK because of a bug in 9.0
+- FFmpeg:
+    - Fix missing rotation data for when avfilter is used
+    - Fix can't load avdevice on android
+
+
 # 0.33.0
 
 - API:

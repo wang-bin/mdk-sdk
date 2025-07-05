@@ -107,7 +107,7 @@ You may fail to run(or codesign) with default hardened runtime options because t
 - RockChip: use [mdk-sdk-linux.tar.xz](https://sourceforge.net/projects/mdk-sdk/files/nightly/mdk-sdk-linux.tar.xz/download), delete libffmpeg.so.* and use https://github.com/nyanmisaka/ffmpeg-rockchip to support rkmpp hardware decoders and use OpenGL ES2/3(mali driver only?) 0-copy rendering, including rendering 10bit videos w/o rga filters(the only player supports this feature!)
 
 ```cpp
-    SetGlobalOption("gl.yuv_sampler" "1"); // optional
+    SetGlobalOption("gl.ubo", "0"); // optional. required by some buggy drivers
     player.setDecoders(MediaType::Video, {"rkmpp", "FFmpeg"});
 ```
 
