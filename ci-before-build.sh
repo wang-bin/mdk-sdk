@@ -25,9 +25,11 @@ if [ `which dpkg` ]; then # TODO: multi arch
     #wget https://apt.llvm.org/llvm.sh
     if [[ "$TARGET_OS" != android ]]; then
         #bash -c "$(wget -O - https://apt.llvm.org/llvm.sh)"
-        wget https://apt.llvm.org/llvm.sh
-        chmod +x llvm.sh
-        sudo ./llvm.sh ${LLVM_VER} all
+        wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | sudo apt-key add -
+        source /etc/os-release
+        sudo add-apt-repository -y "deb http://apt.llvm.org/${VERSION_CODENAME}/ llvm-toolchain-${VERSION_CODENAME} main"
+        sudo apt update
+        pkgs+=" llvm-${LLVM_VER}-tools clang-${LLVM_VER} clang-tools-${LLVM_VER} clang-tidy-${LLVM_VER} lld-${LLVM_VER} libc++-${LLVM_VER}-dev libclang-rt-${LLVM_VER}-dev"
     fi
     if [ "$TARGET_OS" == "linux" ]; then
         pkgs+=" libegl1-mesa-dev libgles2-mesa-dev libgl1-mesa-dev libgbm-dev libx11-dev libwayland-dev libasound2-dev libopenal-dev libpulse-dev libva-dev libvdpau-dev libglfw3-dev libsdl2-dev"
