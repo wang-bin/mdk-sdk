@@ -32,7 +32,8 @@ if [ `which dpkg` ]; then # TODO: multi arch
         pkgs+=" llvm-${LLVM_VER}-tools clang-${LLVM_VER} clang-tools-${LLVM_VER} clang-tidy-${LLVM_VER} lld-${LLVM_VER} libc++-${LLVM_VER}-dev libclang-rt-${LLVM_VER}-dev"
     fi
     if [ "$TARGET_OS" == "linux" ]; then
-        pkgs+=" libegl1-mesa-dev libgles2-mesa-dev libgl1-mesa-dev libgbm-dev libx11-dev libwayland-dev libasound2-dev libopenal-dev libpulse-dev libva-dev libvdpau-dev libglfw3-dev libsdl2-dev"
+        pkgs+=" libopenal-dev libsdl2-dev"
+        #pkgs+=" libegl1-mesa-dev libgles2-mesa-dev libgl1-mesa-dev libgbm-dev libx11-dev libwayland-dev libasound2-dev libopenal-dev libpulse-dev libva-dev libvdpau-dev"
     elif [ "$TARGET_OS" == "sunxi" -o "$TARGET_OS" == "raspberry-pi" ]; then
         pkgs+=" binutils-arm-linux-gnueabihf"
     fi
