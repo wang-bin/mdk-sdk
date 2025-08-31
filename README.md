@@ -56,11 +56,11 @@ pod 'mdk'
 Optionally you can use [mdk.xcframework](https://sourceforge.net/projects/mdk-sdk/files/nightly/mdk-sdk-apple.tar.xz/download) directly.
 
 #### Swift Users
+Add `swift-mdk` via swift package manager, or
 ```ruby
 pod 'swift-mdk'
 ```
-
-and add
+and
 ```swift
 import swift_mdk
 ```
@@ -99,16 +99,16 @@ You may fail to run(or codesign) with default hardened runtime options because t
     SetGlobalOption("X11Display", DisplayPtr); // If using x11. Requred by VAAPI, VDPAU
     player.setDecoders(MediaType::Video, {"VAAPI", "VDPAU", "CUDA", "hap", "FFmpeg", "dav1d"});
 ```
-- Raspberry Pi: use [mdk-sdk-linux.tar.xz](https://sourceforge.net/projects/mdk-sdk/files/nightly/mdk-sdk-linux.tar.xz/download), delete libffmpeg.so.* to use system ffmpeg to support h264, hevc hardware decoder and use OpenGL ES2/3 0-copy rendering
+- Raspberry Pi: use [mdk-sdk-linux.tar.xz](https://sourceforge.net/projects/mdk-sdk/files/nightly/mdk-sdk-linux.tar.xz/download), delete `libffmpeg.so.*` to use system ffmpeg to support hevc hardware decoder and use OpenGL ES2/3 0-copy rendering
 ```cpp
-    player.setDecoders(MediaType::Video, {"V4L2M2M", "FFmpeg:hwcontext=drm", "FFmpeg"});
+    player.setDecoders(MediaType::Video, {"V4L2M2M", "FFmpeg:hwcontext=drm", "FFmpeg", "dav1d"});
 ```
 
-- RockChip: use [mdk-sdk-linux.tar.xz](https://sourceforge.net/projects/mdk-sdk/files/nightly/mdk-sdk-linux.tar.xz/download), delete libffmpeg.so.* and use https://github.com/nyanmisaka/ffmpeg-rockchip to support rkmpp hardware decoders and use OpenGL ES2/3(mali driver only?) 0-copy rendering, including rendering 10bit videos w/o rga filters(the only player supports this feature!)
+- RockChip: [mdk-sdk-linux.tar.xz](https://sourceforge.net/projects/mdk-sdk/files/nightly/mdk-sdk-linux.tar.xz/download) contains a [rockchip decoder plugin](https://github.com/wang-bin/mdk-rockchip). You can also use ffmpeg's `rkmpp` decoder: delete `libffmpeg.so.*` and use upstream ffmpeg or [ffmpeg-rockchip](https://github.com/nyanmisaka/ffmpeg-rockchip) with rkmpp enabled. OpenGL ES2/3 0-copy rendering is supported
 
 ```cpp
     SetGlobalOption("gl.ubo", "0"); // optional. required by some buggy drivers
-    player.setDecoders(MediaType::Video, {"rkmpp", "FFmpeg"});
+    player.setDecoders(MediaType::Video, {"rockchip", "rkmpp", "FFmpeg", "dav1d"});
 ```
 
 - Android:
@@ -132,6 +132,8 @@ You may fail to run(or codesign) with default hardened runtime options because t
 - [cmake tools](https://github.com/wang-bin/cmake-tools)
 - [Blackmagic RAW](https://github.com/wang-bin/mdk-braw)
 - [R3D RAW](https://github.com/wang-bin/mdk-r3d)
+- [nvJPEG2000](https://github.com/wang-bin/mdk-nvjp2k)
+- [rockchip](https://github.com/wang-bin/mdk-rockchip)
 
 ### Examples and Plugins for Other Frameworks
 - [examples for different platforms and gui toolkits](https://github.com/wang-bin/mdk-examples)

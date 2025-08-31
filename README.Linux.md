@@ -21,7 +21,7 @@
 
 
 ## About SDK for Linux
-SDK is built by clang 21 with
+SDK is built by clang 22 with
 - ffmpeg: https://sourceforge.net/projects/avbuild/files/linux/ffmpeg-master-linux-clang-lite-lto.tar.xz/download
 - libc++ 20. You can use delete libc++.so from sdk and use system libc++
 
@@ -65,7 +65,7 @@ Optional:
 - Vulkan: broken now
 
 ### [Supported Decoders:](https://github.com/wang-bin/mdk-sdk/wiki/Decoders)
-- FFmpeg, VDPAU, VAAPI, CUDA, QSV(not tested), NVDEC
+- FFmpeg, VDPAU, VAAPI, CUDA, QSV(not tested), NVDEC, rockchip
 - command line: -c:v decodername
 
 ### DRM Prime

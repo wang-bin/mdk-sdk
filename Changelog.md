@@ -1,5 +1,33 @@
 Change log:
 
+# 0.34.0
+
+- API:
+    - Add `VideoFrame.rotation()`
+    - Add `VideoFrame.metadata()`. Currently it's only used by exporting frame SEI, see [this feature request](https://github.com/wang-bin/mdk-sdk/issues/323)
+    - Add `Player.setAudioMix()`
+- Add [rockchip decoder](https://github.com/wang-bin/mdk-rockchip) as a plugin, libmdk-rockchip.so from sdk is required(will be copied automatically if use FindMDK.cmake). `setDeoders(MediaType::Video, {"rockchip", "FFmpeg", "dav1d"})` will enable rockchip decoder. [Document](https://github.com/wang-bin/mdk-sdk/wiki/Decoders#rockchip)
+- Decoder plugins are loaded automatically when invoking `setDecoders()`. plugin name is `mdk-$decodename_lowercase`. For example, `SetGlobalOption("plugins", "mdk-braw:mdk-r3d")` is no longer required for BRAW and R3D decoder.
+- VT decoder:
+    - force prores raw output rgbaf16. Previously the default format is used, which is rgbaf16 on M1, `'b16q'`(a 4 planes bayer format) on M2+, but `'b16q'` is not supported by current renderers.
+    - ProRes Raw support scene referred extended linear trc. Now Metal renderer has almost the same result as QuickTime player.
+    - Add `scale` property, value can be `1`, `1/2`, `1/4` and `1/8`. Known used by ProRes and ProRes Raw
+- Support apply decoder properties when decoding via `Player.setProperty("video.decoder", "key1=val1:key2=val2")`, and `Player.setProperty("avcodec.$opt", "val")`, for example `VT` and `FFmpeg` decoder `scale` option. Audio is the same.
+- XAudio2: support changing audio device even when playing
+- PulseAudio: Fix wrong volume from input event
+- OpenGL:
+    - Fix crop ratio, avoid recreating textures frequently
+    - DRM EGL: Enable immutable texture only for desktop GL by default
+    - Fix packed rectangle texture attributes.
+- Add recorder error event `{error, "record", "write"}`
+- BRAW: Fix a crash if release resources after decoder stopped`.
+- Fix leak in `VideoFrame.to()`
+- FFmpeg:
+    - Global option `avfilter.ignore_errors=1` enables original frame output if there's an error in filter
+    - Disable frame duration to workaround frame accurate issue introduced in 0.33.0
+    - Add `vulkan` decoder
+
+
 # 0.33.1
 
 - Fix global options not applied for decoders output drm objects, except vaapi
