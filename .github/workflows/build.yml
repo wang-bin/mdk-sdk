@@ -183,7 +183,7 @@ jobs:
         name: mdk-sdk-${{ env.TARGET_OS }}-${{ matrix.config }}
         path: mdk-sdk-${{ env.TARGET_OS }}.tar.xz
     - name: Upload to SourceForge
-      if: ${{ env.SF_UPLOAD == 'true' }}
+      if: ${{ env.SF_UPLOAD == 'true' && matrix.os == 'macCatalyst' }}
       shell: bash
       run: sshpass -p ${SF_PW} scp -o StrictHostKeyChecking=no mdk-sdk-${TARGET_OS}.tar.xz ${SF_USER}@frs.sourceforge.net:/home/frs/project/mdk-sdk/nightly/
 
@@ -283,13 +283,20 @@ jobs:
         gtar Jcvf mdk-sdk-apple.tar.xz mdk-sdk README.md
         gtar Jcvf mdk-sdk-macOS.tar.xz -C macOS .
         7z a mdk-sdk-apple.zip mdk-sdk
+
+        for OS in iOS tvOS visionOS; do
+          rm -rf mdk-sdk/{bin,Frameworks,include} mdk-sdk/lib/mdk.*
+          xcodebuild -create-xcframework -framework ${OS}/mdk-sdk/lib/mdk.framework -debug-symbols $PWD/${OS}/mdk-sdk/lib/mdk.framework.dSYM -framework ${OS}Simulator/mdk-sdk/lib/mdk.framework -debug-symbols $PWD/${OS}Simulator/mdk-sdk/lib/mdk.framework.dSYM -output mdk-sdk/lib/mdk.xcframework
+          gtar Jcvf mdk-sdk-${OS}.tar.xz mdk-sdk
+        done
+
         swift package compute-checksum mdk-sdk-apple.zip
     - name: Archieve XCFramework SDK
       uses: actions/upload-artifact@v4
       with:
         name: mdk-sdk-apple
         path: mdk-sdk-apple.tar.xz
-    - name: Archieve XCFramework SDK
+    - name: Archieve XCFramework SDK zip
       uses: actions/upload-artifact@v4
       with:
         name: mdk-sdk-apple-zip
@@ -299,6 +306,21 @@ jobs:
       with:
         name: mdk-sdk-macOS
         path: mdk-sdk-macOS.tar.xz
+    - name: Archieve iOS SDK
+      uses: actions/upload-artifact@v4
+      with:
+        name: mdk-sdk-iOS
+        path: mdk-sdk-iOS.tar.xz
+    - name: Archieve tvOS SDK
+      uses: actions/upload-artifact@v4
+      with:
+        name: mdk-sdk-tvOS
+        path: mdk-sdk-tvOS.tar.xz
+    - name: Archieve visionOS SDK
+      uses: actions/upload-artifact@v4
+      with:
+        name: mdk-sdk-visionOS
+        path: mdk-sdk-visionOS.tar.xz
     - name: Upload to SourceForge
       if: ${{ env.SF_UPLOAD == 'true' }}
       shell: bash
@@ -1056,27 +1078,15 @@ jobs:
       - name: Download iOS sdk
         uses: actions/download-artifact@v4
         with:
-          name: mdk-sdk-iOS-MinSizeRel
-      - name: Download iOSSimulator sdk
-        uses: actions/download-artifact@v4
-        with:
-          name: mdk-sdk-iOSSimulator-MinSizeRel
+          name: mdk-sdk-iOS
       - name: Download tvOS sdk
         uses: actions/download-artifact@v4
         with:
-          name: mdk-sdk-tvOS-MinSizeRel
-      - name: Download tvOSSimulator sdk
-        uses: actions/download-artifact@v4
-        with:
-          name: mdk-sdk-tvOSSimulator-MinSizeRel
+          name: mdk-sdk-tvOS
       - name: Download visionOS sdk
         uses: actions/download-artifact@v4
         with:
-          name: mdk-sdk-visionOS-MinSizeRel
-      - name: Download visionOSSimulator sdk
-        uses: actions/download-artifact@v4
-        with:
-          name: mdk-sdk-visionOSSimulator-MinSizeRel
+          name: mdk-sdk-visionOS
       - name: Download macCatalyst sdk
         uses: actions/download-artifact@v4
         with:

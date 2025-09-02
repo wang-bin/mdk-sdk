@@ -42,7 +42,7 @@ elif [ `which brew` ]; then
     export HOMEBREW_NO_AUTO_UPDATE=true
     #time brew update --preinstall
     export HOMEBREW_NO_AUTO_UPDATE=1
-    pkgs="ninja vulkan-headers dav1d md5sha1sum" # p7zip  gnu-tar
+    pkgs="vulkan-headers dav1d md5sha1sum" # p7zip  gnu-tar
     #pkgs+=" cmake" # visionOS simulator requires cmake 3.28.4
     if [[ "$DEVTOOLS_CACHE_HIT" != "true" ]]; then
         pkgs+=" hudochenkov/sshpass/sshpass"
@@ -83,7 +83,7 @@ if [[ "$EXTERNAL_DEP_CACHE_HIT" != "true" ]]; then
   if [ "$TARGET_OS" == "sunxi" ]; then
       mkdir -p external/lib/sunxi/armv7
       cp -af ${FFPKG}/lib/* external/lib/sunxi/armv7 #single arch package
-  elif [ "$TARGET_OS" == "windows-desktop" ]; then
+  elif [[ "$TARGET_OS" == "win"* ]]; then
       # TODO: download in cmake(if check_include_files failed)
       curl -kL -o vk.zip https://github.com/KhronosGroup/Vulkan-Headers/archive/main.zip
       7z x vk.zip
