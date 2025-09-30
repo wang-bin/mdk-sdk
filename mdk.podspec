@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
     s.name              = 'mdk'
-    s.version           = '0.34.0'
+    s.version           = '0.35.0'
     s.summary           = 'Multimedia Development Kit'
     s.homepage          = 'https://github.com/wang-bin/mdk-sdk'
 

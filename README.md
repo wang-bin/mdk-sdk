@@ -90,7 +90,7 @@ You may fail to run(or codesign) with default hardened runtime options because t
 
 
 ### Recommended settings
-
+Since 0.35.0, `player.setProperty("video.decoders", GetGlobalOption("video.decoders.hint"))` will prefer hardware decoders over software ones, and the following `player.setDecoders()` is not required.
 - macOS, iOS: `player.setDecoders(MediaType::Video, {"VT", "hap", "FFmpeg", "dav1d"});`
 - Windows: `player.setDecoders(MediaType::Video, {"MFT:d3d=11", "D3D11", "DXVA", "CUDA", "hap", "FFmpeg", "dav1d"});`
 - Linux:
@@ -99,7 +99,7 @@ You may fail to run(or codesign) with default hardened runtime options because t
     SetGlobalOption("X11Display", DisplayPtr); // If using x11. Requred by VAAPI, VDPAU
     player.setDecoders(MediaType::Video, {"VAAPI", "VDPAU", "CUDA", "hap", "FFmpeg", "dav1d"});
 ```
-- Raspberry Pi: use [mdk-sdk-linux.tar.xz](https://sourceforge.net/projects/mdk-sdk/files/nightly/mdk-sdk-linux.tar.xz/download), delete `libffmpeg.so.*` to use system ffmpeg to support hevc hardware decoder and use OpenGL ES2/3 0-copy rendering
+- Raspberry Pi: use [mdk-sdk-linux.tar.xz](https://sourceforge.net/projects/mdk-sdk/files/nightly/mdk-sdk-linux.tar.xz/download), delete `libffmpeg.so.*` to use system ffmpeg to support hardware decoder and use EGL for 0-copy rendering
 ```cpp
     player.setDecoders(MediaType::Video, {"V4L2M2M", "FFmpeg:hwcontext=drm", "FFmpeg", "dav1d"});
 ```

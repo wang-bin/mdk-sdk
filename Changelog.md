@@ -1,5 +1,34 @@
 Change log:
 
+# 0.35.0
+
+- API:
+    - Add `Player.onSubtitleText()`, a callback to be invoked when new subtile text lines are ready to display
+    - Add global options `video.decoders.hint`, used by `player.setProperty("video.decoders", GetGlobalOption("video.decoders.hint"))`
+    - More properties. `avsync.audio` value "false" can sync to a steady clock
+- VT:
+    - Fix vp9 alpha layer is not decoded
+    - HEVC alpha is always supported even for sw decoders
+    - Support "only" & "delivery" to drop frames, known to work for jpeg and maybe more
+- Metal:
+    - Fix renderer and layer colorspace do not match, e.g. bt2100pq is used for prores raw's bt2100 scene referred linear
+- Update renderer if "cc", "subtitle" property changed even when paused
+- D3D11:
+    - Disable internal fence if kmt is used
+    - Avoid creating rtv for decoder error
+- CUDA:
+    - Fix gfx resources are not unregistered
+- Record active tracks only
+- Optimize vk spirv blobs
+- Fix macOS < 10.13 compatibility
+- Fix wrong subtitle aspect ratio in vo size mode
+- FFmpeg:
+    - Fix SAR if only exists in container
+    - Add property "avformat.input" to force input format, e.g. can be used by h264 raw stream over udp
+- BRAW:
+    - Add `error` property
+
+
 # 0.34.0
 
 - API:
@@ -11,7 +40,7 @@ Change log:
 - VT decoder:
     - force prores raw output rgbaf16. Previously the default format is used, which is rgbaf16 on M1, `'b16q'`(a 4 planes bayer format) on M2+, but `'b16q'` is not supported by current renderers.
     - ProRes Raw support scene referred extended linear trc. Now Metal renderer has almost the same result as QuickTime player.
-    - Add `scale` property, value can be `1`, `1/2`, `1/4` and `1/8`. Known used by ProRes and ProRes Raw
+    - Add `scale` property to output a lower resolution, value can be `1`, `1/2`, `1/4` and `1/8`. Decoding speed is higher if resolution is lower. Known used by ProRes and ProRes Raw
 - Support apply decoder properties when decoding via `Player.setProperty("video.decoder", "key1=val1:key2=val2")`, and `Player.setProperty("avcodec.$opt", "val")`, for example `VT` and `FFmpeg` decoder `scale` option. Audio is the same.
 - XAudio2: support changing audio device even when playing
 - PulseAudio: Fix wrong volume from input event
