@@ -24,7 +24,7 @@ done
 find mdk-sdk* -name "*.a" -delete
 
 echo stripping
-export PATH=$PATH:$ANDROID_NDK_LATEST_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin:$ANDROID_NDK_LATEST_HOME/toolchains/llvm/prebuilt/darwin-x86_64/bin
+export PATH=$PATH:$ANDROID_NDK_LATEST_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin:$ANDROID_NDK_LATEST_HOME/toolchains/llvm/prebuilt/darwin-x86_64/bin:$OHOS_NDK/llvm/bin
 : ${STRIP:=llvm-strip-$LLVM_VER}
 which $STRIP || STRIP=llvm-strip
 [ "$TARGET_OS" == "macOS" ] && STRIP=strip && STRIP_ARGS="-u -r"
@@ -32,7 +32,7 @@ ls -lh mdk-sdk*/bin/*
 which $STRIP && find mdk-sdk*/bin -type f -exec $STRIP $STRIP_ARGS {} \;
 ls -lh mdk-sdk*/bin/*
 export XZ_OPT="-T0" # -9e. -8/9 will disable mt?
-if [[ "$TARGET_OS" == "win"* || "$TARGET_OS" == "uwp"* || "$TARGET_OS" == "android" ]]; then
+if [[ "$TARGET_OS" == "win"* || "$TARGET_OS" == "uwp"* || "$TARGET_OS" == "android" || "$TARGET_OS" == ohos ]]; then
   7z a -ssc -m0=lzma2 -mx=9 -ms=on -mf=off mdk-sdk-${TARGET_OS}.7z mdk-sdk
   ls -lh mdk-sdk-${TARGET_OS}.7z
 else

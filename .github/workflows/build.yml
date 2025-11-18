@@ -1002,6 +1002,78 @@ jobs:
         md5sum mdk-sdk-${TARGET_OS}.7z | cut -d ' ' -f1 > mdk-sdk-${TARGET_OS}.7z.md5
         sshpass -p ${SF_PW} scp -o StrictHostKeyChecking=no mdk-*.md5 ${SF_USER}@frs.sourceforge.net:/home/frs/project/mdk-sdk/nightly/
 
+  ohos:
+    runs-on: ubuntu-latest
+    env:
+      TARGET_OS: ohos
+      LTO_SUFFIX: -lto
+    strategy:
+      fail-fast: false
+      matrix:
+        config: [MinSizeRel]
+    steps:
+    - uses: actions/checkout@v4
+    - name: Checkout source
+      uses: actions/checkout@v4
+      with:
+        repository: ${{ github.repository_owner }}/mdk
+        path: mdk
+        ref: ${{ github.event_name == 'repository_dispatch' &&  github.event.client_payload.ref || 'master' }}
+        fetch-depth: 1
+        token: ${{ secrets.CLONE_PAT }}
+        submodules: 'recursive'
+    - name: Setup HarmonyOS CLI tools
+      uses: ErBWs/setup-ohos@v1
+      with:
+        version: latest
+        cache: true
+    - run: hvigorw -v
+    - name: 'Restore External Dep cache'
+      id: external-dep-cache
+      uses: actions/cache@v4
+      with:
+        path: ./mdk/external
+        key: external-dep-${{ env.TARGET_OS }}-ffmpeg-${{ env.FF_VER }}-${{ vars.FF_SDK_ID }}
+    - name: Create Build Environment
+      shell: bash
+      env:
+#        SYSROOT_CACHE_HIT: ${{ steps.sysroot-cache.outputs.cache-hit }}
+        EXTERNAL_DEP_CACHE_HIT: ${{ steps.external-dep-cache.outputs.cache-hit }}
+      working-directory: mdk
+      run: ../ci-before-build.sh
+    - name: Configure for arm64-v8a
+      env:
+        ARCH: arm64-v8a
+      shell: bash
+      working-directory: mdk
+      run: |
+        export OHOS_NDK=$OHOS_NDK_HOME/native
+        cmake -DUSE_LTO=1 -DOHOS_ARCH=${ARCH} -DCMAKE_TOOLCHAIN_FILE=$OHOS_NDK/build/cmake/ohos.toolchain.cmake -GNinja -H$PWD -B$PWD/build/${TARGET_OS}-${ARCH} -DCMAKE_BUILD_TYPE=${{ matrix.config }} -DCMAKE_INSTALL_PREFIX=$PWD/mdk-sdk-${ARCH} -DCMAKE_VERBOSE_MAKEFILE=1
+    - name: Build for arm64-v8a
+      shell: bash
+      working-directory: mdk
+      run: cmake --build build/${TARGET_OS}-arm64-v8a
+    - name: Make SDK
+      shell: bash
+      working-directory: mdk
+      run: |
+        export OHOS_NDK=$OHOS_NDK_HOME/native
+        ../ci-after-build.sh
+        mv mdk-sdk-*.7z ..
+    - name: Archieve SDK
+      uses: actions/upload-artifact@v4
+      with:
+        name: mdk-sdk-${{ env.TARGET_OS }}-${{ matrix.config }}
+        path: mdk-sdk-${{ env.TARGET_OS }}.7z
+    - name: Upload to SourceForge
+      if: ${{ matrix.config == 'MinSizeRel' && env.SF_UPLOAD == 'true' }}
+      shell: bash
+      run: |
+        sshpass -p ${SF_PW} scp -o StrictHostKeyChecking=no mdk-sdk-${TARGET_OS}.7z ${SF_USER}@frs.sourceforge.net:/home/frs/project/mdk-sdk/nightly/
+        md5sum mdk-sdk-${TARGET_OS}.7z | cut -d ' ' -f1 > mdk-sdk-${TARGET_OS}.7z.md5
+        sshpass -p ${SF_PW} scp -o StrictHostKeyChecking=no mdk-*.md5 ${SF_USER}@frs.sourceforge.net:/home/frs/project/mdk-sdk/nightly/
+
+
   abi:
     runs-on: ubuntu-latest
     steps:

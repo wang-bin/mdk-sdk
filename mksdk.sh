@@ -39,7 +39,7 @@ else
     cp -afvL $SDK_DIR/lib/libmdk*.dsym $TMP/
     cp -afvL $SDK_DIR/lib/lib{ass,ffmpeg,mdk}.so.? $TMP/
     cp -afvL $SDK_DIR/lib/libc++.so.1 $TMP/
-  elif [ -f "$SDK_DIR/lib/libmdk.so" ]; then # android
+  elif [ -f "$SDK_DIR/lib/libmdk.so" ]; then # android, ohos
     cp -afvL $SDK_DIR/lib/lib{ass,ffmpeg,mdk-*}.so $TMP/
     cp -afvL $SDK_DIR/lib/libmdk.so $TMP/
     cp -afvL $SDK_DIR/lib/libmdk.so.dsym $TMP/

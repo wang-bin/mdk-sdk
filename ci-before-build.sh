@@ -13,7 +13,7 @@ tolower(){
 
 crt_extra=$(tolower ${CRT_EXTRA})
 
-if [[ "$TARGET_OS" == mac* || "$TARGET_OS" == iOS* || "$TARGET_OS" == tvOS* || "$TARGET_OS" == xr* || "$TARGET_OS" == vision* || "$TARGET_OS" == android ]]; then
+if [[ "$TARGET_OS" == mac* || "$TARGET_OS" == iOS* || "$TARGET_OS" == tvOS* || "$TARGET_OS" == xr* || "$TARGET_OS" == vision* || "$TARGET_OS" == android || "$TARGET_OS" == ohos ]]; then
     FF_EXTRA=
 fi
 if [[ "$TARGET_OS" == "win"* || "$TARGET_OS" == "uwp"* ]]; then
@@ -23,7 +23,7 @@ fi
 if [ `which dpkg` ]; then # TODO: multi arch
     pkgs="sshpass cmake ninja-build p7zip-full"
     #wget https://apt.llvm.org/llvm.sh
-    if [[ "$TARGET_OS" != android ]]; then
+    if [[ "$TARGET_OS" != android && "$TARGET_OS" != ohos ]]; then
         #bash -c "$(wget -O - https://apt.llvm.org/llvm.sh)"
         wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | sudo apt-key add -
         source /etc/os-release
@@ -64,6 +64,7 @@ OS=${OS/*uwp*/WinRT}
 OS=${OS%%-*}
 #OS=${OS/Simulator/} #
 [ "$TARGET_OS" == "linux" ] && OS=Linux
+[ "$TARGET_OS" == "ohos" ] && OS=OHOS
 mkdir -p external/{bin,lib}/$OS
 
 if [[ "$EXTERNAL_DEP_CACHE_HIT" != "true" ]]; then
@@ -108,7 +109,7 @@ fi
 curl -kL -o libmdk-dep.zip https://nightly.link/wang-bin/devpkgs/workflows/build/main/libmdk-dep.zip
 7z x libmdk-dep.zip
 7z x dep.7z
-cp -af dep/* external/
+cp -avf dep/* external/
 
 if [[ "$SYSROOT_CACHE_HIT" != "true" ]]; then
   if [[ "$TARGET_OS" == "win"* || "$TARGET_OS" == "uwp"* ]]; then
