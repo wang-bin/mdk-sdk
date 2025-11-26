@@ -642,12 +642,12 @@ jobs:
       working-directory: mdk
       run: |
         ../ci-after-build.sh
-        mv mdk-sdk-*.7z ../mdk-sdk-${{ env.TARGET_OS }}-vs2022.7z
+        mv mdk-sdk-*.7z ../mdk-sdk-${{ env.TARGET_OS }}.7z
     - name: Archieve SDK
       uses: actions/upload-artifact@v4
       with:
-        name: mdk-sdk-vs2022-${{ env.TARGET_OS }}-${{ matrix.config }}
-        path: mdk-sdk-${{ env.TARGET_OS }}-vs2022.7z
+        name: mdk-sdk-${{ env.TARGET_OS }}-${{ matrix.config }}
+        path: mdk-sdk-${{ env.TARGET_OS }}.7z
 
 
   ClangCL:
@@ -756,10 +756,10 @@ jobs:
       uses: actions/download-artifact@v4
       with:
         name: mdk-sdk-vs2022-ltl-windows-desktop-RelWithDebInfo
-    - name: Download uwp vs2022 sdk
+    - name: Download uwp sdk
       uses: actions/download-artifact@v4
       with:
-        name: mdk-sdk-vs2022-uwp-RelWithDebInfo
+        name: mdk-sdk-uwp-RelWithDebInfo
     - name: update build version
       shell: bash
       run: sed -i .bak "s,\(.*\.\)[0-9]*\(</version>\),\1${GITHUB_RUN_NUMBER}\2," nuget/mdk.nuspec
@@ -771,7 +771,7 @@ jobs:
         md5sum mdk-sdk-windows-desktop-vs2022.7z | cut -d ' ' -f1 > mdk-sdk-windows-desktop-vs2022.7z.md5
         md5sum mdk-sdk-windows-desktop-vs2022-x64.7z | cut -d ' ' -f1 > mdk-sdk-windows-desktop-vs2022-x64.7z.md5
         7z x mdk-sdk-windows-desktop-vs2022.7z
-        7z x mdk-sdk-uwp-vs2022.7z -o"uwp"
+        7z x mdk-sdk-uwp.7z -o"uwp"
         mkdir mdk-sdk/bin/UAP
         cp -af uwp/mdk-sdk/bin/* mdk-sdk/bin/UAP
         cp nuget/mdk.nuspec mdk-sdk
@@ -1183,10 +1183,10 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: mdk-sdk-vs2022-ltl-windows-desktop-RelWithDebInfo
-      - name: Download uwp vs2022 sdk
+      - name: Download uwp sdk
         uses: actions/download-artifact@v4
         with:
-          name: mdk-sdk-vs2022-uwp-RelWithDebInfo
+          name: mdk-sdk-uwp-RelWithDebInfo
       - name: Download clang-cl sdk
         uses: actions/download-artifact@v4
         with:
