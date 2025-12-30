@@ -25,7 +25,7 @@ NuGet[![NuGet](https://img.shields.io/nuget/dt/mdk)](https://www.nuget.org/packa
 - [HDR display metadata passthrough, HDR <=> SDR tone mapping](https://github.com/wang-bin/mdk-sdk/wiki/HDR). You can use HDR display in [Qt6(6.6+ for macOS, 6.x for windows)](https://github.com/wang-bin/mdk-examples/tree/master/Qt/qmlrhi), [OBS Studio](https://github.com/wang-bin/obs-mdk), Android SurfaceView and more.
 - Dolby Vision rendering, including Profile 5. Support HEVC and AV1.
 - HEVC, VP8/9 transparent videos(alpha channel) support for all decoders and renderers
-- Professional codecs: GPU accelerated [HAP](https://github.com/wang-bin/mdk-sdk/wiki/Decoders#hap) codec rendering, [Blackmagic RAW](https://github.com/wang-bin/mdk-braw), [R3D](https://github.com/wang-bin/mdk-r3d), [nvJPEG2000](https://github.com/wang-bin/mdk-nvjp2k)
+- Professional codecs: GPU accelerated [HAP](https://github.com/wang-bin/mdk-sdk/wiki/Decoders#hap) codec rendering, [Blackmagic RAW](https://github.com/wang-bin/mdk-braw), [R3D, N-RAW](https://github.com/wang-bin/mdk-r3d), [nvJPEG2000](https://github.com/wang-bin/mdk-nvjp2k)
 - Subtitle rendering, including ass, plain text, bitmap, closed caption
 - [Seamless/Gapless media and bitrate switch for any media](https://github.com/wang-bin/mdk-sdk/wiki/Player-APIs#player-setcolorspace-value-void-vo_opaque--nullptr)
 - Optimized Continuous seeking. As fast as mpv, but much lower cpu, memory and gpu load. Suitable for [timeline preview](https://github.com/wang-bin/mdk-sdk/wiki/Typical-Usage#timeline-preview)
@@ -79,7 +79,7 @@ You may fail to run(or codesign) with default hardened runtime options because t
 - mdk(libmdk.so.0/ibmdk.dylib/mdk.dll) and ffmpeg library(or standard ffmpeg libraries) are always REQUIRED
 - libass.dll/libass.dylib/ass.framework/libass.so can be optional if not using subtitle rendering
 - mdk-braw.dll/libmdk-braw.{so,dylib}: optional, for blackmagic raw videos
-- mdk-r3d.dll/libmdk-r3d.{so,dylib}: optional, for RED raw videos
+- mdk-r3d.dll/libmdk-r3d.{so,dylib}: optional, for RED raw and N-RAW videos
 - mdk.pdb/libmdk.so*.dsym: debug symbols.
 - Add [libdav1d.dll/libdav1d.dylib/dav1d.framework/libdav1d.so](https://sourceforge.net/projects/mdk-sdk/files/deps/dep.7z/download) to support av1 software decoding
 
@@ -131,7 +131,7 @@ Since 0.35.0, `player.setProperty("video.decoders", GetGlobalOption("video.decod
 - [C++ compatibility layer](https://github.com/wang-bin/cppcompat)
 - [cmake tools](https://github.com/wang-bin/cmake-tools)
 - [Blackmagic RAW](https://github.com/wang-bin/mdk-braw)
-- [R3D RAW](https://github.com/wang-bin/mdk-r3d)
+- [R3D RAW, N-RAW](https://github.com/wang-bin/mdk-r3d)
 - [nvJPEG2000](https://github.com/wang-bin/mdk-nvjp2k)
 - [rockchip](https://github.com/wang-bin/mdk-rockchip)
 
@@ -172,7 +172,9 @@ Since 0.35.0, `player.setProperty("video.decoders", GetGlobalOption("video.decod
 <a href="https://apidash.dev"><img src="https://apidash.dev/media/apidash.png" alt="API Dash" width=120 height=120  style="background-color:black"></a>
 <a href="https://www.iptv-smarters-expert.app"><img src="https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/5b/28/ca/5b28ca83-3685-f6fb-70eb-a0205c6f1a87/AppIcon-0-0-85-220-0-5-0-2x.png/460x0w.webp" alt="IPTV Smarters Expert" width=120 height=120  style="background-color:black"></a>
 <a href="https://app.nextv.fr"><img src="https://app.nextv.fr/images/nextv-logo.svg" alt="NexTv" width=180 height=180  style="background-color:black"></a>
+[![onbon thinkshow](https://www.onbonbx.com/templates/default/images/xylogo.png)](https://www.onbonbx.com/download/software/ThinkShow)
 
+[Q-SYS UCI Viewer](https://help.q-sys.com/Content/Schematic_Library/uci_viewer.htm)
 [Diem](https://www.downloaddiem.com)
 [easy live tv](https://github.com/aiyakuaile/easy_tv_live)
 [Kazumi](https://github.com/Predidit/Kazumi)

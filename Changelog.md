@@ -1,5 +1,28 @@
 Change log:
 
+
+# 0.35.1
+
+- API: Fix frame move assignment and constructor
+- VT:
+    - Improve AV1 support
+    - Ignore session create error for hvc1, fix decoder open error on macOS 26
+- VAAPI:
+    - Fallback to drm display if no wayland
+    - Add drm vendor option: vendor can be "nv", "intel" etc.
+- rockchip decoder: supprt avs1 p2 p16(avs+), avs2
+- Shader:
+    - Fix locale restore
+    - HLG extended model
+- BRAW: stop decoding on error to fix corrupt file playback
+- Fix subtitle font scale
+- Fix audio + cover art wrong position after seek and loop
+- Fix BC4 channel map and display white as red in dx, metal and vk renderer
+- FFmpeg:
+    - Add property "codec.$name" to force a decoder for a codec, for example `"FFmpeg:codec.cavs=libcavs"`
+    - Keep streams order for muxer
+
+
 # 0.35.0
 
 - API:
@@ -111,7 +134,7 @@ Change log:
     - Add decoder property `persistent` or global option `cuda.persistent` for gl and dx11 to map as cuda resource only once
 - Dolby vision: support profile 20, used by MV-HEVC
 - Use rgba format for GBM to fix no EGLConfig for rgb. env var `GBM_FORMAT` can force another format, the value is a GBM fourcc, e.g. `AR24`
-- record() without any decoder will remux the media. steps: `setMedia(..., {}) => record(file,...) => set(State::Playing) => waitFor(State::Stopped)`
+- record() without any decoder will remux the media. steps: `setDecoders(MediaType::Audio/Viedo/Subtitle, {}) => record(file,...) => set(State::Playing) => waitFor(State::Stopped)`
 - Fix avfilter processed audio format
 - Fix bitmap subtitle display area
 - Fix some subtitle crash

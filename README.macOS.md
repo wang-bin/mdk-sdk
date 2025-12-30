@@ -13,7 +13,7 @@
 - [HDR display metadata passthrough, HDR <=> SDR tone mapping](https://github.com/wang-bin/mdk-sdk/wiki/HDR). You can use HDR display in [Qt6(6.6+ for macOS, 6.x for windows)](https://github.com/wang-bin/mdk-examples/tree/master/Qt/qmlrhi), [OBS Studio](https://github.com/wang-bin/obs-mdk), Android SurfaceView and more.
 - Dolby Vision rendering, including Profile 5. Support HEVC and AV1.
 - HEVC, VP8/9 transparent videos(alpha channel) support for all decoders and renderers
-- Professional codecs: GPU accelerated [HAP](https://github.com/wang-bin/mdk-sdk/wiki/Decoders#hap) codec rendering, [Blackmagic RAW](https://github.com/wang-bin/mdk-braw), [R3D](https://github.com/wang-bin/mdk-r3d), [nvJPEG2000](https://github.com/wang-bin/mdk-nvjp2k)
+- Professional codecs: GPU accelerated [HAP](https://github.com/wang-bin/mdk-sdk/wiki/Decoders#hap) codec rendering, [Blackmagic RAW](https://github.com/wang-bin/mdk-braw), [R3D, N-RAW](https://github.com/wang-bin/mdk-r3d), [nvJPEG2000](https://github.com/wang-bin/mdk-nvjp2k)
 - Subtitle rendering, including ass, plain text, bitmap, closed caption
 - [Seamless/Gapless media and bitrate switch for any media](https://github.com/wang-bin/mdk-sdk/wiki/Player-APIs#player-setcolorspace-value-void-vo_opaque--nullptr)
 - Optimized Continuous seeking. As fast as mpv, but much lower cpu, memory and gpu load. Suitable for [timeline preview](https://github.com/wang-bin/mdk-sdk/wiki/Typical-Usage#timeline-preview)
@@ -30,7 +30,7 @@ https://github.com/wang-bin/swift-mdk
 - Support VP9 on macOS 11+
 - Support X11 if runtime libraries exist
 
-SDK is built by Xcode 16 with
+SDK is built by Xcode 26 with
 - ffmpeg: https://sourceforge.net/projects/avbuild/files/macOS/ffmpeg-master-macOS-lite-lto.tar.xz/download
 
 ### macOS 10.15+
@@ -101,7 +101,7 @@ Choose any of
 - [MFT decoder module](https://github.com/wang-bin/mdk-mft)
 - [dav1d decoder module](https://github.com/wang-bin/mdk-dav1d)
 - [Blackmagic RAW](https://github.com/wang-bin/mdk-braw)
-- [R3D RAW](https://github.com/wang-bin/mdk-r3d)
+- [R3D RAW, N-RAW](https://github.com/wang-bin/mdk-r3d)
 
 
 Copyright (c) 2016-2025 WangBin(the author of QtAV) <wbsecg1 at gmail.com>
