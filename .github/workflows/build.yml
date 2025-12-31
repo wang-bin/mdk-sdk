@@ -1140,6 +1140,19 @@ jobs:
       env:
         GH_TOKEN: ${{ secrets.ACTION_PAT }} # GITHUB_TOKEN?
 
+  Pod:
+    runs-on: macos-latest
+    if: startsWith(github.ref, 'refs/tags/')
+    needs: [Apple]
+    steps:
+    - uses: actions/checkout@v4
+    - name: Deploy to Cocoapods
+      run: |
+        set -eo pipefail
+        pod trunk push mdk.podspec --allow-warnings --verbose
+      env:
+        COCOAPODS_TRUNK_TOKEN: ${{ secrets.POD_TRUNK_TOKEN }}
+
   Release:
     runs-on: ubuntu-latest
     if: startsWith(github.ref, 'refs/tags/')
