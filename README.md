@@ -172,6 +172,8 @@ Since 0.35.0, `player.setProperty("video.decoders", GetGlobalOption("video.decod
 <a href="https://apidash.dev"><img src="https://apidash.dev/media/apidash.png" alt="API Dash" width=120 height=120  style="background-color:black"></a>
 <a href="https://www.iptv-smarters-expert.app"><img src="https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/5b/28/ca/5b28ca83-3685-f6fb-70eb-a0205c6f1a87/AppIcon-0-0-85-220-0-5-0-2x.png/460x0w.webp" alt="IPTV Smarters Expert" width=120 height=120  style="background-color:black"></a>
 <a href="https://app.nextv.fr"><img src="https://app.nextv.fr/images/nextv-logo.svg" alt="NexTv" width=180 height=180  style="background-color:black"></a>
+[![NovaStar](https://www.novastar.tech/static/img/01index/logo01.png)](https://novastar-led.cn/index/downloadcenter/downloaddatacontent/cateID/38/type/software/catename/%E5%B1%8F%E7%B2%BE%E7%81%B5+%E6%A1%8C%E9%9D%A2%E7%AB%AF%EF%BC%88%E5%8E%9FViPlex+Express%EF%BC%89.html)
+[![digibird XStar CX1](https://www.digibird.com.cn/images/logo.png)](https://www.digibird.com.cn)
 [![onbon thinkshow](https://www.onbonbx.com/templates/default/images/xylogo.png)](https://www.onbonbx.com/download/software/ThinkShow)
 
 [Q-SYS UCI Viewer](https://help.q-sys.com/Content/Schematic_Library/uci_viewer.htm)

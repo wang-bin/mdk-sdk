@@ -25,7 +25,7 @@ jobs:
     env:
       TARGET_OS: 'macOS'
       TARGET_ARCH: ${{ matrix.arch }}
-      #LTO_SUFFIX: -lto # lto on master branch crashes in avio_open2 if open
+      LTO_SUFFIX: -lto # lto on master branch crashes in avio_open2, incorrect `close()` is used in `tcp_close()`, e.g. `close()` in avp and ffv1
     strategy:
       fail-fast: false
       matrix:
@@ -102,7 +102,7 @@ jobs:
     runs-on: macos-15
     env:
       TARGET_OS: ${{ matrix.os }}${{ matrix.simulator }}
-      #LTO_SUFFIX: -lto # lto on master branch crashes in avio_open2 if open
+      LTO_SUFFIX: -lto # lto on master branch crashes in avio_open2 if open
     strategy:
       fail-fast: false
       matrix:
