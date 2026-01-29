@@ -87,7 +87,7 @@ jobs:
       run: |
         ../ci-after-build.sh
         mv mdk-sdk*.tar.xz ../mdk-sdk-${{ env.TARGET_OS }}-${{ matrix.arch }}.tar.xz
-    - name: Archieve SDK
+    - name: Archive SDK
       uses: actions/upload-artifact@v4
       with:
         name: mdk-sdk-${{ env.TARGET_OS }}-${{ matrix.arch}}-${{ matrix.config }}
@@ -161,12 +161,12 @@ jobs:
             EXTRA_OPTS="-DCMAKE_OSX_SYSROOT=${sdk}"
         }
         [ ${{ matrix.os }} == visionOS ] && archs=arm64
-        cmake -GNinja -DFFMPEG_EMBED=1 -DMIN_SIZE=1 -DUSE_LTO=1 -DWITH_DEB_INFO=1 -DCMAKE_SYSTEM_NAME=${{ matrix.os }} $EXTRA_OPTS -DCMAKE_OSX_DEPLOYMENT_TARGET=$minver -DCMAKE_OSX_ARCHITECTURES="$archs" -Bbuild/${TARGET_OS} -DCMAKE_BUILD_TYPE=${{ matrix.config }} -DCMAKE_INSTALL_PREFIX=$PWD/mdk-sdk -DCMAKE_VERBOSE_MAKEFILE=1 -DCMAKE_IOS_INSTALL_COMBINED=YES -DCMAKE_XCODE_ATTRIBUTE_ONLY_ACTIVE_ARCH=NO # FFMPEG_EMBED=0 to copy libffmpeg.5.dylib
+        cmake -GNinja -DWITH_VK=0 -DFFMPEG_EMBED=1 -DMIN_SIZE=1 -DUSE_LTO=1 -DWITH_DEB_INFO=1 -DCMAKE_SYSTEM_NAME=${{ matrix.os }} $EXTRA_OPTS -DCMAKE_OSX_DEPLOYMENT_TARGET=$minver -DCMAKE_OSX_ARCHITECTURES="$archs" -Bbuild/${TARGET_OS} -DCMAKE_BUILD_TYPE=${{ matrix.config }} -DCMAKE_INSTALL_PREFIX=$PWD/mdk-sdk -DCMAKE_VERBOSE_MAKEFILE=1 -DCMAKE_IOS_INSTALL_COMBINED=YES -DCMAKE_XCODE_ATTRIBUTE_ONLY_ACTIVE_ARCH=NO # FFMPEG_EMBED=0 to copy libffmpeg.5.dylib
     - name: Configure CMake
       if: ${{ matrix.os == 'macCatalyst' }}
       shell: bash
       working-directory: mdk
-      run: cmake -GNinja -DMIN_SIZE=1 -DUSE_LTO=1 -DCMAKE_TOOLCHAIN_FILE=$PWD/cmake/tools/macCatalyst.cmake -DCMAKE_OSX_ARCHITECTURES="x86_64;arm64"  -Bbuild/${TARGET_OS} -DCMAKE_VERBOSE_MAKEFILE=1 -DCMAKE_BUILD_TYPE=${{ matrix.config }} -DCMAKE_INSTALL_PREFIX=$PWD/mdk-sdk
+      run: cmake -GNinja -DWITH_VK=0 -DMIN_SIZE=1 -DUSE_LTO=1 -DCMAKE_TOOLCHAIN_FILE=$PWD/cmake/tools/macCatalyst.cmake -DCMAKE_OSX_ARCHITECTURES="x86_64;arm64"  -Bbuild/${TARGET_OS} -DCMAKE_VERBOSE_MAKEFILE=1 -DCMAKE_BUILD_TYPE=${{ matrix.config }} -DCMAKE_INSTALL_PREFIX=$PWD/mdk-sdk
     - name: Build
       shell: bash
       working-directory: mdk
@@ -177,7 +177,7 @@ jobs:
       run: |
         ../ci-after-build.sh
         mv mdk-sdk*.tar.xz ..
-    - name: Archieve SDK
+    - name: Archive SDK
       uses: actions/upload-artifact@v4
       with:
         name: mdk-sdk-${{ env.TARGET_OS }}-${{ matrix.config }}
@@ -291,32 +291,32 @@ jobs:
         done
 
         swift package compute-checksum mdk-sdk-apple.zip
-    - name: Archieve XCFramework SDK
+    - name: Archive XCFramework SDK
       uses: actions/upload-artifact@v4
       with:
         name: mdk-sdk-apple
         path: mdk-sdk-apple.tar.xz
-    - name: Archieve XCFramework SDK zip
+    - name: Archive XCFramework SDK zip
       uses: actions/upload-artifact@v4
       with:
         name: mdk-sdk-apple-zip
         path: mdk-sdk-apple.zip
-    - name: Archieve macOS SDK
+    - name: Archive macOS SDK
       uses: actions/upload-artifact@v4
       with:
         name: mdk-sdk-macOS
         path: mdk-sdk-macOS.tar.xz
-    - name: Archieve iOS SDK
+    - name: Archive iOS SDK
       uses: actions/upload-artifact@v4
       with:
         name: mdk-sdk-iOS
         path: mdk-sdk-iOS.tar.xz
-    - name: Archieve tvOS SDK
+    - name: Archive tvOS SDK
       uses: actions/upload-artifact@v4
       with:
         name: mdk-sdk-tvOS
         path: mdk-sdk-tvOS.tar.xz
-    - name: Archieve visionOS SDK
+    - name: Archive visionOS SDK
       uses: actions/upload-artifact@v4
       with:
         name: mdk-sdk-visionOS
@@ -411,7 +411,7 @@ jobs:
         mv mdk-sdk-*.7z ../mdk-sdk-${{ env.TARGET_OS }}-vs2022.7z
         rm -rf mdk-sdk/bin/{x86,arm*}
         7z a -ssc -m0=lzma2 -mx=9 -ms=on -mf=off ../mdk-sdk-${{ env.TARGET_OS }}-vs2022-x64.7z mdk-sdk
-    - name: Archieve SDK
+    - name: Archive SDK
       uses: actions/upload-artifact@v4
       with:
         name: mdk-sdk-vs2022-${{ env.TARGET_OS }}-${{ matrix.config }}
@@ -489,7 +489,7 @@ jobs:
         cp -avf external/lib/windows/${{ env.ARCH }}/MD$CRT_SUFFIX/{vpl,snappy}.lib mdk-sdk-${{ env.ARCH }}/lib
         date +%m%d
         7z a -p${{ secrets.SRC_USER }}`date +%m%d` -mhe ../mdk-src-${{ env.TARGET_OS }}-vs2022.7z mdk-sdk-${{ env.ARCH }}
-    - name: Archieve SDK
+    - name: Archive SDK
       uses: actions/upload-artifact@v4
       with:
         name: mdk-src-vs2022-${{ env.TARGET_OS }}-${{ matrix.config }}
@@ -573,7 +573,7 @@ jobs:
       run: |
         ../ci-after-build.sh
         mv mdk-sdk-*.7z ../mdk-sdk-${{ env.TARGET_OS }}-vs2022-ltl.7z
-    - name: Archieve SDK
+    - name: Archive SDK
       uses: actions/upload-artifact@v4
       with:
         name: mdk-sdk-vs2022-ltl-${{ env.TARGET_OS }}-${{ matrix.config }}
@@ -643,7 +643,7 @@ jobs:
       run: |
         ../ci-after-build.sh
         mv mdk-sdk-*.7z ../mdk-sdk-${{ env.TARGET_OS }}.7z
-    - name: Archieve SDK
+    - name: Archive SDK
       uses: actions/upload-artifact@v4
       with:
         name: mdk-sdk-${{ env.TARGET_OS }}-${{ matrix.config }}
@@ -734,7 +734,7 @@ jobs:
           7z a mdk-sdk-*.7z mdk-sdk/bin/x64/vcruntime140_1.dll
         fi
         mv mdk-sdk-*.7z ../mdk-sdk-${{ env.TARGET_OS }}-clang.7z
-    - name: Archieve SDK
+    - name: Archive SDK
       uses: actions/upload-artifact@v4
       with:
         name: mdk-sdk-clang-${{ env.TARGET_OS }}-${{ matrix.config }}
@@ -779,7 +779,7 @@ jobs:
         cd mdk-sdk
         nuget pack mdk.nuspec
         mv *.nupkg ../mdk-vs2022.nupkg
-    - name: Archieve SDK
+    - name: Archive SDK
       uses: actions/upload-artifact@v4
       with:
         name: mdk-nuget
@@ -868,7 +868,7 @@ jobs:
         mv mdk-sdk*.tar.xz ..
         rm -rf mdk-sdk/{bin,lib}/arm*
         tar Jcvf ../mdk-sdk-${{ env.TARGET_OS }}-x64.tar.xz mdk-sdk
-    - name: Archieve SDK
+    - name: Archive SDK
       uses: actions/upload-artifact@v4
       with:
         name: mdk-sdk-${{ env.TARGET_OS }}-${{ matrix.config }}
@@ -941,7 +941,7 @@ jobs:
       run: |
         MIN_API_64=21
         [ $MIN_API -gt 21 ] && MIN_API_64=$MIN_API
-        cmake -DMIN_SIZE=1 -DUSE_LTO=1 -DANDROID_LD=lld -DANDROID_ABI=${ARCH} -DANDROID_PLATFORM=android-${MIN_API_64} -DANDROID_TOOLCHAIN=clang -DANDROID_STL=c++_shared -DANDROID_PIE=ON -DCMAKE_TOOLCHAIN_FILE=$ANDROID_NDK_LATEST_HOME/build/cmake/android.toolchain.cmake -GNinja -H$PWD -B$PWD/build/${TARGET_OS}-${ARCH} -DCMAKE_BUILD_TYPE=${{ matrix.config }} -DCMAKE_INSTALL_PREFIX=$PWD/mdk-sdk-${ARCH} -DCMAKE_VERBOSE_MAKEFILE=1
+        cmake -DWITH_VK=0 -DMIN_SIZE=1 -DUSE_LTO=1 -DANDROID_LD=lld -DANDROID_ABI=${ARCH} -DANDROID_PLATFORM=android-${MIN_API_64} -DANDROID_TOOLCHAIN=clang -DANDROID_STL=c++_shared -DANDROID_PIE=ON -DCMAKE_TOOLCHAIN_FILE=$ANDROID_NDK_LATEST_HOME/build/cmake/android.toolchain.cmake -GNinja -H$PWD -B$PWD/build/${TARGET_OS}-${ARCH} -DCMAKE_BUILD_TYPE=${{ matrix.config }} -DCMAKE_INSTALL_PREFIX=$PWD/mdk-sdk-${ARCH} -DCMAKE_VERBOSE_MAKEFILE=1
     - name: Build for x86_64
       shell: bash
       working-directory: mdk
@@ -976,7 +976,7 @@ jobs:
 #        ANDROID_NDK_HOME: ${{ steps.setup-ndk.outputs.ndk-path }}
       shell: bash
       working-directory: mdk
-      run: cmake -DMIN_SIZE=1 -DUSE_LTO=1 -DANDROID_LD=lld -DANDROID_ABI=${ARCH} -DANDROID_PLATFORM=android-${MIN_API} -DANDROID_TOOLCHAIN=clang -DANDROID_STL=c++_shared -DANDROID_PIE=ON -DCMAKE_TOOLCHAIN_FILE=$ANDROID_NDK_HOME/build/cmake/android.toolchain.cmake -GNinja -H$PWD -B$PWD/build/${TARGET_OS}-${ARCH} -DCMAKE_BUILD_TYPE=${{ matrix.config }} -DCMAKE_INSTALL_PREFIX=$PWD/mdk-sdk-${ARCH} -DCMAKE_VERBOSE_MAKEFILE=1
+      run: cmake -DWITH_VK=0 -DMIN_SIZE=1 -DUSE_LTO=1 -DANDROID_LD=lld -DANDROID_ABI=${ARCH} -DANDROID_PLATFORM=android-${MIN_API} -DANDROID_TOOLCHAIN=clang -DANDROID_STL=c++_shared -DANDROID_PIE=ON -DCMAKE_TOOLCHAIN_FILE=$ANDROID_NDK_HOME/build/cmake/android.toolchain.cmake -GNinja -H$PWD -B$PWD/build/${TARGET_OS}-${ARCH} -DCMAKE_BUILD_TYPE=${{ matrix.config }} -DCMAKE_INSTALL_PREFIX=$PWD/mdk-sdk-${ARCH} -DCMAKE_VERBOSE_MAKEFILE=1
     - name: Build for x86
       shell: bash
       working-directory: mdk
@@ -987,7 +987,7 @@ jobs:
       run: |
         ../ci-after-build.sh
         mv mdk-sdk-*.7z ..
-    - name: Archieve SDK
+    - name: Archive SDK
       uses: actions/upload-artifact@v4
       with:
         name: mdk-sdk-${{ env.TARGET_OS }}-${{ matrix.config }}
@@ -1060,7 +1060,7 @@ jobs:
         export OHOS_NDK=$OHOS_NDK_HOME/native
         ../ci-after-build.sh
         mv mdk-sdk-*.7z ..
-    - name: Archieve SDK
+    - name: Archive SDK
       uses: actions/upload-artifact@v4
       with:
         name: mdk-sdk-${{ env.TARGET_OS }}-${{ matrix.config }}
@@ -1091,7 +1091,7 @@ jobs:
       run: |
         mkdir -p mdk-sdk/include/abi/mdk
         cp -avf mdk/include/mdk/{AudioFormat,AudioFrame,Buffer,ColorSpace,FrameReader,global,MediaInfo,Property,VideoBuffer,VideoFormat,VideoFrame,VideoDecoder,Packet,MediaIO}.h mdk-sdk/include/abi/mdk
-    - name: Archieve SDK
+    - name: Archive SDK
       uses: actions/upload-artifact@v4
       with:
         name: mdk-abi-sdk
