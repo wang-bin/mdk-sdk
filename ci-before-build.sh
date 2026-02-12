@@ -17,7 +17,7 @@ if [[ "$TARGET_OS" == mac* || "$TARGET_OS" == iOS* || "$TARGET_OS" == tvOS* || "
     FF_EXTRA=
 fi
 if [[ "$TARGET_OS" == "win"* || "$TARGET_OS" == "uwp"* ]]; then
-  FF_EXTRA=-vs2022${crt_extra}
+  FF_EXTRA=-vs2026${crt_extra}
   FFPKG_EXT=7z
 fi
 if [ `which dpkg` ]; then # TODO: multi arch

@@ -329,7 +329,7 @@ jobs:
 
 
   Windows:
-    runs-on: windows-latest
+    runs-on: windows-2025-vs2026
     env:
       TARGET_OS: windows-desktop
     strategy:
@@ -408,14 +408,14 @@ jobs:
       working-directory: mdk
       run: |
         ../ci-after-build.sh
-        mv mdk-sdk-*.7z ../mdk-sdk-${{ env.TARGET_OS }}-vs2022.7z
+        mv mdk-sdk-*.7z ../mdk-sdk-${{ env.TARGET_OS }}-vs2026.7z
         rm -rf mdk-sdk/bin/{x86,arm*}
-        7z a -ssc -m0=lzma2 -mx=9 -ms=on -mf=off ../mdk-sdk-${{ env.TARGET_OS }}-vs2022-x64.7z mdk-sdk
+        7z a -ssc -m0=lzma2 -mx=9 -ms=on -mf=off ../mdk-sdk-${{ env.TARGET_OS }}-vs2026-x64.7z mdk-sdk
     - name: Archive SDK
       uses: actions/upload-artifact@v4
       with:
-        name: mdk-sdk-vs2022-${{ env.TARGET_OS }}-${{ matrix.config }}
-        path: mdk-sdk-${{ env.TARGET_OS }}-vs2022*.7z
+        name: mdk-sdk-vs2026-${{ env.TARGET_OS }}-${{ matrix.config }}
+        path: mdk-sdk-${{ env.TARGET_OS }}-vs2026*.7z
 #    - name: Upload to SourceForge
 #      if: ${{ matrix.config == 'MinSizeRel' && env.SF_UPLOAD == 'true' }}
 #      uses: garygrossgarten/github-action-scp@release
@@ -423,7 +423,7 @@ jobs:
 #        host: 'frs.sourceforge.net'
 #        username: ${{ secrets.SF_USER }}
 #        password: ${{ secrets.SF_PW }}
-#        local: mdk-sdk-${{ env.TARGET_OS }}-vs2022.7z
+#        local: mdk-sdk-${{ env.TARGET_OS }}-vs2026.7z
 #        remote: '/home/frs/project/mdk-sdk/nightly/'
 
 
@@ -488,16 +488,16 @@ jobs:
         fi
         cp -avf external/lib/windows/${{ env.ARCH }}/MD$CRT_SUFFIX/{vpl,snappy}.lib mdk-sdk-${{ env.ARCH }}/lib
         date +%m%d
-        7z a -p${{ secrets.SRC_USER }}`date +%m%d` -mhe ../mdk-src-${{ env.TARGET_OS }}-vs2022.7z mdk-sdk-${{ env.ARCH }}
+        7z a -p${{ secrets.SRC_USER }}`date +%m%d` -mhe ../mdk-src-${{ env.TARGET_OS }}-vs2026.7z mdk-sdk-${{ env.ARCH }}
     - name: Archive SDK
       uses: actions/upload-artifact@v4
       with:
-        name: mdk-src-vs2022-${{ env.TARGET_OS }}-${{ matrix.config }}
-        path: mdk-src-${{ env.TARGET_OS }}-vs2022.7z
+        name: mdk-src-vs2026-${{ env.TARGET_OS }}-${{ matrix.config }}
+        path: mdk-src-${{ env.TARGET_OS }}-vs2026.7z
 
 
   Windows_LTL:
-    runs-on: windows-latest
+    runs-on: windows-2025-vs2026
     env:
       TARGET_OS: windows-desktop
       CRT_EXTRA: LTL
@@ -572,12 +572,12 @@ jobs:
       working-directory: mdk
       run: |
         ../ci-after-build.sh
-        mv mdk-sdk-*.7z ../mdk-sdk-${{ env.TARGET_OS }}-vs2022-ltl.7z
+        mv mdk-sdk-*.7z ../mdk-sdk-${{ env.TARGET_OS }}-vs2026-ltl.7z
     - name: Archive SDK
       uses: actions/upload-artifact@v4
       with:
-        name: mdk-sdk-vs2022-ltl-${{ env.TARGET_OS }}-${{ matrix.config }}
-        path: mdk-sdk-${{ env.TARGET_OS }}-vs2022-ltl.7z
+        name: mdk-sdk-vs2026-ltl-${{ env.TARGET_OS }}-${{ matrix.config }}
+        path: mdk-sdk-${{ env.TARGET_OS }}-vs2026-ltl.7z
 
 
   UWP:
@@ -748,14 +748,14 @@ jobs:
     needs: [Windows, UWP, Windows_LTL]
     steps:
     - uses: actions/checkout@v4
-    - name: Download win32 vs2022 sdk
+    - name: Download win32 vs2026 sdk
       uses: actions/download-artifact@v4
       with:
-        name: mdk-sdk-vs2022-windows-desktop-RelWithDebInfo
-    - name: Download win32 vs2022 ltl sdk
+        name: mdk-sdk-vs2026-windows-desktop-RelWithDebInfo
+    - name: Download win32 vs2026 ltl sdk
       uses: actions/download-artifact@v4
       with:
-        name: mdk-sdk-vs2022-ltl-windows-desktop-RelWithDebInfo
+        name: mdk-sdk-vs2026-ltl-windows-desktop-RelWithDebInfo
     - name: Download uwp sdk
       uses: actions/download-artifact@v4
       with:
@@ -765,12 +765,12 @@ jobs:
       run: sed -i .bak "s,\(.*\.\)[0-9]*\(</version>\),\1${GITHUB_RUN_NUMBER}\2," nuget/mdk.nuspec
     - name: install tools
       run: brew install sshpass nuget 7zip md5sha1sum
-    - name: Make nupkg (VS2022)
+    - name: Make nupkg (vs2026)
       run: |
         rm -rf mdk-sdk uwp
-        md5sum mdk-sdk-windows-desktop-vs2022.7z | cut -d ' ' -f1 > mdk-sdk-windows-desktop-vs2022.7z.md5
-        md5sum mdk-sdk-windows-desktop-vs2022-x64.7z | cut -d ' ' -f1 > mdk-sdk-windows-desktop-vs2022-x64.7z.md5
-        7z x mdk-sdk-windows-desktop-vs2022.7z
+        md5sum mdk-sdk-windows-desktop-vs2026.7z | cut -d ' ' -f1 > mdk-sdk-windows-desktop-vs2026.7z.md5
+        md5sum mdk-sdk-windows-desktop-vs2026-x64.7z | cut -d ' ' -f1 > mdk-sdk-windows-desktop-vs2026-x64.7z.md5
+        7z x mdk-sdk-windows-desktop-vs2026.7z
         7z x mdk-sdk-uwp.7z -o"uwp"
         mkdir mdk-sdk/bin/UAP
         cp -af uwp/mdk-sdk/bin/* mdk-sdk/bin/UAP
@@ -778,7 +778,7 @@ jobs:
         cp -avf nuget/README.md mdk-sdk
         cd mdk-sdk
         nuget pack mdk.nuspec
-        mv *.nupkg ../mdk-vs2022.nupkg
+        mv *.nupkg ../mdk-vs2026.nupkg
     - name: Archive SDK
       uses: actions/upload-artifact@v4
       with:
@@ -1188,14 +1188,14 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: mdk-sdk-apple-zip
-      - name: Download win32 vs2022 sdk
+      - name: Download win32 vs2026 sdk
         uses: actions/download-artifact@v4
         with:
-          name: mdk-sdk-vs2022-windows-desktop-RelWithDebInfo
-      - name: Download win32 vs2022 ltl sdk
+          name: mdk-sdk-vs2026-windows-desktop-RelWithDebInfo
+      - name: Download win32 vs2026 ltl sdk
         uses: actions/download-artifact@v4
         with:
-          name: mdk-sdk-vs2022-ltl-windows-desktop-RelWithDebInfo
+          name: mdk-sdk-vs2026-ltl-windows-desktop-RelWithDebInfo
       - name: Download uwp sdk
         uses: actions/download-artifact@v4
         with:

@@ -24,9 +24,9 @@
 
 ## About SDK for Windows Desktop & UWP
 SDK is built by
-- latest VS2022 with [FFmpeg win32](https://sourceforge.net/projects/avbuild/files/windows-desktop/ffmpeg-master-windows-desktop-vs2022-lite.7z/download) and [FFmpeg UWP](https://sourceforge.net/projects/avbuild/files/uwp/ffmpeg-master-uwp-vs2022-lite.7z/download)
+- latest VS2026 with [FFmpeg win32](https://sourceforge.net/projects/avbuild/files/windows-desktop/ffmpeg-master-windows-desktop-vs2026-lite.7z/download) and [FFmpeg UWP](https://sourceforge.net/projects/avbuild/files/uwp/ffmpeg-master-uwp-vs2026-lite.7z/download)
 
-SDK can be used by any C or C++11 compiler, e.g. vs2015, vs2022, mingw g++, clang
+SDK can be used by any C or C++11 compiler, e.g. vs2015, vs2026, mingw g++, clang
 
 ### Use in Visual Studio
 

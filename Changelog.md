@@ -10,7 +10,7 @@ Change log:
 - VAAPI:
     - Fallback to drm display if no wayland
     - Add drm vendor option: vendor can be "nv", "intel" etc.
-- rockchip decoder: supprt avs1 p2 p16(avs+), avs2
+- rockchip decoder: support avs1 p2 p16(avs+), avs2
 - Shader:
     - Fix locale restore
     - HLG extended model
@@ -264,7 +264,7 @@ Change log:
 # 0.29.1
 
 - Android 64bit is built with 16KB page size support
-- Supprt GL_EXT_EGL_image_storage for drm, via global option "eglimage.storage=1"
+- Support GL_EXT_EGL_image_storage for drm, via global option "eglimage.storage=1"
 - VAAPI: prefer x11 display to support both EGL and GLX
 - Add privacy manifest for apple platforms
 - Improve demuxer cache
