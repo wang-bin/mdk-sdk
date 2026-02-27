@@ -88,10 +88,11 @@ jobs:
         ../ci-after-build.sh
         mv mdk-sdk*.tar.xz ../mdk-sdk-${{ env.TARGET_OS }}-${{ matrix.arch }}.tar.xz
     - name: Archive SDK
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: mdk-sdk-${{ env.TARGET_OS }}-${{ matrix.arch}}-${{ matrix.config }}
         path: mdk-sdk-${{ env.TARGET_OS }}-${{ matrix.arch}}.tar.xz
+        archive: false
     - name: Upload to SourceForge
       if: ${{ matrix.config == 'RelWithDebInfo' && matrix.arch == 'x86_64' && env.SF_UPLOAD == 'true' }}
       shell: bash
@@ -178,10 +179,11 @@ jobs:
         ../ci-after-build.sh
         mv mdk-sdk*.tar.xz ..
     - name: Archive SDK
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: mdk-sdk-${{ env.TARGET_OS }}-${{ matrix.config }}
         path: mdk-sdk-${{ env.TARGET_OS }}.tar.xz
+        archive: false
     - name: Upload to SourceForge
       if: ${{ env.SF_UPLOAD == 'true' && matrix.os == 'macCatalyst' }}
       shell: bash
@@ -195,39 +197,39 @@ jobs:
       run: sudo xcode-select -s /Applications/Xcode_${{ vars.XCODE }}.app
     - uses: actions/checkout@v4
     - name: Download macOS x64 sdk
-      uses: actions/download-artifact@v4
+      uses: actions/download-artifact@v8
       with:
         name: mdk-sdk-macOS-x86_64-MinSizeRel
     - name: Download macOS arm64 sdk
-      uses: actions/download-artifact@v4
+      uses: actions/download-artifact@v8
       with:
         name: mdk-sdk-macOS-arm64-MinSizeRel
     - name: Download iOS sdk
-      uses: actions/download-artifact@v4
+      uses: actions/download-artifact@v8
       with:
         name: mdk-sdk-iOS-MinSizeRel
     - name: Download iOSSimulator sdk
-      uses: actions/download-artifact@v4
+      uses: actions/download-artifact@v8
       with:
         name: mdk-sdk-iOSSimulator-MinSizeRel
     - name: Download tvOS sdk
-      uses: actions/download-artifact@v4
+      uses: actions/download-artifact@v8
       with:
         name: mdk-sdk-tvOS-MinSizeRel
     - name: Download tvOSSimulator sdk
-      uses: actions/download-artifact@v4
+      uses: actions/download-artifact@v8
       with:
         name: mdk-sdk-tvOSSimulator-MinSizeRel
     - name: Download visionOS sdk
-      uses: actions/download-artifact@v4
+      uses: actions/download-artifact@v8
       with:
         name: mdk-sdk-visionOS-MinSizeRel
     - name: Download visionOSSimulator sdk
-      uses: actions/download-artifact@v4
+      uses: actions/download-artifact@v8
       with:
         name: mdk-sdk-visionOSSimulator-MinSizeRel
     - name: Download macCatalyst sdk
-      uses: actions/download-artifact@v4
+      uses: actions/download-artifact@v8
       with:
         name: mdk-sdk-macCatalyst-MinSizeRel
     - name: Install tools
@@ -292,35 +294,41 @@ jobs:
 
         swift package compute-checksum mdk-sdk-apple.zip
     - name: Archive XCFramework SDK
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: mdk-sdk-apple
         path: mdk-sdk-apple.tar.xz
+        archive: false
     - name: Archive XCFramework SDK zip
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: mdk-sdk-apple-zip
         path: mdk-sdk-apple.zip
+        archive: false
     - name: Archive macOS SDK
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: mdk-sdk-macOS
         path: mdk-sdk-macOS.tar.xz
+        archive: false
     - name: Archive iOS SDK
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: mdk-sdk-iOS
         path: mdk-sdk-iOS.tar.xz
+        archive: false
     - name: Archive tvOS SDK
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: mdk-sdk-tvOS
         path: mdk-sdk-tvOS.tar.xz
+        archive: false
     - name: Archive visionOS SDK
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: mdk-sdk-visionOS
         path: mdk-sdk-visionOS.tar.xz
+        archive: false
     - name: Upload to SourceForge
       if: ${{ env.SF_UPLOAD == 'true' }}
       shell: bash
@@ -412,10 +420,11 @@ jobs:
         rm -rf mdk-sdk/bin/{x86,arm*}
         7z a -ssc -m0=lzma2 -mx=9 -ms=on -mf=off ../mdk-sdk-${{ env.TARGET_OS }}-vs2026-x64.7z mdk-sdk
     - name: Archive SDK
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: mdk-sdk-vs2026-${{ env.TARGET_OS }}-${{ matrix.config }}
         path: mdk-sdk-${{ env.TARGET_OS }}-vs2026*.7z
+        archive: false
 #    - name: Upload to SourceForge
 #      if: ${{ matrix.config == 'MinSizeRel' && env.SF_UPLOAD == 'true' }}
 #      uses: garygrossgarten/github-action-scp@release
@@ -490,10 +499,11 @@ jobs:
         date +%m%d
         7z a -p${{ secrets.SRC_USER }}`date +%m%d` -mhe ../mdk-src-${{ env.TARGET_OS }}-vs2026.7z mdk-sdk-${{ env.ARCH }}
     - name: Archive SDK
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: mdk-src-vs2026-${{ env.TARGET_OS }}-${{ matrix.config }}
         path: mdk-src-${{ env.TARGET_OS }}-vs2026.7z
+        archive: false
 
 
   Windows_LTL:
@@ -574,10 +584,11 @@ jobs:
         ../ci-after-build.sh
         mv mdk-sdk-*.7z ../mdk-sdk-${{ env.TARGET_OS }}-vs2026-ltl.7z
     - name: Archive SDK
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: mdk-sdk-vs2026-ltl-${{ env.TARGET_OS }}-${{ matrix.config }}
         path: mdk-sdk-${{ env.TARGET_OS }}-vs2026-ltl.7z
+        archive: false
 
 
   UWP:
@@ -644,10 +655,11 @@ jobs:
         ../ci-after-build.sh
         mv mdk-sdk-*.7z ../mdk-sdk-${{ env.TARGET_OS }}.7z
     - name: Archive SDK
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: mdk-sdk-${{ env.TARGET_OS }}-${{ matrix.config }}
         path: mdk-sdk-${{ env.TARGET_OS }}.7z
+        archive: false
 
 
   ClangCL:
@@ -735,10 +747,11 @@ jobs:
         fi
         mv mdk-sdk-*.7z ../mdk-sdk-${{ env.TARGET_OS }}-clang.7z
     - name: Archive SDK
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: mdk-sdk-clang-${{ env.TARGET_OS }}-${{ matrix.config }}
         path: mdk-sdk-${{ env.TARGET_OS }}-clang.7z
+        archive: false
     - name: Upload to SourceForge
       if: ${{ matrix.config == 'MinSizeRel' && env.SF_UPLOAD == 'true' }}
       run: sshpass -p ${SF_PW} scp -o StrictHostKeyChecking=no mdk-sdk-${TARGET_OS}-clang.7z ${SF_USER}@frs.sourceforge.net:/home/frs/project/mdk-sdk/nightly/
@@ -749,15 +762,15 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     - name: Download win32 vs2026 sdk
-      uses: actions/download-artifact@v4
+      uses: actions/download-artifact@v8
       with:
         name: mdk-sdk-vs2026-windows-desktop-RelWithDebInfo
     - name: Download win32 vs2026 ltl sdk
-      uses: actions/download-artifact@v4
+      uses: actions/download-artifact@v8
       with:
         name: mdk-sdk-vs2026-ltl-windows-desktop-RelWithDebInfo
     - name: Download uwp sdk
-      uses: actions/download-artifact@v4
+      uses: actions/download-artifact@v8
       with:
         name: mdk-sdk-uwp-RelWithDebInfo
     - name: update build version
@@ -780,10 +793,11 @@ jobs:
         nuget pack mdk.nuspec
         mv *.nupkg ../mdk-vs2026.nupkg
     - name: Archive SDK
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: mdk-nuget
         path: 'mdk*.nupkg'
+        archive: false
     - name: Upload to SourceForge
       if: ${{ env.SF_UPLOAD == 'true' }}
       shell: bash
@@ -794,6 +808,7 @@ jobs:
     env:
       TARGET_OS: linux
       LTO_SUFFIX: -lto
+      LINUX_SYSROOT:
     strategy:
       fail-fast: false
       matrix:
@@ -869,10 +884,11 @@ jobs:
         rm -rf mdk-sdk/{bin,lib}/arm*
         tar Jcvf ../mdk-sdk-${{ env.TARGET_OS }}-x64.tar.xz mdk-sdk
     - name: Archive SDK
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: mdk-sdk-${{ env.TARGET_OS }}-${{ matrix.config }}
         path: mdk-sdk-${{ env.TARGET_OS }}*.tar.xz
+        archive: false
     - name: Upload to SourceForge
       if: ${{ matrix.config == 'MinSizeRel' && env.SF_UPLOAD == 'true' }}
       shell: bash
@@ -988,10 +1004,11 @@ jobs:
         ../ci-after-build.sh
         mv mdk-sdk-*.7z ..
     - name: Archive SDK
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: mdk-sdk-${{ env.TARGET_OS }}-${{ matrix.config }}
         path: mdk-sdk-${{ env.TARGET_OS }}.7z
+        archive: false
     - name: Upload to SourceForge
       if: ${{ matrix.config == 'MinSizeRel' && env.SF_UPLOAD == 'true' }}
       shell: bash
@@ -1061,10 +1078,11 @@ jobs:
         ../ci-after-build.sh
         mv mdk-sdk-*.7z ..
     - name: Archive SDK
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: mdk-sdk-${{ env.TARGET_OS }}-${{ matrix.config }}
         path: mdk-sdk-${{ env.TARGET_OS }}.7z
+        archive: false
     - name: Upload to SourceForge
       if: ${{ matrix.config == 'MinSizeRel' && env.SF_UPLOAD == 'true' }}
       shell: bash
@@ -1086,21 +1104,22 @@ jobs:
         ref: ${{ github.event_name == 'repository_dispatch' &&  github.event.client_payload.ref || 'master' }}
         fetch-depth: 1
         token: ${{ secrets.CLONE_PAT }}
+    - run: sudo apt install -y sshpass p7zip-full
     - name: Make SDK
       shell: bash
       run: |
         mkdir -p mdk-sdk/include/abi/mdk
         cp -avf mdk/include/mdk/{AudioFormat,AudioFrame,Buffer,ColorSpace,FrameReader,global,MediaInfo,Property,VideoBuffer,VideoFormat,VideoFrame,VideoDecoder,Packet,MediaIO}.h mdk-sdk/include/abi/mdk
+        7z a mdk-abi-sdk.7z mdk-sdk
     - name: Archive SDK
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: mdk-abi-sdk
-        path: mdk-sdk/
-    - run: sudo apt install -y sshpass p7zip-full
+        path: mdk-abi-sdk.7z
+        archive: false
     - name: Upload to SourceForge
       shell: bash
       run: |
-        7z a mdk-abi-sdk.7z mdk-sdk
         sshpass -p ${SF_PW} scp -o StrictHostKeyChecking=no mdk-abi-sdk.7z ${SF_USER}@frs.sourceforge.net:/home/frs/project/mdk-sdk/nightly/
         cd mdk && git describe --always >.version
         sshpass -p ${SF_PW} scp -o StrictHostKeyChecking=no .version ${SF_USER}@frs.sourceforge.net:/home/frs/project/mdk-sdk/nightly/
@@ -1161,55 +1180,55 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Download iOS sdk
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: mdk-sdk-iOS
       - name: Download tvOS sdk
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: mdk-sdk-tvOS
       - name: Download visionOS sdk
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: mdk-sdk-visionOS
       - name: Download macCatalyst sdk
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: mdk-sdk-macCatalyst-MinSizeRel
       - name: Download macOS sdk
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: mdk-sdk-macOS
       - name: Download Apple sdk txz
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: mdk-sdk-apple
       - name: Download Apple sdk zip
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: mdk-sdk-apple-zip
       - name: Download win32 vs2026 sdk
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: mdk-sdk-vs2026-windows-desktop-RelWithDebInfo
       - name: Download win32 vs2026 ltl sdk
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: mdk-sdk-vs2026-ltl-windows-desktop-RelWithDebInfo
       - name: Download uwp sdk
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: mdk-sdk-uwp-RelWithDebInfo
       - name: Download clang-cl sdk
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: mdk-sdk-clang-windows-desktop-MinSizeRel
       - name: Download linux sdk
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: mdk-sdk-linux-MinSizeRel
       - name: Download android sdk
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: mdk-sdk-android-MinSizeRel
       - run: ls -lh
