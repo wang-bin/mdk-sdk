@@ -65,6 +65,7 @@ OS=${OS%%-*}
 #OS=${OS/Simulator/} #
 [ "$TARGET_OS" == "linux" ] && OS=Linux
 [ "$TARGET_OS" == "ohos" ] && OS=OHOS
+[ "$TARGET_OS" == "windows" ] && TARGET_OS+="-desktop" # avbuild now always has -desktop suffix for windows
 mkdir -p external/{bin,lib}/$OS
 
 if [[ "$EXTERNAL_DEP_CACHE_HIT" != "true" ]]; then
