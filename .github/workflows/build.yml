@@ -17,6 +17,11 @@ env:
   SF_UPLOAD: ${{ github.event_name != 'repository_dispatch' ||  github.event.client_payload.ref == 'master' }}
   NVJP2K_SDK_PW: ${{ secrets.NVJP2K_SDK_PW }}
   CUDA_SDK_PW: ${{ secrets.CUDA_SDK_PW }}
+  CUDA_SDK_DIR: ${{ github.workspace }}/cuda
+  NVJPEG2K_PATH: ${{ github.workspace }}/nvjpeg2000
+  R3DSDK: ${{ github.workspace }}/mdk/external/R3DSDK
+  LINUX_SYSROOT: ${{ github.workspace }}/mdk/sysroot
+  XZ_OPT: "-9e -T0"
 
 jobs:
   macOS:
@@ -63,24 +68,13 @@ jobs:
       run: ../ci-before-build.sh
 
     - name: Configure CMake
-      if: ${{ matrix.arch == 'x86_64' }}
-      # Use a bash shell so we can use the same syntax for environment variable
-      # access regardless of the host operating system
-      shell: bash
-      working-directory: mdk # TODO: remove
-      run: |
-        pwd
-        cmake -DMIN_SIZE=1 -DUSE_LTO=1 -DWITH_X11=0 -DR3DSDK=$PWD/external/R3DSDK -DCMAKE_OSX_DEPLOYMENT_TARGET=10.9 -GNinja -DCMAKE_OSX_ARCHITECTURES=${{ matrix.arch }} -Bbuild/${TARGET_OS} -DCMAKE_VERBOSE_MAKEFILE=1 -DCMAKE_BUILD_TYPE=${{ matrix.config }} -DCMAKE_INSTALL_PREFIX=$PWD/mdk-sdk
-    - name: Configure CMake
-      if: ${{ startsWith(matrix.arch, 'arm64') }} # arm64, arm64e
       shell: bash
       working-directory: mdk
-      run: |
-        cmake -DMIN_SIZE=1 -DUSE_LTO=1 -DWITH_X11=0 -DR3DSDK=$PWD/external/R3DSDK -DCMAKE_OSX_DEPLOYMENT_TARGET=11.0 -GNinja -DCMAKE_OSX_ARCHITECTURES=${{ matrix.arch }} -Bbuild/${TARGET_OS} -DCMAKE_VERBOSE_MAKEFILE=1 -DCMAKE_BUILD_TYPE=${{ matrix.config }} -DCMAKE_INSTALL_PREFIX=$PWD/mdk-sdk
+      run: cmake --preset=${{ env.TARGET_OS }}-${{ matrix.arch }}  -DCMAKE_INSTALL_PREFIX=$PWD/mdk-sdk
     - name: Build
       shell: bash
       working-directory: mdk
-      run: cmake --build build/${TARGET_OS} --parallel
+      run: cmake --build --preset=${{ env.TARGET_OS }}-${{ matrix.arch }} --parallel
     - name: Make SDK
       shell: bash
       working-directory: mdk
@@ -143,34 +137,23 @@ jobs:
       working-directory: mdk
       run: ../ci-before-build.sh
     - name: Configure CMake
-      if: ${{ matrix.os != 'macCatalyst' }}
       shell: bash
       working-directory: mdk
       run: |
-        minver=8.0
-        [[ "$TARGET_OS" == "tv"* ]] && minver=10.2  # VT: 10.2+
-        [[ "$TARGET_OS" == "vision"* ]] && minver=1.0
-        archs=arm64
-        [[ "$TARGET_OS" == *"Simulator" ]] && {
-            archs="arm64;x86_64"
-            sdk=$TARGET_OS
-            sdk=${sdk/iOSS/iphones}
-            sdk=${sdk/tvOSS/appletvs}
-            sdk=${sdk/visionOSS/xrs}
-            sdk=${sdk/xrOSS/xrs}
-            EXTRA_OPTS="-DCMAKE_OSX_SYSROOT=${sdk}"
-        }
-        [ ${{ matrix.os }} == visionOS ] && archs=arm64
-        cmake -GNinja -DWITH_VK=0 -DFFMPEG_EMBED=1 -DMIN_SIZE=1 -DUSE_LTO=1 -DWITH_DEB_INFO=1 -DCMAKE_SYSTEM_NAME=${{ matrix.os }} $EXTRA_OPTS -DCMAKE_OSX_DEPLOYMENT_TARGET=$minver -DCMAKE_OSX_ARCHITECTURES="$archs" -Bbuild/${TARGET_OS} -DCMAKE_BUILD_TYPE=${{ matrix.config }} -DCMAKE_INSTALL_PREFIX=$PWD/mdk-sdk -DCMAKE_VERBOSE_MAKEFILE=1 -DCMAKE_IOS_INSTALL_COMBINED=YES -DCMAKE_XCODE_ATTRIBUTE_ONLY_ACTIVE_ARCH=NO # FFMPEG_EMBED=0 to copy libffmpeg.5.dylib
-    - name: Configure CMake
-      if: ${{ matrix.os == 'macCatalyst' }}
-      shell: bash
-      working-directory: mdk
-      run: cmake -GNinja -DWITH_VK=0 -DMIN_SIZE=1 -DUSE_LTO=1 -DCMAKE_TOOLCHAIN_FILE=$PWD/cmake/tools/macCatalyst.cmake -DCMAKE_OSX_ARCHITECTURES="x86_64;arm64"  -Bbuild/${TARGET_OS} -DCMAKE_VERBOSE_MAKEFILE=1 -DCMAKE_BUILD_TYPE=${{ matrix.config }} -DCMAKE_INSTALL_PREFIX=$PWD/mdk-sdk
+        preset="${{ matrix.os }}"
+        if [ "${{ matrix.simulator }}" = "Simulator" ]; then
+          preset="${{ matrix.os }}-${{ matrix.simulator }}"
+        fi
+        cmake --preset=$preset -DCMAKE_INSTALL_PREFIX=$PWD/mdk-sdk
     - name: Build
       shell: bash
       working-directory: mdk
-      run: cmake --build build/${TARGET_OS} --parallel
+      run: |
+        preset="${{ matrix.os }}"
+        if [ "${{ matrix.simulator }}" = "Simulator" ]; then
+          preset="${{ matrix.os }}-${{ matrix.simulator }}"
+        fi
+        cmake --build --preset=$preset --parallel
     - name: Make SDK
       shell: bash
       working-directory: mdk
@@ -236,17 +219,11 @@ jobs:
     - name: make XCFramework and SDK
       shell: bash
       run: |
-        export XZ_OPT="-9e -T0"
-        mkdir -p macOS iOS iOSSimulator tvOS tvOSSimulator visionOS visionOSSimulator macCatalyst mdk-sdk/{Frameworks,include,lib} macOS-arm64 macOS-x86_64
-        tar Jxf mdk-sdk-macOS-x86_64.tar.xz -C macOS-x86_64
-        tar Jxf mdk-sdk-macOS-arm64.tar.xz -C macOS-arm64
-        tar Jxf mdk-sdk-iOS.tar.xz -C iOS
-        tar Jxf mdk-sdk-iOSSimulator.tar.xz -C iOSSimulator
-        tar Jxf mdk-sdk-tvOS.tar.xz -C tvOS
-        tar Jxf mdk-sdk-tvOSSimulator.tar.xz -C tvOSSimulator
-        tar Jxf mdk-sdk-visionOS.tar.xz -C visionOS
-        tar Jxf mdk-sdk-visionOSSimulator.tar.xz -C visionOSSimulator
-        tar Jxf mdk-sdk-macCatalyst.tar.xz -C macCatalyst
+        mkdir -p macOS  mdk-sdk/{Frameworks,include,lib}
+        for os in macOS-x86_64 macOS-arm64 iOS iOSSimulator tvOS tvOSSimulator visionOS visionOSSimulator macCatalyst; do
+          mkdir -p ${os}
+          tar Jxf mdk-sdk-${os}.tar.xz -C ${os}
+        done
         find .
         cp -af macOS-$(uname -m)/mdk-sdk macOS/ # libffmpeg is already fat
         lipo -create macOS-{arm,x86_}64/mdk-sdk/lib/mdk.framework/mdk -output macOS/mdk-sdk/lib/mdk.framework/Versions/Current/mdk
@@ -331,11 +308,12 @@ jobs:
   Windows:
     runs-on: windows-2025-vs2026
     env:
-      TARGET_OS: windows-desktop
+      TARGET_OS: windows
     strategy:
       fail-fast: false
       matrix:
         config: [RelWithDebInfo]
+        arch: [x86, x64, arm64]
     steps:
     - uses: actions/checkout@v4
     - name: Checkout source
@@ -362,60 +340,38 @@ jobs:
       run: ../ci-before-build.sh
     - uses: seanmiddleditch/gha-setup-ninja@master
     - uses: ilammy/msvc-dev-cmd@v1
+      if: ${{ matrix.arch != 'x64' }}
       with:
-        arch: amd64_arm64
-    - name: Configure for win arm64
-      env:
-        ARCH: arm64
-      working-directory: mdk
-      run: cmake -DMIN_SIZE=1 -DUSE_LTO=1 -DCMAKE_SYSTEM_PROCESSOR=${{ env.ARCH }} -GNinja  -Bbuild/${{ env.TARGET_OS }}-${{ env.ARCH }} -DCMAKE_BUILD_TYPE=${{ matrix.config }} -DCMAKE_INSTALL_PREFIX=mdk-sdk-${{ env.ARCH }} -DCMAKE_VERBOSE_MAKEFILE=1 .
-    - name: Build for win arm64
-      working-directory: mdk
-      run: cmake --build build/${{ env.TARGET_OS }}-arm64
+        arch: amd64_${{ matrix.arch }}
     - uses: ilammy/msvc-dev-cmd@v1
+      if: ${{ matrix.arch == 'x64' }}
       with:
-        arch: amd64_x86
-    - name: Configure for win x86
-      env:
-        ARCH: x86
-        R3DSDK: ${{ github.workspace }}/mdk/external/R3DSDK
-      working-directory: mdk
-      run: cmake -DR3DSDK=${{ env.R3DSDK }} -DMIN_SIZE=1 -DUSE_LTO=1 -DCMAKE_SYSTEM_PROCESSOR=${{ env.ARCH }} -DCMAKE_SYSTEM_VERSION="6.0" -GNinja  -Bbuild/${{ env.TARGET_OS }}-${{ env.ARCH }} -DCMAKE_BUILD_TYPE=${{ matrix.config }} -DCMAKE_INSTALL_PREFIX=mdk-sdk-${{ env.ARCH }} -DCMAKE_VERBOSE_MAKEFILE=1 .
-    - name: Build for win x86
-      working-directory: mdk
-      run: cmake --build build/${{ env.TARGET_OS }}-x86
-    - uses: ilammy/msvc-dev-cmd@v1
-      with:
-        arch: x64
+        arch: amd64
     - name: Get nvJPEG2000 SDK
+      if: ${{ matrix.arch == 'x64' }}
       shell: bash
       run: |
         curl -kL -o nvjpeg2000.zip  https://github.com/user-attachments/files/17663661/nvjpeg2000.zip
         7z x -y -p${{ env.NVJP2K_SDK_PW }} nvjpeg2000.zip
         curl -kL -o cuda.zip  https://github.com/user-attachments/files/17663668/cuda.zip
         7z x -y -p${{ env.CUDA_SDK_PW }} cuda.zip
-    - name: Configure for win x64
-      env:
-        ARCH: x64
-        R3DSDK: ${{ github.workspace }}/mdk/external/R3DSDK
+    - name: Configure
       working-directory: mdk
-      run: cmake -DR3DSDK=${{ env.R3DSDK }} -DNVJP2K=1 -DCUDA_SDK_DIR=${{ github.workspace }}/cuda -DNVJPEG2K_PATH=${{ github.workspace }}/nvjpeg2000 -DMIN_SIZE=1 -DUSE_LTO=1 -DCMAKE_SYSTEM_PROCESSOR=${{ env.ARCH }} -DCMAKE_SYSTEM_VERSION="6.0" -GNinja  -Bbuild/${{ env.TARGET_OS }}-${{ env.ARCH }} -DCMAKE_BUILD_TYPE=${{ matrix.config }} -DCMAKE_INSTALL_PREFIX=mdk-sdk-${{ env.ARCH }} -DCMAKE_VERBOSE_MAKEFILE=1 .
-    - name: Build for win x64
+      run: cmake --preset=${{ env.TARGET_OS }}-${{ matrix.arch }} -DCMAKE_INSTALL_PREFIX=mdk-sdk-${{ matrix.arch }}
+    - name: Build
       working-directory: mdk
-      run: cmake --build build/${{ env.TARGET_OS }}-x64
+      run: cmake --build --preset=${{ env.TARGET_OS }}-${{ matrix.arch }} --parallel
     - name: Make SDK
       shell: bash
       working-directory: mdk
       run: |
         ../ci-after-build.sh
-        mv mdk-sdk-*.7z ../mdk-sdk-${{ env.TARGET_OS }}-vs2026.7z
-        rm -rf mdk-sdk/bin/{x86,arm*}
-        7z a -ssc -m0=lzma2 -mx=9 -ms=on -mf=off ../mdk-sdk-${{ env.TARGET_OS }}-vs2026-x64.7z mdk-sdk
+        mv mdk-sdk-*.7z ../mdk-sdk-${{ env.TARGET_OS }}-${{ matrix.arch }}-vs2026.7z
     - name: Archive SDK
       uses: actions/upload-artifact@v4
       with:
-        name: mdk-sdk-vs2026-${{ env.TARGET_OS }}-${{ matrix.config }}
-        path: mdk-sdk-${{ env.TARGET_OS }}-vs2026*.7z
+        name: mdk-sdk-${{ env.TARGET_OS }}-${{ matrix.arch }}-vs2026-${{ matrix.config }}
+        path: mdk-sdk-${{ env.TARGET_OS }}-${{ matrix.arch }}-vs2026.7z
 #    - name: Upload to SourceForge
 #      if: ${{ matrix.config == 'MinSizeRel' && env.SF_UPLOAD == 'true' }}
 #      uses: garygrossgarten/github-action-scp@release
@@ -426,85 +382,51 @@ jobs:
 #        local: mdk-sdk-${{ env.TARGET_OS }}-vs2026.7z
 #        remote: '/home/frs/project/mdk-sdk/nightly/'
 
-
-  Win64_SRC:
-    if: false
-    runs-on: windows-latest
+  Windows_SDK:
+    runs-on: ubuntu-latest
+    needs: [Windows]
     env:
-      TARGET_OS: windows-desktop
-      ARCH: x64
-    strategy:
-      fail-fast: false
-      matrix:
-        config: [Debug]
+      TARGET_OS: windows
     steps:
     - uses: actions/checkout@v4
-    - name: Checkout source
-      uses: actions/checkout@v4
+    - name: Download x86 sdk
+      uses: actions/download-artifact@v4
       with:
-        repository: ${{ github.repository_owner }}/mdk
-        path: mdk
-        ref: ${{ github.event_name == 'repository_dispatch' &&  github.event.client_payload.ref || 'master' }}
-        fetch-depth: 1
-        token: ${{ secrets.CLONE_PAT }}
-        submodules: 'recursive'
-    - name: 'Restore External Dep cache'
-      id: external-dep-cache
-      uses: actions/cache@v4
+        name: mdk-sdk-windows-x86-vs2026-RelWithDebInfo
+    - name: Download x64 sdk
+      uses: actions/download-artifact@v4
       with:
-        path: ./mdk/external
-        key: external-dep-${{ env.TARGET_OS }}-ffmpeg-${{ env.FF_VER }}-${{ vars.FF_SDK_ID }}
-    - name: Create Build Environment
+        name: mdk-sdk-windows-x64-vs2026-RelWithDebInfo
+    - name: Download arm64 sdk
+      uses: actions/download-artifact@v4
+      with:
+        name: mdk-sdk-windows-arm64-vs2026-RelWithDebInfo
+    - name: Merge SDKs
       shell: bash
-      env:
-        SYSROOT_CACHE_HIT: true
-        EXTERNAL_DEP_CACHE_HIT: ${{ steps.external-dep-cache.outputs.cache-hit }}
-      working-directory: mdk
-      run: ../ci-before-build.sh
-    - uses: seanmiddleditch/gha-setup-ninja@master
-    - uses: ilammy/msvc-dev-cmd@v1
-      with:
-        arch: x64
-    - name: Configure for win x64
-      env:
-        R3DSDK: ${{ github.workspace }}/mdk/external/R3DSDK
-      working-directory: mdk
-      run: cmake -DSOURCE_MODULES=core -DR3DSDK=${{ env.R3DSDK }} -DUSE_LTO=0 -DCMAKE_SYSTEM_PROCESSOR=${{ env.ARCH }} -DCMAKE_SYSTEM_VERSION="6.0" -GNinja  -Bbuild/${{ env.TARGET_OS }}-${{ env.ARCH }} -DCMAKE_BUILD_TYPE=${{ matrix.config }} -DCMAKE_INSTALL_PREFIX=mdk-sdk-${{ env.ARCH }} -DCMAKE_VERBOSE_MAKEFILE=1 .
-    - name: Build for win x64
-      working-directory: mdk
-      run: cmake --build build/${{ env.TARGET_OS }}-x64
-    - name: Install for win x64
-      working-directory: mdk
-      run: cmake --install build/${{ env.TARGET_OS }}-x64
-    - name: Make SRC SDK
-      shell: bash
-      working-directory: mdk
       run: |
-        chmod +x ../mksrc.sh
-        ../mksrc.sh $PWD mdk-sdk-${{ env.ARCH }}
-        cp -avf ../CMakeLists.txt mdk-sdk-${{ env.ARCH }}
-        if [[ ${{ matrix.config }} == Debug ]]; then
-          CRT_SUFFIX=d
-        fi
-        cp -avf external/lib/windows/${{ env.ARCH }}/MD$CRT_SUFFIX/{vpl,snappy}.lib mdk-sdk-${{ env.ARCH }}/lib
-        date +%m%d
-        7z a -p${{ secrets.SRC_USER }}`date +%m%d` -mhe ../mdk-src-${{ env.TARGET_OS }}-vs2026.7z mdk-sdk-${{ env.ARCH }}
+        7z x -aoa mdk-sdk-${TARGET_OS}-x86-vs2026.7z
+        7z x -aoa mdk-sdk-${TARGET_OS}-x64-vs2026.7z
+        7z x -aoa mdk-sdk-${TARGET_OS}-arm64-vs2026.7z
+        7z a -ssc -m0=lzma2 -mx=9 -ms=on -mf=off mdk-sdk-${TARGET_OS}-vs2026.7z mdk-sdk
     - name: Archive SDK
       uses: actions/upload-artifact@v4
       with:
-        name: mdk-src-vs2026-${{ env.TARGET_OS }}-${{ matrix.config }}
-        path: mdk-src-${{ env.TARGET_OS }}-vs2026.7z
+        name: mdk-sdk-vs2026-windows-RelWithDebInfo
+        path: |
+            mdk-sdk-${{ env.TARGET_OS }}-vs2026.7z
+            mdk-sdk-${{ env.TARGET_OS }}-x64-vs2026.7z
 
 
   Windows_LTL:
     runs-on: windows-2025-vs2026
     env:
-      TARGET_OS: windows-desktop
+      TARGET_OS: windows
       CRT_EXTRA: LTL
     strategy:
       fail-fast: false
       matrix:
         config: [RelWithDebInfo]
+        arch: [x86, x64]
     steps:
     - uses: actions/checkout@v4
     - name: Checkout source
@@ -544,39 +466,56 @@ jobs:
       run: ../ci-before-build.sh
     - uses: seanmiddleditch/gha-setup-ninja@master
     - uses: ilammy/msvc-dev-cmd@v1
+      if: ${{ matrix.arch != 'x64' }}
       with:
-        arch: amd64_x86
-    - name: Configure for win x86
-      env:
-        ARCH: x86
-        R3DSDK: ${{ github.workspace }}/mdk/external/R3DSDK
-      working-directory: mdk
-      run: cmake -DVC_LTL=1 -DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreaded -DR3DSDK=${{ env.R3DSDK }} -DMIN_SIZE=1 -DUSE_LTO=1 -DCMAKE_SYSTEM_PROCESSOR=${{ env.ARCH }} -DCMAKE_SYSTEM_VERSION="6.0" -GNinja  -Bbuild/${{ env.TARGET_OS }}-${{ env.ARCH }} -DCMAKE_BUILD_TYPE=${{ matrix.config }} -DCMAKE_INSTALL_PREFIX=mdk-sdk-${{ env.ARCH }} -DCMAKE_VERBOSE_MAKEFILE=1 .
-    - name: Build for win x86
-      working-directory: mdk
-      run: cmake --build build/${{ env.TARGET_OS }}-x86
+        arch: amd64_${{ matrix.arch }}
     - uses: ilammy/msvc-dev-cmd@v1
+      if: ${{ matrix.arch == 'x64' }}
       with:
-        arch: x64
-    - name: Configure for win x64
-      env:
-        ARCH: x64
-        R3DSDK: ${{ github.workspace }}/mdk/external/R3DSDK
+        arch: amd64
+    - name: Configure
       working-directory: mdk
-      run: cmake -DVC_LTL=1 -DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreaded -DR3DSDK=${{ env.R3DSDK }} -DMIN_SIZE=1 -DUSE_LTO=1 -DCMAKE_SYSTEM_PROCESSOR=${{ env.ARCH }} -DCMAKE_SYSTEM_VERSION="6.0" -GNinja  -Bbuild/${{ env.TARGET_OS }}-${{ env.ARCH }} -DCMAKE_BUILD_TYPE=${{ matrix.config }} -DCMAKE_INSTALL_PREFIX=mdk-sdk-${{ env.ARCH }} -DCMAKE_VERBOSE_MAKEFILE=1 .
-    - name: Build for win x64
+      run: cmake --preset=${{ env.TARGET_OS }}-${{ matrix.arch }}-ltl -DCMAKE_INSTALL_PREFIX=$PWD/mdk-sdk-${{ matrix.arch }}
+    - name: Build
       working-directory: mdk
-      run: cmake --build build/${{ env.TARGET_OS }}-x64
+      run: cmake --build --preset=${{ env.TARGET_OS }}-${{ matrix.arch }}-ltl --parallel
     - name: Make SDK
       shell: bash
       working-directory: mdk
       run: |
         ../ci-after-build.sh
-        mv mdk-sdk-*.7z ../mdk-sdk-${{ env.TARGET_OS }}-vs2026-ltl.7z
+        mv mdk-sdk-*.7z ../mdk-sdk-${{ env.TARGET_OS }}-${{ matrix.arch }}-vs2026-ltl.7z
     - name: Archive SDK
       uses: actions/upload-artifact@v4
       with:
-        name: mdk-sdk-vs2026-ltl-${{ env.TARGET_OS }}-${{ matrix.config }}
+        name: mdk-sdk-vs2026-ltl-${{ env.TARGET_OS }}-${{ matrix.arch }}-${{ matrix.config }}
+        path: mdk-sdk-${{ env.TARGET_OS }}-${{ matrix.arch }}-vs2026-ltl.7z
+
+  Windows_LTL_SDK:
+    runs-on: ubuntu-latest
+    needs: [Windows_LTL]
+    env:
+      TARGET_OS: windows
+    steps:
+    - uses: actions/checkout@v4
+    - name: Download x86 sdk
+      uses: actions/download-artifact@v4
+      with:
+        name: mdk-sdk-vs2026-ltl-windows-x86-RelWithDebInfo
+    - name: Download x64 sdk
+      uses: actions/download-artifact@v4
+      with:
+        name: mdk-sdk-vs2026-ltl-windows-x64-RelWithDebInfo
+    - name: Merge SDKs
+      shell: bash
+      run: |
+        7z x -aoa mdk-sdk-${TARGET_OS}-x86-vs2026-ltl.7z
+        7z x -aoa mdk-sdk-${TARGET_OS}-x64-vs2026-ltl.7z
+        7z a -ssc -m0=lzma2 -mx=9 -ms=on -mf=off mdk-sdk-${TARGET_OS}-vs2026-ltl.7z mdk-sdk
+    - name: Archive SDK
+      uses: actions/upload-artifact@v4
+      with:
+        name: mdk-sdk-vs2026-ltl-windows-RelWithDebInfo
         path: mdk-sdk-${{ env.TARGET_OS }}-vs2026-ltl.7z
 
 
@@ -588,6 +527,7 @@ jobs:
       fail-fast: false
       matrix:
         config: [RelWithDebInfo]
+        arch: [x64, arm64]
     steps:
     - uses: actions/checkout@v4
     - name: Checkout source
@@ -614,39 +554,58 @@ jobs:
       run: ../ci-before-build.sh
     - uses: seanmiddleditch/gha-setup-ninja@master
     - uses: ilammy/msvc-dev-cmd@v1
+      if: ${{ matrix.arch != 'x64' }}
       with:
-        arch: amd64_arm64
+        arch: amd64_${{ matrix.arch }}
         uwp: true
-    - name: Configure for uwp arm64
-      env:
-        ARCH: arm64
-      working-directory: mdk
-      run: cmake -DMIN_SIZE=1 -DUSE_LTO=1 -DCMAKE_SYSTEM_PROCESSOR=${{ env.ARCH }} -GNinja -DCMAKE_SYSTEM_NAME=WindowsStore -DCMAKE_SYSTEM_VERSION="10.0"  -Bbuild/${{ env.TARGET_OS }}-${{ env.ARCH }} -DCMAKE_BUILD_TYPE=${{ matrix.config }} -DCMAKE_INSTALL_PREFIX=mdk-sdk-${{ env.ARCH }} -DCMAKE_VERBOSE_MAKEFILE=1 .
-    - name: Build for win arm64
-      working-directory: mdk
-      run: cmake --build build/${{ env.TARGET_OS }}-arm64
     - uses: ilammy/msvc-dev-cmd@v1
+      if: ${{ matrix.arch == 'x64' }}
       with:
         arch: x64
         uwp: true
-    - name: Configure for uwp x64
-      env:
-        ARCH: x64
+    - name: Configure
       working-directory: mdk
-      run: cmake -DMIN_SIZE=1 -DUSE_LTO=1 -DCMAKE_SYSTEM_PROCESSOR=${{ env.ARCH }} -GNinja -DCMAKE_SYSTEM_NAME=WindowsStore -DCMAKE_SYSTEM_VERSION="10.0"  -Bbuild/${{ env.TARGET_OS }}-${{ env.ARCH }} -DCMAKE_BUILD_TYPE=${{ matrix.config }} -DCMAKE_INSTALL_PREFIX=mdk-sdk-${{ env.ARCH }} -DCMAKE_VERBOSE_MAKEFILE=1 .
-    - name: Build for win x64
+      run: cmake --preset=${{ env.TARGET_OS }}-${{ matrix.arch }} -DCMAKE_INSTALL_PREFIX=$PWD/mdk-sdk-${{ matrix.arch }}
+    - name: Build
       working-directory: mdk
-      run: cmake --build build/${{ env.TARGET_OS }}-x64
+      run: cmake --build --preset=${{ env.TARGET_OS }}-${{ matrix.arch }} --parallel
     - name: Make SDK
       shell: bash
       working-directory: mdk
       run: |
         ../ci-after-build.sh
-        mv mdk-sdk-*.7z ../mdk-sdk-${{ env.TARGET_OS }}.7z
+        mv mdk-sdk-*.7z ../mdk-sdk-${{ env.TARGET_OS }}-${{ matrix.arch }}.7z
     - name: Archive SDK
       uses: actions/upload-artifact@v4
       with:
-        name: mdk-sdk-${{ env.TARGET_OS }}-${{ matrix.config }}
+        name: mdk-sdk-${{ env.TARGET_OS }}-${{ matrix.arch }}-${{ matrix.config }}
+        path: mdk-sdk-${{ env.TARGET_OS }}-${{ matrix.arch }}.7z
+
+  UWP_SDK:
+    runs-on: ubuntu-latest
+    needs: [UWP]
+    env:
+      TARGET_OS: uwp
+    steps:
+    - uses: actions/checkout@v4
+    - name: Download x64 sdk
+      uses: actions/download-artifact@v4
+      with:
+        name: mdk-sdk-uwp-x64-RelWithDebInfo
+    - name: Download arm64 sdk
+      uses: actions/download-artifact@v4
+      with:
+        name: mdk-sdk-uwp-arm64-RelWithDebInfo
+    - name: Merge SDKs
+      shell: bash
+      run: |
+        7z x -aoa mdk-sdk-${TARGET_OS}-x64.7z
+        7z x -aoa mdk-sdk-${TARGET_OS}-arm64.7z
+        7z a -ssc -m0=lzma2 -mx=9 -ms=on -mf=off mdk-sdk-${TARGET_OS}.7z mdk-sdk
+    - name: Archive SDK
+      uses: actions/upload-artifact@v4
+      with:
+        name: mdk-sdk-uwp-RelWithDebInfo
         path: mdk-sdk-${{ env.TARGET_OS }}.7z
 
 
@@ -659,8 +618,9 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [windows-desktop]
+        os: [windows]
         config: [MinSizeRel]
+        arch: [x86, x64, arm64]
     steps:
     - uses: actions/checkout@v4
     - name: Checkout source
@@ -691,39 +651,15 @@ jobs:
         EXTERNAL_DEP_CACHE_HIT: ${{ steps.external-dep-cache.outputs.cache-hit }}
       working-directory: mdk
       run: ../ci-before-build.sh
-    - name: Configure for win arm64
-      env:
-        ARCH: arm64
+    - name: Configure
       working-directory: mdk
       run: |
         export WindowsSdkDir=${WINDOWSSDKDIR}
         export WindowsSDKVersion=$(cat ${WINDOWSSDKDIR}/.version)
-        cmake -DCMAKE_SYSTEM_PROCESSOR=${ARCH} -DCMAKE_TOOLCHAIN_FILE=$PWD/cmake/tools/windows.clang.cmake -GNinja -H$PWD -B$PWD/build/${TARGET_OS}-${ARCH} -DCMAKE_BUILD_TYPE=${{ matrix.config }} -DCMAKE_INSTALL_PREFIX=$PWD/mdk-sdk-${ARCH} -DCMAKE_VERBOSE_MAKEFILE=1
-    - name: Build for arm64
+        cmake --preset=${{ env.TARGET_OS }}-${{ matrix.arch }}-clang -DCMAKE_INSTALL_PREFIX=$PWD/mdk-sdk-${{ matrix.arch }}
+    - name: Build
       working-directory: mdk
-      run: cmake --build build/${TARGET_OS}-arm64
-    - name: Configure for win x86
-      env:
-        ARCH: x86
-      working-directory: mdk
-      run: |
-        export WindowsSdkDir=${WINDOWSSDKDIR}
-        export WindowsSDKVersion=$(cat ${WINDOWSSDKDIR}/.version)
-        cmake -DMIN_SIZE=1 -DUSE_QSV=0 -DR3DSDK=$PWD/external/R3DSDK -DCMAKE_SYSTEM_PROCESSOR=${ARCH} -DCMAKE_TOOLCHAIN_FILE=$PWD/cmake/tools/windows.clang.cmake -GNinja -H$PWD -B$PWD/build/${TARGET_OS}-${ARCH} -DCMAKE_BUILD_TYPE=${{ matrix.config }} -DCMAKE_INSTALL_PREFIX=$PWD/mdk-sdk-${ARCH} -DCMAKE_VERBOSE_MAKEFILE=1
-    - name: Build for x86
-      working-directory: mdk
-      run: cmake --build build/${TARGET_OS}-x86
-    - name: Configure for win x64
-      env:
-        ARCH: x64
-      working-directory: mdk
-      run: |
-        export WindowsSdkDir=${WINDOWSSDKDIR}
-        export WindowsSDKVersion=$(cat ${WINDOWSSDKDIR}/.version)
-        cmake -DMIN_SIZE=1 -DUSE_QSV=0 -DR3DSDK=$PWD/external/R3DSDK -DCMAKE_SYSTEM_PROCESSOR=${ARCH} -DCMAKE_TOOLCHAIN_FILE=$PWD/cmake/tools/windows.clang.cmake -GNinja -H$PWD -B$PWD/build/${TARGET_OS}-${ARCH} -DCMAKE_BUILD_TYPE=${{ matrix.config }} -DCMAKE_INSTALL_PREFIX=$PWD/mdk-sdk-${ARCH} -DCMAKE_VERBOSE_MAKEFILE=1
-    - name: Build for x64
-      working-directory: mdk
-      run: cmake --build build/${TARGET_OS}-x64
+      run: cmake --build --preset=${TARGET_OS}-${{ matrix.arch }}-clang --parallel
     - name: Make SDK
       working-directory: mdk
       run: |
@@ -733,29 +669,62 @@ jobs:
           cp $VCDIR/bin/x64/vcruntime140_1.dll mdk-sdk/bin/x64
           7z a mdk-sdk-*.7z mdk-sdk/bin/x64/vcruntime140_1.dll
         fi
-        mv mdk-sdk-*.7z ../mdk-sdk-${{ env.TARGET_OS }}-clang.7z
+        mv mdk-sdk-*.7z ../mdk-sdk-${{ env.TARGET_OS }}-${{ matrix.arch }}-clang.7z
     - name: Archive SDK
       uses: actions/upload-artifact@v4
       with:
-        name: mdk-sdk-clang-${{ env.TARGET_OS }}-${{ matrix.config }}
+        name: mdk-sdk-clang-${{ env.TARGET_OS }}-${{ matrix.arch }}-${{ matrix.config }}
+        path: mdk-sdk-${{ env.TARGET_OS }}-${{ matrix.arch }}-clang.7z
+
+  ClangCL_SDK:
+    runs-on: ubuntu-latest
+    needs: [ClangCL]
+    env:
+      TARGET_OS: windows
+    steps:
+    - uses: actions/checkout@v4
+    - name: Download x86 sdk
+      uses: actions/download-artifact@v4
+      with:
+        name: mdk-sdk-clang-windows-x86-MinSizeRel
+    - name: Download x64 sdk
+      uses: actions/download-artifact@v4
+      with:
+        name: mdk-sdk-clang-windows-x64-MinSizeRel
+    - name: Download arm64 sdk
+      uses: actions/download-artifact@v4
+      with:
+        name: mdk-sdk-clang-windows-arm64-MinSizeRel
+    - run: sudo apt install -y sshpass p7zip-full
+    - name: Merge SDK
+      shell: bash
+      run: |
+        7z x -aoa mdk-sdk-${TARGET_OS}-x86-clang.7z
+        7z x -aoa mdk-sdk-${TARGET_OS}-x64-clang.7z
+        7z x -aoa mdk-sdk-${TARGET_OS}-arm64-clang.7z
+        7z a -ssc -m0=lzma2 -mx=9 -ms=on -mf=off mdk-sdk-${TARGET_OS}-clang.7z mdk-sdk
+    - name: Archive SDK
+      uses: actions/upload-artifact@v4
+      with:
+        name: mdk-sdk-clang-windows-MinSizeRel
         path: mdk-sdk-${{ env.TARGET_OS }}-clang.7z
     - name: Upload to SourceForge
-      if: ${{ matrix.config == 'MinSizeRel' && env.SF_UPLOAD == 'true' }}
+      if: ${{ env.SF_UPLOAD == 'true' }}
       run: sshpass -p ${SF_PW} scp -o StrictHostKeyChecking=no mdk-sdk-${TARGET_OS}-clang.7z ${SF_USER}@frs.sourceforge.net:/home/frs/project/mdk-sdk/nightly/
 
   NuGet:
     runs-on: macos-latest
-    needs: [Windows, UWP, Windows_LTL]
+    needs: [Windows_SDK, UWP_SDK]
     steps:
     - uses: actions/checkout@v4
-    - name: Download win32 vs2026 sdk
+    - name: Download windows vs2026 sdk
       uses: actions/download-artifact@v4
       with:
-        name: mdk-sdk-vs2026-windows-desktop-RelWithDebInfo
-    - name: Download win32 vs2026 ltl sdk
+        name: mdk-sdk-vs2026-windows-RelWithDebInfo
+    - name: Download windows x64 vs2026 sdk
       uses: actions/download-artifact@v4
       with:
-        name: mdk-sdk-vs2026-ltl-windows-desktop-RelWithDebInfo
+        name: mdk-sdk-windows-x64-vs2026-RelWithDebInfo
     - name: Download uwp sdk
       uses: actions/download-artifact@v4
       with:
@@ -768,9 +737,9 @@ jobs:
     - name: Make nupkg (vs2026)
       run: |
         rm -rf mdk-sdk uwp
-        md5sum mdk-sdk-windows-desktop-vs2026.7z | cut -d ' ' -f1 > mdk-sdk-windows-desktop-vs2026.7z.md5
-        md5sum mdk-sdk-windows-desktop-vs2026-x64.7z | cut -d ' ' -f1 > mdk-sdk-windows-desktop-vs2026-x64.7z.md5
-        7z x mdk-sdk-windows-desktop-vs2026.7z
+        md5sum mdk-sdk-windows-vs2026.7z | cut -d ' ' -f1 > mdk-sdk-windows-vs2026.7z.md5
+        md5sum mdk-sdk-windows-x64-vs2026.7z | cut -d ' ' -f1 > mdk-sdk-windows-x64-vs2026.7z.md5
+        7z x mdk-sdk-windows-vs2026.7z
         7z x mdk-sdk-uwp.7z -o"uwp"
         mkdir mdk-sdk/bin/UAP
         cp -af uwp/mdk-sdk/bin/* mdk-sdk/bin/UAP
@@ -798,6 +767,7 @@ jobs:
       fail-fast: false
       matrix:
         config: [MinSizeRel]
+        arch: [amd64, arm64, armhf]
     steps:
     - uses: actions/checkout@v4
     - name: Checkout source
@@ -830,51 +800,64 @@ jobs:
       run: |
         sudo apt remove -y libc++1-14 libc++abi1-14 libunwind-14 python3-lldb-14 # conflict with latest llvm
         ../ci-before-build.sh
-    - name: Configure for x64
-      env:
-        ARCH: amd64
+    - name: Configure
       shell: bash
       working-directory: mdk
-      run: cmake -DR3DSDK=$PWD/external/R3DSDK -DGLVA_STATIC_CXX=OFF -DMIN_SIZE=1 -DUSE_LTO=1 -DUSE_LIBCXX=1 -DCMAKE_SYSTEM_PROCESSOR=${ARCH} -DCMAKE_TOOLCHAIN_FILE=$PWD/cmake/tools/${TARGET_OS/r*pi/rpi}.clang.cmake -DLINUX_SYSROOT=$PWD/sysroot -GNinja -H$PWD -B$PWD/build/${TARGET_OS}-${ARCH} -DCMAKE_BUILD_TYPE=${{ matrix.config }} -DCMAKE_INSTALL_PREFIX=$PWD/mdk-sdk-${ARCH}  -DCMAKE_VERBOSE_MAKEFILE=1
-    - name: Build for x64
+      run: cmake --preset=${{ env.TARGET_OS }}-${{ matrix.arch }} -DCMAKE_INSTALL_PREFIX=$PWD/mdk-sdk-${{ matrix.arch }}
+    - name: Build
       shell: bash
       working-directory: mdk
-      run: cmake --build build/${TARGET_OS}-amd64
-    - name: Configure for aarch64
-      env:
-        ARCH: arm64
-      shell: bash
-      working-directory: mdk
-      run: cmake -DGLVA_STATIC_CXX=OFF -DMIN_SIZE=1 -DUSE_LTO=1 -DUSE_LIBCXX=1 -DCMAKE_SYSTEM_PROCESSOR=${ARCH} -DCMAKE_TOOLCHAIN_FILE=$PWD/cmake/tools/${TARGET_OS/r*pi/rpi}.clang.cmake -DLINUX_SYSROOT=$PWD/sysroot -GNinja -H$PWD -B$PWD/build/${TARGET_OS}-${ARCH} -DCMAKE_BUILD_TYPE=${{ matrix.config }} -DCMAKE_INSTALL_PREFIX=$PWD/mdk-sdk-${ARCH}  -DCMAKE_VERBOSE_MAKEFILE=1
-    - name: Build for aarch64
-      shell: bash
-      working-directory: mdk
-      run: cmake --build build/${TARGET_OS}-arm64
-    - name: Configure for armhf
-      env:
-        ARCH: armhf
-      shell: bash
-      working-directory: mdk
-      run: cmake -DGLVA_STATIC_CXX=OFF -DMIN_SIZE=1 -DUSE_LTO=1 -DUSE_LIBCXX=1 -DCMAKE_SYSTEM_PROCESSOR=${ARCH} -DCMAKE_TOOLCHAIN_FILE=$PWD/cmake/tools/${TARGET_OS/r*pi/rpi}.clang.cmake -DLINUX_SYSROOT=$PWD/sysroot -GNinja -H$PWD -B$PWD/build/${TARGET_OS}-${ARCH} -DCMAKE_BUILD_TYPE=${{ matrix.config }} -DCMAKE_INSTALL_PREFIX=$PWD/mdk-sdk-${ARCH}  -DCMAKE_VERBOSE_MAKEFILE=1
-    - name: Build for armhf
-      shell: bash
-      working-directory: mdk
-      run: cmake --build build/${TARGET_OS}-armhf
+      run: cmake --build --preset=${{ env.TARGET_OS }}-${{ matrix.arch }} --parallel
     - name: Make SDK
       shell: bash
       working-directory: mdk
       run: |
         ../ci-after-build.sh
-        mv mdk-sdk*.tar.xz ..
-        rm -rf mdk-sdk/{bin,lib}/arm*
-        tar Jcvf ../mdk-sdk-${{ env.TARGET_OS }}-x64.tar.xz mdk-sdk
+        mv mdk-sdk*.tar.xz ../mdk-sdk-${{ env.TARGET_OS }}-${{ matrix.arch }}.tar.xz
     - name: Archive SDK
       uses: actions/upload-artifact@v4
       with:
-        name: mdk-sdk-${{ env.TARGET_OS }}-${{ matrix.config }}
+        name: mdk-sdk-${{ env.TARGET_OS }}-${{ matrix.arch }}-${{ matrix.config }}
         path: mdk-sdk-${{ env.TARGET_OS }}*.tar.xz
+
+  Linux_SDK:
+    runs-on: ubuntu-latest
+    needs: [Linux]
+    env:
+      TARGET_OS: linux
+    steps:
+    - uses: actions/checkout@v4
+    - name: Download amd64 sdk
+      uses: actions/download-artifact@v4
+      with:
+        name: mdk-sdk-linux-amd64-MinSizeRel
+    - name: Download arm64 sdk
+      uses: actions/download-artifact@v4
+      with:
+        name: mdk-sdk-linux-arm64-MinSizeRel
+    - name: Download armhf sdk
+      uses: actions/download-artifact@v4
+      with:
+        name: mdk-sdk-linux-armhf-MinSizeRel
+    - run: sudo apt install -y sshpass
+    - name: Merge SDKs
+      shell: bash
+      run: |
+        tar Jxvf mdk-sdk-${TARGET_OS}-amd64.tar.xz
+        tar Jxvf mdk-sdk-${TARGET_OS}-arm64.tar.xz
+        tar Jxvf mdk-sdk-${TARGET_OS}-armhf.tar.xz
+        tar Jcvf mdk-sdk-${TARGET_OS}.tar.xz mdk-sdk
+        rm -rf mdk-sdk/{bin,lib}/arm*
+        tar Jcvf mdk-sdk-${TARGET_OS}-x64.tar.xz mdk-sdk
+    - name: Archive SDK
+      uses: actions/upload-artifact@v4
+      with:
+        name: mdk-sdk-linux-MinSizeRel
+        path: |
+            mdk-sdk-${{ env.TARGET_OS }}.tar.xz
+            mdk-sdk-${{ env.TARGET_OS }}-x64.tar.xz
     - name: Upload to SourceForge
-      if: ${{ matrix.config == 'MinSizeRel' && env.SF_UPLOAD == 'true' }}
+      if: ${{ env.SF_UPLOAD == 'true' }}
       shell: bash
       run: |
         sshpass -p ${SF_PW} scp -o StrictHostKeyChecking=no mdk-sdk-${TARGET_OS}.tar.xz ${SF_USER}@frs.sourceforge.net:/home/frs/project/mdk-sdk/nightly/
@@ -895,6 +878,7 @@ jobs:
       fail-fast: false
       matrix:
         config: [MinSizeRel] # https://github.com/android/ndk/issues/721
+        arch: [arm64-v8a, x86_64, armeabi-v7a, x86]
     steps:
     - uses: actions/checkout@v4
     - name: Checkout source
@@ -919,33 +903,16 @@ jobs:
         EXTERNAL_DEP_CACHE_HIT: ${{ steps.external-dep-cache.outputs.cache-hit }}
       working-directory: mdk
       run: ../ci-before-build.sh
-    - name: Configure for arm64-v8a
-      env:
-        ARCH: arm64-v8a
+    - name: Install sshpass
+      if: ${{ matrix.arch == 'arm64-v8a' }}
+      run: sudo apt install -y sshpass
+    - name: Configure
+      working-directory: mdk
+      run: cmake --preset=${{ env.TARGET_OS }}-${{ matrix.arch }} -DCMAKE_INSTALL_PREFIX=$PWD/mdk-sdk-${{ matrix.arch }}
+    - name: Build
       shell: bash
       working-directory: mdk
-      run: |
-        ls ${ANDROID_HOME}/ndk
-        MIN_API_64=21
-        [ $MIN_API -gt 21 ] && MIN_API_64=$MIN_API
-        cmake -DMIN_SIZE=1 -DUSE_LTO=1 -DANDROID_LD=lld -DANDROID_ABI=${ARCH} -DANDROID_PLATFORM=android-${MIN_API_64} -DANDROID_TOOLCHAIN=clang -DANDROID_STL=c++_shared -DANDROID_PIE=ON -DCMAKE_TOOLCHAIN_FILE=$ANDROID_NDK_LATEST_HOME/build/cmake/android.toolchain.cmake -GNinja -H$PWD -B$PWD/build/${TARGET_OS}-${ARCH} -DCMAKE_BUILD_TYPE=${{ matrix.config }} -DCMAKE_INSTALL_PREFIX=$PWD/mdk-sdk-${ARCH} -DCMAKE_VERBOSE_MAKEFILE=1
-    - name: Build for arm64-v8a
-      shell: bash
-      working-directory: mdk
-      run: cmake --build build/${TARGET_OS}-arm64-v8a
-    - name: Configure for x86_64
-      env:
-        ARCH: x86_64
-      shell: bash
-      working-directory: mdk
-      run: |
-        MIN_API_64=21
-        [ $MIN_API -gt 21 ] && MIN_API_64=$MIN_API
-        cmake -DWITH_VK=0 -DMIN_SIZE=1 -DUSE_LTO=1 -DANDROID_LD=lld -DANDROID_ABI=${ARCH} -DANDROID_PLATFORM=android-${MIN_API_64} -DANDROID_TOOLCHAIN=clang -DANDROID_STL=c++_shared -DANDROID_PIE=ON -DCMAKE_TOOLCHAIN_FILE=$ANDROID_NDK_LATEST_HOME/build/cmake/android.toolchain.cmake -GNinja -H$PWD -B$PWD/build/${TARGET_OS}-${ARCH} -DCMAKE_BUILD_TYPE=${{ matrix.config }} -DCMAKE_INSTALL_PREFIX=$PWD/mdk-sdk-${ARCH} -DCMAKE_VERBOSE_MAKEFILE=1
-    - name: Build for x86_64
-      shell: bash
-      working-directory: mdk
-      run: cmake --build build/${TARGET_OS}-x86_64
+      run: cmake --build --preset=${{ env.TARGET_OS }}-${{ matrix.arch }} --parallel
 #    - uses: nttld/setup-ndk@v1
 #      id: setup-ndk
 #      with:
@@ -957,48 +924,67 @@ jobs:
 #      with:
 #        path: ${{ runner.tool_cache }}/ndk/${{ env.NDK_32 }} # /opt/hostedtoolcache
 #        key: ndk-cache-${{ runner.os }}-${{ env.NDK_32 }}
-    - name: Configure for armeabi-v7a
-      env:
-        ARCH: armeabi-v7a
-        MIN_API: 21  # 19: android 4.4. ndk25
-#        ANDROID_NDK_HOME: ${{ steps.setup-ndk.outputs.ndk-path }}
-      shell: bash
-      working-directory: mdk
-      run: cmake -DMIN_SIZE=1 -DUSE_LTO=1 -DANDROID_LD=lld -DANDROID_ABI=${ARCH} -DANDROID_PLATFORM=android-${MIN_API} -DANDROID_TOOLCHAIN=clang -DANDROID_STL=c++_shared -DANDROID_PIE=ON -DCMAKE_TOOLCHAIN_FILE=$ANDROID_NDK_HOME/build/cmake/android.toolchain.cmake -GNinja -H$PWD -B$PWD/build/${TARGET_OS}-${ARCH} -DCMAKE_BUILD_TYPE=${{ matrix.config }} -DCMAKE_INSTALL_PREFIX=$PWD/mdk-sdk-${ARCH} -DCMAKE_VERBOSE_MAKEFILE=1
-    - name: Build for armeabi-v7a
-      shell: bash
-      working-directory: mdk
-      run: cmake --build build/${TARGET_OS}-armeabi-v7a
-    - name: Configure for x86
-      env:
-        ARCH: x86
-        MIN_API: 21  # 19: android 4.4. ndk25
-#        ANDROID_NDK_HOME: ${{ steps.setup-ndk.outputs.ndk-path }}
-      shell: bash
-      working-directory: mdk
-      run: cmake -DWITH_VK=0 -DMIN_SIZE=1 -DUSE_LTO=1 -DANDROID_LD=lld -DANDROID_ABI=${ARCH} -DANDROID_PLATFORM=android-${MIN_API} -DANDROID_TOOLCHAIN=clang -DANDROID_STL=c++_shared -DANDROID_PIE=ON -DCMAKE_TOOLCHAIN_FILE=$ANDROID_NDK_HOME/build/cmake/android.toolchain.cmake -GNinja -H$PWD -B$PWD/build/${TARGET_OS}-${ARCH} -DCMAKE_BUILD_TYPE=${{ matrix.config }} -DCMAKE_INSTALL_PREFIX=$PWD/mdk-sdk-${ARCH} -DCMAKE_VERBOSE_MAKEFILE=1
-    - name: Build for x86
-      shell: bash
-      working-directory: mdk
-      run: cmake --build build/${TARGET_OS}-x86
     - name: Make SDK
       shell: bash
       working-directory: mdk
       run: |
         ../ci-after-build.sh
-        mv mdk-sdk-*.7z ..
+        mv mdk-sdk-*.7z ../mdk-sdk-${{ env.TARGET_OS }}-${{ matrix.arch }}.7z
     - name: Archive SDK
       uses: actions/upload-artifact@v4
       with:
-        name: mdk-sdk-${{ env.TARGET_OS }}-${{ matrix.config }}
+        name: mdk-sdk-${{ env.TARGET_OS }}-${{ matrix.arch }}-${{ matrix.config }}
+        path: mdk-sdk-${{ env.TARGET_OS }}-${{ matrix.arch }}.7z
+    - name: Upload mediacodec library to SourceForge
+      if: ${{ matrix.config == 'MinSizeRel' && matrix.arch == 'arm64-v8a' && env.SF_UPLOAD == 'true' }}
+      shell: bash
+      working-directory: mdk
+      run: |
+        sshpass -p ${SF_PW} scp -o StrictHostKeyChecking=no build/android-arm64-v8a/video/libqtav-mediacodec.so ${SF_USER}@frs.sourceforge.net:/home/frs/project/qtav/depends/mediacodec/arm64-v8a
+
+  Android_SDK:
+    runs-on: ubuntu-latest
+    needs: [Android]
+    env:
+      TARGET_OS: android
+    steps:
+    - uses: actions/checkout@v4
+    - name: Download arm64-v8a sdk
+      uses: actions/download-artifact@v4
+      with:
+        name: mdk-sdk-android-arm64-v8a-MinSizeRel
+    - name: Download x86_64 sdk
+      uses: actions/download-artifact@v4
+      with:
+        name: mdk-sdk-android-x86_64-MinSizeRel
+    - name: Download armeabi-v7a sdk
+      uses: actions/download-artifact@v4
+      with:
+        name: mdk-sdk-android-armeabi-v7a-MinSizeRel
+    - name: Download x86 sdk
+      uses: actions/download-artifact@v4
+      with:
+        name: mdk-sdk-android-x86-MinSizeRel
+    - run: sudo apt install -y sshpass p7zip-full
+    - name: Merge SDKs
+      shell: bash
+      run: |
+        7z x -aoa mdk-sdk-${TARGET_OS}-x86_64.7z
+        7z x -aoa mdk-sdk-${TARGET_OS}-armeabi-v7a.7z
+        7z x -aoa mdk-sdk-${TARGET_OS}-x86.7z
+        7z x -aoa mdk-sdk-${TARGET_OS}-arm64-v8a.7z
+        7z a -ssc -m0=lzma2 -mx=9 -ms=on -mf=off mdk-sdk-${TARGET_OS}.7z mdk-sdk
+    - name: Archive SDK
+      uses: actions/upload-artifact@v4
+      with:
+        name: mdk-sdk-android-MinSizeRel
         path: mdk-sdk-${{ env.TARGET_OS }}.7z
     - name: Upload to SourceForge
-      if: ${{ matrix.config == 'MinSizeRel' && env.SF_UPLOAD == 'true' }}
+      if: ${{ env.SF_UPLOAD == 'true' }}
       shell: bash
       run: |
         7z d -ssc -m0=lzma2 -mx=9 -ms=on -mf=off mdk-sdk-${TARGET_OS}.7z mdk-sdk/lib/{x86,x86_64}/libmdk.so.dsym
         sshpass -p ${SF_PW} scp -o StrictHostKeyChecking=no mdk-sdk-${TARGET_OS}.7z ${SF_USER}@frs.sourceforge.net:/home/frs/project/mdk-sdk/nightly/
-        sshpass -p ${SF_PW} scp -o StrictHostKeyChecking=no mdk/build/android-arm64-v8a/video/libqtav-mediacodec.so ${SF_USER}@frs.sourceforge.net:/home/frs/project/qtav/depends/mediacodec/arm64-v8a
         md5sum mdk-sdk-${TARGET_OS}.7z | cut -d ' ' -f1 > mdk-sdk-${TARGET_OS}.7z.md5
         sshpass -p ${SF_PW} scp -o StrictHostKeyChecking=no mdk-*.md5 ${SF_USER}@frs.sourceforge.net:/home/frs/project/mdk-sdk/nightly/
 
@@ -1011,6 +997,7 @@ jobs:
       fail-fast: false
       matrix:
         config: [MinSizeRel]
+        arch: [arm64-v8a]
     steps:
     - uses: actions/checkout@v4
     - name: Checkout source
@@ -1041,18 +1028,16 @@ jobs:
         EXTERNAL_DEP_CACHE_HIT: ${{ steps.external-dep-cache.outputs.cache-hit }}
       working-directory: mdk
       run: ../ci-before-build.sh
-    - name: Configure for arm64-v8a
-      env:
-        ARCH: arm64-v8a
+    - name: Configure
       shell: bash
       working-directory: mdk
       run: |
         export OHOS_NDK=$OHOS_NDK_HOME/native
-        cmake -DMIN_SIZE=1 -DUSE_LTO=1 -DOHOS_ARCH=${ARCH} -DCMAKE_TOOLCHAIN_FILE=$OHOS_NDK/build/cmake/ohos.toolchain.cmake -GNinja -H$PWD -B$PWD/build/${TARGET_OS}-${ARCH} -DCMAKE_BUILD_TYPE=${{ matrix.config }} -DCMAKE_INSTALL_PREFIX=$PWD/mdk-sdk-${ARCH} -DCMAKE_VERBOSE_MAKEFILE=1
-    - name: Build for arm64-v8a
+        cmake --preset=${{ env.TARGET_OS }}-${{ matrix.arch }} -DCMAKE_INSTALL_PREFIX=$PWD/mdk-sdk-${{ matrix.arch }}
+    - name: Build
       shell: bash
       working-directory: mdk
-      run: cmake --build build/${TARGET_OS}-arm64-v8a
+      run: cmake --build --preset=${{ env.TARGET_OS }}-${{ matrix.arch }} --parallel
     - name: Make SDK
       shell: bash
       working-directory: mdk
@@ -1115,7 +1100,7 @@ jobs:
   Dispatch:
     runs-on: ubuntu-latest
     permissions: write-all
-    needs: [abi, NuGet, Apple, Linux, Android]
+    needs: [abi, NuGet, Apple, Linux_SDK, Android_SDK]
     steps:
 #    - name: 'Trigger Workflow'
 #      uses: actions/github-script@v7
@@ -1156,7 +1141,7 @@ jobs:
   Release:
     runs-on: ubuntu-latest
     if: startsWith(github.ref, 'refs/tags/')
-    needs: [Apple, NuGet, Linux, Android, ClangCL]
+    needs: [Apple, NuGet, Linux_SDK, Android_SDK, ClangCL_SDK]
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -1191,11 +1176,11 @@ jobs:
       - name: Download win32 vs2026 sdk
         uses: actions/download-artifact@v4
         with:
-          name: mdk-sdk-vs2026-windows-desktop-RelWithDebInfo
+          name: mdk-sdk-vs2026-windows-RelWithDebInfo
       - name: Download win32 vs2026 ltl sdk
         uses: actions/download-artifact@v4
         with:
-          name: mdk-sdk-vs2026-ltl-windows-desktop-RelWithDebInfo
+          name: mdk-sdk-vs2026-ltl-windows-RelWithDebInfo
       - name: Download uwp sdk
         uses: actions/download-artifact@v4
         with:
@@ -1203,7 +1188,7 @@ jobs:
       - name: Download clang-cl sdk
         uses: actions/download-artifact@v4
         with:
-          name: mdk-sdk-clang-windows-desktop-MinSizeRel
+          name: mdk-sdk-clang-windows-MinSizeRel
       - name: Download linux sdk
         uses: actions/download-artifact@v4
         with:

@@ -31,7 +31,7 @@ which $STRIP || STRIP=llvm-strip
 ls -lh mdk-sdk*/bin/*
 which $STRIP && find mdk-sdk*/bin -type f -exec $STRIP $STRIP_ARGS {} \;
 ls -lh mdk-sdk*/bin/*
-export XZ_OPT="-T0" # -9e. -8/9 will disable mt?
+export XZ_OPT="-9e -T0" # -9e. -8/9 will disable mt?
 if [[ "$TARGET_OS" == "win"* || "$TARGET_OS" == "uwp"* || "$TARGET_OS" == "android" || "$TARGET_OS" == ohos ]]; then
   7z a -ssc -m0=lzma2 -mx=9 -ms=on -mf=off mdk-sdk-${TARGET_OS}.7z mdk-sdk
   ls -lh mdk-sdk-${TARGET_OS}.7z
