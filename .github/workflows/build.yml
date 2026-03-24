@@ -989,7 +989,7 @@ jobs:
         sshpass -p ${SF_PW} scp -o StrictHostKeyChecking=no mdk-*.md5 ${SF_USER}@frs.sourceforge.net:/home/frs/project/mdk-sdk/nightly/
 
   ohos:
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
     env:
       TARGET_OS: ohos
       LTO_SUFFIX: -lto
@@ -1009,12 +1009,15 @@ jobs:
         fetch-depth: 1
         token: ${{ secrets.CLONE_PAT }}
         submodules: 'recursive'
-    - name: Setup HarmonyOS CLI tools
-      uses: ErBWs/setup-ohos@v1
+    - name: Setup OpenHarmony SDK
+      id: setup-ohos-sdk
+      uses: openharmony-rs/setup-ohos-sdk@v1.0.0
       with:
-        version: latest
+        version: ${{ vars.OH_SDK_VERSION }}
         cache: true
-    - run: hvigorw -v
+    - run: |
+        echo "api-version: ${{ steps.setup-ohos-sdk.outputs.api-version }}"
+        echo "ohos_sdk_native: ${{ steps.setup-ohos-sdk.outputs.ohos_sdk_native }}"
     - name: 'Restore External Dep cache'
       id: external-dep-cache
       uses: actions/cache@v4
@@ -1032,7 +1035,7 @@ jobs:
       shell: bash
       working-directory: mdk
       run: |
-        export OHOS_NDK=$OHOS_NDK_HOME/native
+        export OHOS_NDK=$OHOS_SDK_NATIVE
         cmake --preset=${{ env.TARGET_OS }}-${{ matrix.arch }} -DCMAKE_INSTALL_PREFIX=$PWD/mdk-sdk-${{ matrix.arch }}
     - name: Build
       shell: bash
@@ -1042,7 +1045,7 @@ jobs:
       shell: bash
       working-directory: mdk
       run: |
-        export OHOS_NDK=$OHOS_NDK_HOME/native
+        export OHOS_NDK=$OHOS_SDK_NATIVE
         ../ci-after-build.sh
         mv mdk-sdk-*.7z ..
     - name: Archive SDK
