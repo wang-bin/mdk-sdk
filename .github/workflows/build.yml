@@ -37,9 +37,9 @@ jobs:
         config: [MinSizeRel]
         arch: [x86_64, arm64] # different minos
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
     - name: Checkout source
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
       with:
         repository: ${{ github.repository_owner }}/mdk
         path: mdk
@@ -51,7 +51,7 @@ jobs:
       run: sudo xcode-select -s /Applications/Xcode_${{ vars.XCODE }}.app
     - name: 'Restore External Dep cache'
       id: external-dep-cache
-      uses: actions/cache@v4
+      uses: actions/cache@v5
       with:
         path: |
           ./mdk/external
@@ -82,7 +82,7 @@ jobs:
         ../ci-after-build.sh
         mv mdk-sdk*.tar.xz ../mdk-sdk-${{ env.TARGET_OS }}-${{ matrix.arch }}.tar.xz
     - name: Archive SDK
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: mdk-sdk-${{ env.TARGET_OS }}-${{ matrix.arch}}-${{ matrix.config }}
         path: mdk-sdk-${{ env.TARGET_OS }}-${{ matrix.arch}}.tar.xz
@@ -107,9 +107,9 @@ jobs:
           - os: macCatalyst
             simulator: Simulator
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
     - name: Checkout source
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
       with:
         repository: ${{ github.repository_owner }}/mdk
         path: mdk
@@ -121,7 +121,7 @@ jobs:
       run: sudo xcode-select -s /Applications/Xcode_${{ vars.XCODE }}.app
     - name: 'Restore External Dep cache'
       id: external-dep-cache
-      uses: actions/cache@v4
+      uses: actions/cache@v5
       with:
         path: |
           ./mdk/external
@@ -161,7 +161,7 @@ jobs:
         ../ci-after-build.sh
         mv mdk-sdk*.tar.xz ..
     - name: Archive SDK
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: mdk-sdk-${{ env.TARGET_OS }}-${{ matrix.config }}
         path: mdk-sdk-${{ env.TARGET_OS }}.tar.xz
@@ -176,41 +176,41 @@ jobs:
     steps:
     - name: Setup Xcode
       run: sudo xcode-select -s /Applications/Xcode_${{ vars.XCODE }}.app
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
     - name: Download macOS x64 sdk
-      uses: actions/download-artifact@v4
+      uses: actions/download-artifact@v8
       with:
         name: mdk-sdk-macOS-x86_64-MinSizeRel
     - name: Download macOS arm64 sdk
-      uses: actions/download-artifact@v4
+      uses: actions/download-artifact@v8
       with:
         name: mdk-sdk-macOS-arm64-MinSizeRel
     - name: Download iOS sdk
-      uses: actions/download-artifact@v4
+      uses: actions/download-artifact@v8
       with:
         name: mdk-sdk-iOS-MinSizeRel
     - name: Download iOSSimulator sdk
-      uses: actions/download-artifact@v4
+      uses: actions/download-artifact@v8
       with:
         name: mdk-sdk-iOSSimulator-MinSizeRel
     - name: Download tvOS sdk
-      uses: actions/download-artifact@v4
+      uses: actions/download-artifact@v8
       with:
         name: mdk-sdk-tvOS-MinSizeRel
     - name: Download tvOSSimulator sdk
-      uses: actions/download-artifact@v4
+      uses: actions/download-artifact@v8
       with:
         name: mdk-sdk-tvOSSimulator-MinSizeRel
     - name: Download visionOS sdk
-      uses: actions/download-artifact@v4
+      uses: actions/download-artifact@v8
       with:
         name: mdk-sdk-visionOS-MinSizeRel
     - name: Download visionOSSimulator sdk
-      uses: actions/download-artifact@v4
+      uses: actions/download-artifact@v8
       with:
         name: mdk-sdk-visionOSSimulator-MinSizeRel
     - name: Download macCatalyst sdk
-      uses: actions/download-artifact@v4
+      uses: actions/download-artifact@v8
       with:
         name: mdk-sdk-macCatalyst-MinSizeRel
     - name: Install tools
@@ -269,32 +269,32 @@ jobs:
 
         swift package compute-checksum mdk-sdk-apple.zip
     - name: Archive XCFramework SDK
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: mdk-sdk-apple
         path: mdk-sdk-apple.tar.xz
     - name: Archive XCFramework SDK zip
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: mdk-sdk-apple-zip
         path: mdk-sdk-apple.zip
     - name: Archive macOS SDK
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: mdk-sdk-macOS
         path: mdk-sdk-macOS.tar.xz
     - name: Archive iOS SDK
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: mdk-sdk-iOS
         path: mdk-sdk-iOS.tar.xz
     - name: Archive tvOS SDK
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: mdk-sdk-tvOS
         path: mdk-sdk-tvOS.tar.xz
     - name: Archive visionOS SDK
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: mdk-sdk-visionOS
         path: mdk-sdk-visionOS.tar.xz
@@ -315,9 +315,9 @@ jobs:
         config: [RelWithDebInfo]
         arch: [x86, x64, arm64]
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
     - name: Checkout source
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
       with:
         repository: ${{ github.repository_owner }}/mdk
         path: mdk
@@ -327,7 +327,7 @@ jobs:
         submodules: 'recursive'
     - name: 'Restore External Dep cache'
       id: external-dep-cache
-      uses: actions/cache@v4
+      uses: actions/cache@v5
       with:
         path: ./mdk/external
         key: external-dep-${{ env.TARGET_OS }}-ffmpeg-${{ env.FF_VER }}-${{ vars.FF_SDK_ID }}
@@ -368,7 +368,7 @@ jobs:
         ../ci-after-build.sh
         mv mdk-sdk-*.7z ../mdk-sdk-${{ env.TARGET_OS }}-${{ matrix.arch }}-vs2026.7z
     - name: Archive SDK
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: mdk-sdk-${{ env.TARGET_OS }}-${{ matrix.arch }}-vs2026-${{ matrix.config }}
         path: mdk-sdk-${{ env.TARGET_OS }}-${{ matrix.arch }}-vs2026.7z
@@ -388,17 +388,17 @@ jobs:
     env:
       TARGET_OS: windows
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
     - name: Download x86 sdk
-      uses: actions/download-artifact@v4
+      uses: actions/download-artifact@v8
       with:
         name: mdk-sdk-windows-x86-vs2026-RelWithDebInfo
     - name: Download x64 sdk
-      uses: actions/download-artifact@v4
+      uses: actions/download-artifact@v8
       with:
         name: mdk-sdk-windows-x64-vs2026-RelWithDebInfo
     - name: Download arm64 sdk
-      uses: actions/download-artifact@v4
+      uses: actions/download-artifact@v8
       with:
         name: mdk-sdk-windows-arm64-vs2026-RelWithDebInfo
     - name: Merge SDKs
@@ -409,7 +409,7 @@ jobs:
         7z x -aoa mdk-sdk-${TARGET_OS}-arm64-vs2026.7z
         7z a -ssc -m0=lzma2 -mx=9 -ms=on -mf=off mdk-sdk-${TARGET_OS}-vs2026.7z mdk-sdk
     - name: Archive SDK
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: mdk-sdk-windows-vs2026-RelWithDebInfo
         path: |
@@ -428,9 +428,9 @@ jobs:
         config: [RelWithDebInfo]
         arch: [x86, x64]
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
     - name: Checkout source
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
       with:
         repository: ${{ github.repository_owner }}/mdk
         path: mdk
@@ -440,13 +440,13 @@ jobs:
         submodules: 'recursive'
     - name: 'Restore External Dep cache'
       id: external-dep-cache
-      uses: actions/cache@v4
+      uses: actions/cache@v5
       with:
         path: ./mdk/external
         key: external-dep-${{ env.TARGET_OS }}-${{ env.CRT_EXTRA }}-ffmpeg-${{ env.FF_VER }}-${{ vars.FF_SDK_ID }}
     - name: 'Restore VC-LTL cache'
       id: ltl-cache
-      uses: actions/cache@v4
+      uses: actions/cache@v5
       with:
         path: ./mdk/cmake/VC-LTL
         key: ltl-${{ vars.VC_LTL_VER }}
@@ -486,7 +486,7 @@ jobs:
         ../ci-after-build.sh
         mv mdk-sdk-*.7z ../mdk-sdk-${{ env.TARGET_OS }}-${{ matrix.arch }}-vs2026-ltl.7z
     - name: Archive SDK
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: mdk-sdk-${{ env.TARGET_OS }}-${{ matrix.arch }}-vs2026-ltl-${{ matrix.config }}
         path: mdk-sdk-${{ env.TARGET_OS }}-${{ matrix.arch }}-vs2026-ltl.7z
@@ -497,13 +497,13 @@ jobs:
     env:
       TARGET_OS: windows
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
     - name: Download x86 sdk
-      uses: actions/download-artifact@v4
+      uses: actions/download-artifact@v8
       with:
         name: mdk-sdk-windows-x86-vs2026-ltl-RelWithDebInfo
     - name: Download x64 sdk
-      uses: actions/download-artifact@v4
+      uses: actions/download-artifact@v8
       with:
         name: mdk-sdk-windows-x64-vs2026-ltl-RelWithDebInfo
     - name: Merge SDKs
@@ -513,7 +513,7 @@ jobs:
         7z x -aoa mdk-sdk-${TARGET_OS}-x64-vs2026-ltl.7z
         7z a -ssc -m0=lzma2 -mx=9 -ms=on -mf=off mdk-sdk-${TARGET_OS}-vs2026-ltl.7z mdk-sdk
     - name: Archive SDK
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: mdk-sdk-windows-vs2026-ltl-RelWithDebInfo
         path: mdk-sdk-${{ env.TARGET_OS }}-vs2026-ltl.7z
@@ -529,9 +529,9 @@ jobs:
         config: [RelWithDebInfo]
         arch: [x64, arm64]
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
     - name: Checkout source
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
       with:
         repository: ${{ github.repository_owner }}/mdk
         path: mdk
@@ -541,7 +541,7 @@ jobs:
         submodules: 'recursive'
     - name: 'Restore External Dep cache'
       id: external-dep-cache
-      uses: actions/cache@v4
+      uses: actions/cache@v5
       with:
         path: ./mdk/external
         key: external-dep-${{ env.TARGET_OS }}-ffmpeg-${{ env.FF_VER }}-${{ vars.FF_SDK_ID }}
@@ -576,7 +576,7 @@ jobs:
         ../ci-after-build.sh
         mv mdk-sdk-*.7z ../mdk-sdk-${{ env.TARGET_OS }}-${{ matrix.arch }}.7z
     - name: Archive SDK
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: mdk-sdk-${{ env.TARGET_OS }}-${{ matrix.arch }}-${{ matrix.config }}
         path: mdk-sdk-${{ env.TARGET_OS }}-${{ matrix.arch }}.7z
@@ -587,13 +587,13 @@ jobs:
     env:
       TARGET_OS: uwp
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
     - name: Download x64 sdk
-      uses: actions/download-artifact@v4
+      uses: actions/download-artifact@v8
       with:
         name: mdk-sdk-uwp-x64-RelWithDebInfo
     - name: Download arm64 sdk
-      uses: actions/download-artifact@v4
+      uses: actions/download-artifact@v8
       with:
         name: mdk-sdk-uwp-arm64-RelWithDebInfo
     - name: Merge SDKs
@@ -603,7 +603,7 @@ jobs:
         7z x -aoa mdk-sdk-${TARGET_OS}-arm64.7z
         7z a -ssc -m0=lzma2 -mx=9 -ms=on -mf=off mdk-sdk-${TARGET_OS}.7z mdk-sdk
     - name: Archive SDK
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: mdk-sdk-uwp-RelWithDebInfo
         path: mdk-sdk-${{ env.TARGET_OS }}.7z
@@ -622,9 +622,9 @@ jobs:
         config: [MinSizeRel]
         arch: [x86, x64, arm64]
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
     - name: Checkout source
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
       with:
         repository: ${{ github.repository_owner }}/mdk
         path: mdk
@@ -634,13 +634,13 @@ jobs:
         submodules: 'recursive'
     - name: 'Restore External Dep cache'
       id: external-dep-cache
-      uses: actions/cache@v4
+      uses: actions/cache@v5
       with:
         path: ./mdk/external
         key: external-dep-${{ env.TARGET_OS }}-ffmpeg-${{ env.FF_VER }}-${{ vars.FF_SDK_ID }}
     - name: 'Restore sysroot cache'
       id: sysroot-cache
-      uses: actions/cache@v4
+      uses: actions/cache@v5
       with:
         path: /tmp/winsysroot
         key: sysroot-${{ env.TARGET_OS }}${{ vars.WINSDKVER }}-vc${{ vars.VCVER }}
@@ -671,7 +671,7 @@ jobs:
         fi
         mv mdk-sdk-*.7z ../mdk-sdk-${{ env.TARGET_OS }}-${{ matrix.arch }}-clang.7z
     - name: Archive SDK
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: mdk-sdk-clang-${{ env.TARGET_OS }}-${{ matrix.arch }}-${{ matrix.config }}
         path: mdk-sdk-${{ env.TARGET_OS }}-${{ matrix.arch }}-clang.7z
@@ -682,17 +682,17 @@ jobs:
     env:
       TARGET_OS: windows
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
     - name: Download x86 sdk
-      uses: actions/download-artifact@v4
+      uses: actions/download-artifact@v8
       with:
         name: mdk-sdk-clang-windows-x86-MinSizeRel
     - name: Download x64 sdk
-      uses: actions/download-artifact@v4
+      uses: actions/download-artifact@v8
       with:
         name: mdk-sdk-clang-windows-x64-MinSizeRel
     - name: Download arm64 sdk
-      uses: actions/download-artifact@v4
+      uses: actions/download-artifact@v8
       with:
         name: mdk-sdk-clang-windows-arm64-MinSizeRel
     - run: sudo apt install -y sshpass p7zip-full
@@ -704,7 +704,7 @@ jobs:
         7z x -aoa mdk-sdk-${TARGET_OS}-arm64-clang.7z
         7z a -ssc -m0=lzma2 -mx=9 -ms=on -mf=off mdk-sdk-${TARGET_OS}-clang.7z mdk-sdk
     - name: Archive SDK
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: mdk-sdk-clang-windows-MinSizeRel
         path: mdk-sdk-${{ env.TARGET_OS }}-clang.7z
@@ -716,17 +716,17 @@ jobs:
     runs-on: macos-latest
     needs: [Windows_SDK, UWP_SDK]
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
     - name: Download windows vs2026 sdk
-      uses: actions/download-artifact@v4
+      uses: actions/download-artifact@v8
       with:
         name: mdk-sdk-windows-vs2026-RelWithDebInfo
     - name: Download windows x64 vs2026 sdk
-      uses: actions/download-artifact@v4
+      uses: actions/download-artifact@v8
       with:
         name: mdk-sdk-windows-x64-vs2026-RelWithDebInfo
     - name: Download uwp sdk
-      uses: actions/download-artifact@v4
+      uses: actions/download-artifact@v8
       with:
         name: mdk-sdk-uwp-RelWithDebInfo
     - name: update build version
@@ -749,7 +749,7 @@ jobs:
         nuget pack mdk.nuspec
         mv *.nupkg ../mdk-vs2026.nupkg
     - name: Archive SDK
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: mdk-nuget
         path: 'mdk*.nupkg'
@@ -769,9 +769,9 @@ jobs:
         config: [MinSizeRel]
         arch: [amd64, arm64, armhf]
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
     - name: Checkout source
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
       with:
         repository: ${{ github.repository_owner }}/mdk
         path: mdk
@@ -781,13 +781,13 @@ jobs:
         submodules: 'recursive'
     - name: 'Restore External Dep cache'
       id: external-dep-cache
-      uses: actions/cache@v4
+      uses: actions/cache@v5
       with:
         path: ./mdk/external
         key: external-dep-${{ env.TARGET_OS }}-ffmpeg-${{ env.FF_VER }}-${{ vars.FF_SDK_ID }}
     - name: 'Restore sysroot cache'
       id: sysroot-cache
-      uses: actions/cache@v4
+      uses: actions/cache@v5
       with:
         path: ./mdk/sysroot
         key: sysroot-${{ env.TARGET_OS }}-${{ vars.LINUX_SYSROOT_ID }}
@@ -815,7 +815,7 @@ jobs:
         ../ci-after-build.sh
         mv mdk-sdk*.tar.xz ../mdk-sdk-${{ env.TARGET_OS }}-${{ matrix.arch }}.tar.xz
     - name: Archive SDK
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: mdk-sdk-${{ env.TARGET_OS }}-${{ matrix.arch }}-${{ matrix.config }}
         path: mdk-sdk-${{ env.TARGET_OS }}*.tar.xz
@@ -826,17 +826,17 @@ jobs:
     env:
       TARGET_OS: linux
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
     - name: Download amd64 sdk
-      uses: actions/download-artifact@v4
+      uses: actions/download-artifact@v8
       with:
         name: mdk-sdk-linux-amd64-MinSizeRel
     - name: Download arm64 sdk
-      uses: actions/download-artifact@v4
+      uses: actions/download-artifact@v8
       with:
         name: mdk-sdk-linux-arm64-MinSizeRel
     - name: Download armhf sdk
-      uses: actions/download-artifact@v4
+      uses: actions/download-artifact@v8
       with:
         name: mdk-sdk-linux-armhf-MinSizeRel
     - run: sudo apt install -y sshpass
@@ -850,7 +850,7 @@ jobs:
         rm -rf mdk-sdk/{bin,lib}/arm*
         tar Jcvf mdk-sdk-${TARGET_OS}-x64.tar.xz mdk-sdk
     - name: Archive SDK
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: mdk-sdk-linux-MinSizeRel
         path: |
@@ -880,9 +880,9 @@ jobs:
         config: [MinSizeRel] # https://github.com/android/ndk/issues/721
         arch: [arm64-v8a, x86_64, armeabi-v7a, x86]
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
     - name: Checkout source
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
       with:
         repository: ${{ github.repository_owner }}/mdk
         path: mdk
@@ -892,7 +892,7 @@ jobs:
         submodules: 'recursive'
     - name: 'Restore External Dep cache'
       id: external-dep-cache
-      uses: actions/cache@v4
+      uses: actions/cache@v5
       with:
         path: ./mdk/external
         key: external-dep-${{ env.TARGET_OS }}-ffmpeg-${{ env.FF_VER }}-${{ vars.FF_SDK_ID }}
@@ -920,7 +920,7 @@ jobs:
 #        local-cache: false
 #    - name: 'Restore ndk cache' # setup-ndk not fully cached
 #      id: ndk-cache
-#      uses: actions/cache@v4
+#      uses: actions/cache@v5
 #      with:
 #        path: ${{ runner.tool_cache }}/ndk/${{ env.NDK_32 }} # /opt/hostedtoolcache
 #        key: ndk-cache-${{ runner.os }}-${{ env.NDK_32 }}
@@ -931,7 +931,7 @@ jobs:
         ../ci-after-build.sh
         mv mdk-sdk-*.7z ../mdk-sdk-${{ env.TARGET_OS }}-${{ matrix.arch }}.7z
     - name: Archive SDK
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: mdk-sdk-${{ env.TARGET_OS }}-${{ matrix.arch }}-${{ matrix.config }}
         path: mdk-sdk-${{ env.TARGET_OS }}-${{ matrix.arch }}.7z
@@ -948,21 +948,21 @@ jobs:
     env:
       TARGET_OS: android
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
     - name: Download arm64-v8a sdk
-      uses: actions/download-artifact@v4
+      uses: actions/download-artifact@v8
       with:
         name: mdk-sdk-android-arm64-v8a-MinSizeRel
     - name: Download x86_64 sdk
-      uses: actions/download-artifact@v4
+      uses: actions/download-artifact@v8
       with:
         name: mdk-sdk-android-x86_64-MinSizeRel
     - name: Download armeabi-v7a sdk
-      uses: actions/download-artifact@v4
+      uses: actions/download-artifact@v8
       with:
         name: mdk-sdk-android-armeabi-v7a-MinSizeRel
     - name: Download x86 sdk
-      uses: actions/download-artifact@v4
+      uses: actions/download-artifact@v8
       with:
         name: mdk-sdk-android-x86-MinSizeRel
     - run: sudo apt install -y sshpass p7zip-full
@@ -975,7 +975,7 @@ jobs:
         7z x -aoa mdk-sdk-${TARGET_OS}-arm64-v8a.7z
         7z a -ssc -m0=lzma2 -mx=9 -ms=on -mf=off mdk-sdk-${TARGET_OS}.7z mdk-sdk
     - name: Archive SDK
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: mdk-sdk-android-MinSizeRel
         path: mdk-sdk-${{ env.TARGET_OS }}.7z
@@ -999,9 +999,9 @@ jobs:
         config: [MinSizeRel]
         arch: [arm64-v8a]
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
     - name: Checkout source
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
       with:
         repository: ${{ github.repository_owner }}/mdk
         path: mdk
@@ -1020,7 +1020,7 @@ jobs:
         echo "ohos_sdk_native: ${{ steps.setup-ohos-sdk.outputs.ohos_sdk_native }}"
     - name: 'Restore External Dep cache'
       id: external-dep-cache
-      uses: actions/cache@v4
+      uses: actions/cache@v5
       with:
         path: ./mdk/external
         key: external-dep-${{ env.TARGET_OS }}-ffmpeg-${{ env.FF_VER }}-${{ vars.FF_SDK_ID }}
@@ -1049,7 +1049,7 @@ jobs:
         ../ci-after-build.sh
         mv mdk-sdk-*.7z ..
     - name: Archive SDK
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: mdk-sdk-${{ env.TARGET_OS }}-${{ matrix.config }}
         path: mdk-sdk-${{ env.TARGET_OS }}.7z
@@ -1065,9 +1065,9 @@ jobs:
   abi:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
     - name: Checkout source
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
       with:
         repository: ${{ github.repository_owner }}/mdk
         path: mdk
@@ -1080,7 +1080,7 @@ jobs:
         mkdir -p mdk-sdk/include/abi/mdk
         cp -avf mdk/include/mdk/{AudioFormat,AudioFrame,Buffer,ColorSpace,FrameReader,global,MediaInfo,Property,VideoBuffer,VideoFormat,VideoFrame,VideoDecoder,Packet,MediaIO}.h mdk-sdk/include/abi/mdk
     - name: Archive SDK
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: mdk-abi-sdk
         path: mdk-sdk/
@@ -1133,7 +1133,7 @@ jobs:
     if: startsWith(github.ref, 'refs/tags/')
     needs: [Apple]
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
     - name: Deploy to Cocoapods
       run: |
         set -eo pipefail
@@ -1147,57 +1147,57 @@ jobs:
     needs: [Apple, NuGet, Linux_SDK, Android_SDK, ClangCL_SDK]
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       - name: Download iOS sdk
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: mdk-sdk-iOS
       - name: Download tvOS sdk
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: mdk-sdk-tvOS
       - name: Download visionOS sdk
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: mdk-sdk-visionOS
       - name: Download macCatalyst sdk
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: mdk-sdk-macCatalyst-MinSizeRel
       - name: Download macOS sdk
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: mdk-sdk-macOS
       - name: Download Apple sdk txz
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: mdk-sdk-apple
       - name: Download Apple sdk zip
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: mdk-sdk-apple-zip
       - name: Download win32 vs2026 sdk
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: mdk-sdk-windows-vs2026-RelWithDebInfo
       - name: Download win32 vs2026 ltl sdk
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: mdk-sdk-windows-vs2026-ltl-RelWithDebInfo
       - name: Download uwp sdk
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: mdk-sdk-uwp-RelWithDebInfo
       - name: Download clang-cl sdk
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: mdk-sdk-clang-windows-MinSizeRel
       - name: Download linux sdk
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: mdk-sdk-linux-MinSizeRel
       - name: Download android sdk
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: mdk-sdk-android-MinSizeRel
       - run: ls -lh
