@@ -26,7 +26,7 @@ env:
 jobs:
   macOS:
     # See: https://docs.github.com/en/actions/configuring-and-managing-workflows/configuring-a-workflow#configuring-a-build-matrix
-    runs-on: macos-15 # 15. 1 xcode per image
+    runs-on: macos-26 # 15. 1 xcode per image
     env:
       TARGET_OS: 'macOS'
       TARGET_ARCH: ${{ matrix.arch }}
@@ -93,7 +93,7 @@ jobs:
         sshpass -p ${SF_PW} scp -o StrictHostKeyChecking=no mdk-sdk-${TARGET_OS}-${{ matrix.arch }}.tar.xz ${SF_USER}@frs.sourceforge.net:/home/frs/project/mdk-sdk/nightly/
 
   iOS:
-    runs-on: macos-15
+    runs-on: macos-26
     env:
       TARGET_OS: ${{ matrix.os }}${{ matrix.simulator }}
       LTO_SUFFIX: -lto # lto on master branch crashes in avio_open2 if open
@@ -171,7 +171,7 @@ jobs:
       run: sshpass -p ${SF_PW} scp -o StrictHostKeyChecking=no mdk-sdk-${TARGET_OS}.tar.xz ${SF_USER}@frs.sourceforge.net:/home/frs/project/mdk-sdk/nightly/
 
   Apple:
-    runs-on: macos-15
+    runs-on: macos-26
     needs: [macOS, iOS]
     steps:
     - name: Setup Xcode
