@@ -145,6 +145,7 @@ Since 0.35.0, `player.setProperty("video.decoders", GetGlobalOption("video.decod
 - [Swift binding](https://github.com/wang-bin/swift-mdk)
 - [Flutter/Dart](https://pub.dev/packages/fvp)
 - [C#](https://github.com/axojhf/MDK.SDK.NET)
+- [OHOS ArkTS](https://github.com/wang-bin/libmdk-napi)
 
 ## Sponsors
 [![Sportimization](https://www.sportimization.com/assets/images/logo_sportimization_small.png)](https://www.sportimization.com)

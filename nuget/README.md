@@ -6,7 +6,7 @@
 
 ### Features
 - [Simple and powerful API set](https://github.com/wang-bin/mdk-sdk/wiki/Player-APIs)
-- [Cross platform: Windows(x86, arm), UWP, Linux, macOS, Android, iOS, tvOS, visionOS, Raspberry Pi](https://github.com/wang-bin/mdk-sdk/wiki/System-Requirements)
+- [Cross platform: Windows(x86, arm), UWP, Linux, macOS, Android, OpenHarmony, iOS, tvOS, visionOS, Raspberry Pi, RockChip](https://github.com/wang-bin/mdk-sdk/wiki/System-Requirements)
 - [Hardware accelerated decoders for all platforms](https://github.com/wang-bin/mdk-sdk/wiki/Decoders)
 - [0-copy GPU rendering for all platforms and all renderers(Vulkan is WIP.)](https://github.com/wang-bin/mdk-sdk/wiki/Zero-Copy-Renderer)
 - [Dynamic OpenGL](https://github.com/wang-bin/mdk-sdk/wiki/OpenGL-Support-Matrix)

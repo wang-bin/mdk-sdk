@@ -1,5 +1,41 @@
 Change log:
 
+# 0.36.0
+
+- New OHOS(OpenHarmony) support. [An example](https://github.com/wang-bin/mdk-examples/tree/master/ohos) is created, [flutter pluging](https://github.com/wang-bin/fvp) is also supported
+    - `OH` hardware video decoder. Support 0-copy rendering.
+    - Default audio renderer is OHAudio. OpenSLES also works but not recommended.
+    - EGL supports hdr10 passthrough.
+    - Vulkan is WIP.
+    - HEVC alpha rendering is not perfect.
+- Add GLRenderer.depth, can be 0(default), 8, 10. 0 may change depth for sdr and hdr automatically. Currently only supported by EGL.
+- Hap: new lossless compression, about 10% of snappy compressed size, faster decode and encode speed. There is also a command line tool to convert from snappy: `./transcode -vd hap -ve hap -vc hap -i in.mov -o out.mov`
+- Support frame size change for VT, MFT and CUDA decoder
+- XAudio2: improve device switch speed
+- Android
+    - New AAudio renderer, now is the default
+    - Fix sdk caller module name for android < 7.0
+- AMediaCodec:
+    - Add apv
+    - Reuse EGLImage
+    - Async acquire AImage
+    - Support tunneled playback via property `tunnel=1`
+    - Supports api 37 NDK AMediaCodecInfo and AMediaCodecStore, and prefer ndk ASurfaceTexture over jni by [ndk compat layer](https://github.com/wang-bin/AND)
+- EGL: fix get_all_proc_addresses extension test
+- GL: support 16bit unsigned int format. used by platforms do not support r16 unorm, e.g. OHOS.
+- Add global option `os.api` to test given sdk version(android).
+- dav1d: fix rgb format check
+- Fix MFT error check for vp9 with alpha
+- Snapshot error details
+- Reduce android debug symbol size
+- Reduce builtin spirv size
+- Improve MediaInfo dolby vision description
+- VAAPI: fix null display and 0-copy error
+- FFmpeg
+    - Enable threads for software defined vk decoders(ffv1, prores etc.)
+    - Improve module loading
+    - Keep stream order when remuxing
+
 
 # 0.35.1
 
