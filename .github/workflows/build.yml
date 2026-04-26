@@ -475,7 +475,7 @@ jobs:
         arch: amd64
     - name: Configure
       working-directory: mdk
-      run: cmake --preset=${{ env.TARGET_OS }}-${{ matrix.arch }}-ltl -DCMAKE_INSTALL_PREFIX=$PWD/mdk-sdk-${{ matrix.arch }}
+      run: cmake --preset=${{ env.TARGET_OS }}-${{ matrix.arch }}-ltl -DCMAKE_INSTALL_PREFIX=mdk-sdk-${{ matrix.arch }}
     - name: Build
       working-directory: mdk
       run: cmake --build --preset=${{ env.TARGET_OS }}-${{ matrix.arch }}-ltl --parallel
@@ -565,7 +565,7 @@ jobs:
         uwp: true
     - name: Configure
       working-directory: mdk
-      run: cmake --preset=${{ env.TARGET_OS }}-${{ matrix.arch }} -DCMAKE_INSTALL_PREFIX=$PWD/mdk-sdk-${{ matrix.arch }}
+      run: cmake --preset=${{ env.TARGET_OS }}-${{ matrix.arch }} -DCMAKE_INSTALL_PREFIX=mdk-sdk-${{ matrix.arch }}
     - name: Build
       working-directory: mdk
       run: cmake --build --preset=${{ env.TARGET_OS }}-${{ matrix.arch }} --parallel
@@ -1200,6 +1200,10 @@ jobs:
         uses: actions/download-artifact@v8
         with:
           name: mdk-sdk-android-MinSizeRel
+      - name: Download ohos sdk
+        uses: actions/download-artifact@v8
+        with:
+          name: mdk-sdk-ohos-MinSizeRel
       - run: ls -lh
       - name: Release
         uses: softprops/action-gh-release@v2
