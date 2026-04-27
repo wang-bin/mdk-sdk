@@ -18,6 +18,8 @@ for s in build/${TARGET_OS}-*; do
   echo "arch: $a"
   if [ -f build/${TARGET_OS}-$a/cmake_install.cmake ]; then
     cmake -P build/${TARGET_OS}-$a/cmake_install.cmake
+    a=${a%%-clang}
+    a=${a%%-ltl}
     tools/mksdk.sh mdk-sdk-$a $a || echo done # FIXME: android arch
   fi
 done
