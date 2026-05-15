@@ -44,6 +44,8 @@ else
   $TAR Jcvf mdk-sdk-${TARGET_OS}.tar.xz mdk-sdk
   ls -lh mdk-sdk-${TARGET_OS}.tar.xz
 fi
+
+find mdk-sdk*/lib -name "libmdk.so" -exec file {} \;
 #if [ `which sshpass` ]; then
   #echo sshpass -p "$SF_PW" scp -o StrictHostKeyChecking=no mdk-sdk-${TARGET_OS}.tar.xz $SF_USER@frs.sourceforge.net:/home/frs/project/mdk-sdk/nightly/
   #sshpass -e scp -o StrictHostKeyChecking=no mdk-sdk-${TARGET_OS}.tar.xz $SF_USER@frs.sourceforge.net:/home/frs/project/mdk-sdk/nightly/
