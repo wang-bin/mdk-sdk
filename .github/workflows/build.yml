@@ -520,7 +520,7 @@ jobs:
 
 
   UWP:
-    runs-on: windows-latest
+    runs-on: windows-2025-vs2026
     env:
       TARGET_OS: uwp
     strategy:

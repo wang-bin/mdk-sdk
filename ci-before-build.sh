@@ -92,15 +92,6 @@ if [[ "$EXTERNAL_DEP_CACHE_HIT" != "true" ]]; then
       cp -af Vulkan-Headers-main/include/* external/include/
   fi
 
-  if [[ "$TARGET_OS" == "win"* || "$TARGET_OS" == "uwp"* || "$TARGET_OS" == macOS ]]; then
-    mkdir -p external/include/{EGL,GLES{2,3},KHR}
-    for h in GLES2/gl2.h GLES2/gl2ext.h GLES2/gl2platform.h GLES3/gl3.h GLES3/gl3platform.h; do
-      curl -kL -o external/include/${h} https://www.khronos.org/registry/OpenGL/api/${h}
-    done
-    for h in EGL/egl.h EGL/eglext.h EGL/eglplatform.h KHR/khrplatform.h; do
-      curl -kL -o external/include/${h} https://www.khronos.org/registry/EGL/api/${h}
-    done
-  fi
   if [[ "$TARGET_OS" == "win"* || "$TARGET_OS" == macOS || "$TARGET_OS" == "linux" ]]; then
     curl -kL -o R3DSDK.7z https://sourceforge.net/projects/mdk-sdk/files/deps/r3d/R3DSDK.7z/download
     7z x R3DSDK.7z -oexternal
