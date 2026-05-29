@@ -408,6 +408,8 @@ jobs:
         7z x -aoa mdk-sdk-${TARGET_OS}-x64-vs2026.7z
         7z x -aoa mdk-sdk-${TARGET_OS}-arm64-vs2026.7z
         7z a -ssc -m0=lzma2 -mx=9 -ms=on -mf=off mdk-sdk-${TARGET_OS}-vs2026.7z mdk-sdk
+        md5sum mdk-sdk-${TARGET_OS}-vs2026.7z | cut -d ' ' -f1 > mdk-sdk-${TARGET_OS}-vs2026.7z.md5
+        md5sum mdk-sdk-${TARGET_OS}-x64-vs2026.7z | cut -d ' ' -f1 > mdk-sdk-${TARGET_OS}-x64-vs2026.7z.md5
     - name: Archive SDK
       uses: actions/upload-artifact@v7
       with:
@@ -415,6 +417,10 @@ jobs:
         path: |
             mdk-sdk-${{ env.TARGET_OS }}-vs2026.7z
             mdk-sdk-${{ env.TARGET_OS }}-x64-vs2026.7z
+    - name: Upload to SourceForge
+      if: ${{ env.SF_UPLOAD == 'true' }}
+      shell: bash
+      run: make -f upload.mk
 
 
   Windows_LTL:
@@ -607,6 +613,10 @@ jobs:
       with:
         name: mdk-sdk-uwp-RelWithDebInfo
         path: mdk-sdk-${{ env.TARGET_OS }}.7z
+    - name: Upload to SourceForge
+      if: ${{ env.SF_UPLOAD == 'true' }}
+      shell: bash
+      run: make -f upload.mk
 
 
   ClangCL:
@@ -721,10 +731,6 @@ jobs:
       uses: actions/download-artifact@v8
       with:
         name: mdk-sdk-windows-vs2026-RelWithDebInfo
-    - name: Download windows x64 vs2026 sdk
-      uses: actions/download-artifact@v8
-      with:
-        name: mdk-sdk-windows-x64-vs2026-RelWithDebInfo
     - name: Download uwp sdk
       uses: actions/download-artifact@v8
       with:
@@ -737,8 +743,6 @@ jobs:
     - name: Make nupkg (vs2026)
       run: |
         rm -rf mdk-sdk uwp
-        md5sum mdk-sdk-windows-vs2026.7z | cut -d ' ' -f1 > mdk-sdk-windows-vs2026.7z.md5
-        md5sum mdk-sdk-windows-x64-vs2026.7z | cut -d ' ' -f1 > mdk-sdk-windows-x64-vs2026.7z.md5
         7z x mdk-sdk-windows-vs2026.7z
         7z x mdk-sdk-uwp.7z -o"uwp"
         mkdir mdk-sdk/bin/UAP
