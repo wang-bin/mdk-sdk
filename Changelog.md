@@ -1,5 +1,50 @@
 Change log:
 
+# 0.37.0
+
+- Support ProRes Raw color parameters parsing and rendering for all decoders and renderers.
+- Disk cache support for http(s), default cache dir is OS or app cache dir. Can be enabled by global option `cache.disk.io=1`, change protocols via `cache.disk.io.protocols=proto1,proto2`, change cache dir via `cache.disk.io.dir`
+- Support h264/5 decoder frame drop, improve seek speed
+- Video decoder property `drop` value can be `no`, `nonref`, `bidir`, `noni`, `nonkey` and `auto`(default)
+- Drop frames to keep playback rate for intra only codecs e.g. hap. can be disabled by decoder property `drop_fps=0`
+- Support decoder frame drop if out of sync. For playback rate >= 3.0, it's enabled. drop count is show in log.
+- If a decoder support scaled output, default size is max video renderer size, result in higher decoding speed. Can be enabled(default) by player property `video.decoder.scale` value `vo`, disabled by other values.
+- GPU:
+    - Support bayer formats, 8~16 bits, all patterns, including OpenGL ES2
+    - Support ProRes Raw rendering with color correction
+    - Fix uniform/const buffer struct member alignment, especially for metal msl
+- VT decoder:
+    - `scale` property value can be `${w}x${h}` or `1/N`, a closest supported size will be used. Improve scale support check.
+    - ProRes Raw now outputs bayer format by default for macOS 11.0+ and iOS 14.0+, higher performance, no scale support. Still output rgbaf16 if bayer is not supported.
+- OHOS:
+    - More codecs in api 23 and 24
+    - Bundle dav1d in sdk
+    - Support raw file resources via `rawfile:some_path`, requires global option `resourceManager`. [native example](https://github.com/wang-bin/libmdk-napi/commit/3c55c2a69090ea8e38b8e1855932fa2d562b31fa) and [flutter example](https://github.com/wang-bin/fvp/commit/2e46bcde70f7cf89dc8da24eedd161fb39875d20)
+- CUDA:
+    - Prefer primary context. can be disabled by global option `cuda.primaryCtx=0` or env `CUDA_PRIMARY_CTX=0`
+    - Enable for WOA64
+    - Support 422(not tested)
+- Ensure snapshot is executed when a frame is rendered
+- Slow down audio speed if video is too slow, can be enabled by global option `avsync.audio.adaptive=1`
+- Default font dir is in app cache dir for android and ohos
+- OpenGL: Fix crash if snapshot without a video frame
+- Add vulkan to `decoders.hint` for desktop platforms
+- XAudio2: destroy engine when player destroyed to fix preventing system hibernation. env `XA2_SHARED=1` or global option `audio.xa2.persistent=1` can keep engine alive to speedup device switch.
+- Fix potential hang when destroying player
+- Fix play again w/o stop may result in dead lock
+- Fix sync to external clock via `onSync()` when seeking or state changed.
+- Don't convert mono pcm if marked as planar format
+- R3D:
+    - Build against 9.2 SDK
+    - Support windows on arm64
+    - Disable unsupported features
+- FFmpeg:
+    - Compatible with 9.0 abi
+    - Fix in/out pts mismatch
+    - More pixel formats support
+    - Check requirements for compute shader based vulkan decoders to avoid driver crash
+
+
 # 0.36.0
 
 - New OHOS(OpenHarmony) support. [An example](https://github.com/wang-bin/mdk-examples/tree/master/ohos) is created, [flutter pluging](https://github.com/wang-bin/fvp) is also supported
@@ -9,7 +54,7 @@ Change log:
     - Vulkan is WIP.
     - HEVC alpha rendering is not perfect.
 - Add GLRenderer.depth, can be 0(default), 8, 10. 0 may change depth for sdr and hdr automatically. Currently only supported by EGL.
-- Hap: new lossless compression, about 10% of snappy compressed size, faster decode and encode speed. There is also a command line tool to convert from snappy: `./transcode -vd hap -ve hap -vc hap -i in.mov -o out.mov`
+- Hap: new lossless compression, about 10%~100% of snappy compressed size, faster decode and encode speed. There is also a command line tool to convert from snappy: `./transcode -vd hap -ve hap -vc hap -i in.mov -o out.mov`
 - Support frame size change for VT, MFT and CUDA decoder
 - XAudio2: improve device switch speed
 - Android

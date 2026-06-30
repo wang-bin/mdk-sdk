@@ -25,11 +25,11 @@ NuGet[![NuGet](https://img.shields.io/nuget/dt/mdk)](https://www.nuget.org/packa
 - [HDR display metadata passthrough, HDR <=> SDR tone mapping](https://github.com/wang-bin/mdk-sdk/wiki/HDR). You can use HDR display in [Qt6(6.6+ for macOS, 6.x for windows)](https://github.com/wang-bin/mdk-examples/tree/master/Qt/qmlrhi), [OBS Studio](https://github.com/wang-bin/obs-mdk), Android SurfaceView and more.
 - Dolby Vision rendering, including Profile 5. Support HEVC and AV1.
 - HEVC, VP8/9 transparent videos(alpha channel) support for all decoders and renderers
-- Professional codecs: GPU accelerated [HAP](https://github.com/wang-bin/mdk-sdk/wiki/Decoders#hap) codec rendering, higher HAP compression ratio and decoding speed, [Blackmagic RAW](https://github.com/wang-bin/mdk-braw), [R3D, N-RAW](https://github.com/wang-bin/mdk-r3d), [nvJPEG2000](https://github.com/wang-bin/mdk-nvjp2k)
+- Professional codecs: GPU accelerated [HAP](https://github.com/wang-bin/mdk-sdk/wiki/Decoders#hap) codec rendering, higher HAP compression ratio and decoding speed, ProRes Raw rendering, [Blackmagic RAW](https://github.com/wang-bin/mdk-braw), [R3D, N-RAW](https://github.com/wang-bin/mdk-r3d), [nvJPEG2000](https://github.com/wang-bin/mdk-nvjp2k)
 - Subtitle rendering, including ass, plain text, bitmap, closed caption
 - [Seamless/Gapless media and bitrate switch for any media](https://github.com/wang-bin/mdk-sdk/wiki/Player-APIs#player-setcolorspace-value-void-vo_opaque--nullptr)
 - Optimized Continuous seeking. As fast as mpv, but much lower cpu, memory and gpu load. Suitable for [timeline preview](https://github.com/wang-bin/mdk-sdk/wiki/Typical-Usage#timeline-preview)
-- [Smart FFmpeg runtime, dynamic load, binary compatible with 4.0~8.x](https://github.com/wang-bin/mdk-sdk/wiki/FFmpeg-Runtime)
+- [Smart FFmpeg runtime, dynamic load, binary compatible with 4.0~9.x](https://github.com/wang-bin/mdk-sdk/wiki/FFmpeg-Runtime)
 
 
 ## Install
@@ -68,6 +68,10 @@ import swift_mdk
 ### Nuget
 
 Install via [NuGet](https://www.nuget.org/packages/mdk) in Visual Studio for both Windows desktop and UWP
+
+### OpenHarmony
+
+`ohpm install @mediadevkit/libmdk-napi`
 
 ## macOS Hardened Runtime
 You may fail to run(or codesign) with default hardened runtime options because there are some dylib files in mdk.framework not signed correctly. You can either select `Disable Library Validation` in `Hardened Runtime` options, or sign dylib(**RECOMMENDED**): In `Build Phase`, add a `New Run Script Phase` with content
@@ -176,6 +180,9 @@ Since 0.35.0, `player.setProperty("video.decoders", GetGlobalOption("video.decod
 [![NovaStar](https://www.novastar.tech/static/img/01index/logo01.png)](https://novastar-led.cn/index/downloadcenter/downloaddatacontent/cateID/38/type/software/catename/%E5%B1%8F%E7%B2%BE%E7%81%B5+%E6%A1%8C%E9%9D%A2%E7%AB%AF%EF%BC%88%E5%8E%9FViPlex+Express%EF%BC%89.html)
 [![digibird XStar CX1](https://www.digibird.com.cn/images/logo.png)](https://www.digibird.com.cn)
 [![onbon thinkshow](https://www.onbonbx.com/templates/default/images/xylogo.png)](https://www.onbonbx.com/download/software/ThinkShow)
+[![NeoStation](https://neostation.dev/neostation-logo-dark-v2.webp)](https://neostation.dev)
+<a href="http://www.dtrktech.com"><img src="http://www.dtrktech.com/images/logo.png" alt="DTRK" width=120 height=120  style="background-color:black"></a>
+
 
 [Q-SYS UCI Viewer](https://help.q-sys.com/Content/Schematic_Library/uci_viewer.htm)
 [Diem](https://www.downloaddiem.com)
