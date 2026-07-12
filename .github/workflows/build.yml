@@ -1001,7 +1001,7 @@ jobs:
       fail-fast: false
       matrix:
         config: [MinSizeRel]
-        arch: [arm64-v8a]
+        arch: [arm64-v8a, x86_64]
     steps:
     - uses: actions/checkout@v6
     - name: Checkout source
@@ -1051,14 +1051,42 @@ jobs:
       run: |
         export OHOS_NDK=$OHOS_SDK_NATIVE
         ../ci-after-build.sh
-        mv mdk-sdk-*.7z ..
+        mv mdk-sdk-*.7z ../mdk-sdk-${{ env.TARGET_OS }}-${{ matrix.arch }}.7z
     - name: Archive SDK
       uses: actions/upload-artifact@v7
       with:
-        name: mdk-sdk-${{ env.TARGET_OS }}-${{ matrix.config }}
+        name: mdk-sdk-${{ env.TARGET_OS }}-${{ matrix.arch }}-${{ matrix.config }}
+        path: mdk-sdk-${{ env.TARGET_OS }}-${{ matrix.arch }}.7z
+
+  OHOS_SDK:
+    runs-on: ubuntu-latest
+    needs: [ohos]
+    env:
+      TARGET_OS: ohos
+    steps:
+    - uses: actions/checkout@v6
+    - name: Download arm64-v8a sdk
+      uses: actions/download-artifact@v8
+      with:
+        name: mdk-sdk-ohos-arm64-v8a-MinSizeRel
+    - name: Download x86_64 sdk
+      uses: actions/download-artifact@v8
+      with:
+        name: mdk-sdk-ohos-x86_64-MinSizeRel
+    - run: sudo apt install -y sshpass p7zip-full
+    - name: Merge SDKs
+      shell: bash
+      run: |
+        7z x -aoa mdk-sdk-${{ env.TARGET_OS }}-x86_64.7z
+        7z x -aoa mdk-sdk-${{ env.TARGET_OS }}-arm64-v8a.7z
+        7z a -ssc -m0=lzma2 -mx=9 -ms=on -mf=off mdk-sdk-${{ env.TARGET_OS }}.7z mdk-sdk
+    - name: Archive SDK
+      uses: actions/upload-artifact@v7
+      with:
+        name: mdk-sdk-ohos-MinSizeRel
         path: mdk-sdk-${{ env.TARGET_OS }}.7z
     - name: Upload to SourceForge
-      if: ${{ matrix.config == 'MinSizeRel' && env.SF_UPLOAD == 'true' }}
+      if: ${{ env.SF_UPLOAD == 'true' }}
       shell: bash
       run: |
         sshpass -p ${SF_PW} scp -o StrictHostKeyChecking=no mdk-sdk-${TARGET_OS}.7z ${SF_USER}@frs.sourceforge.net:/home/frs/project/mdk-sdk/nightly/
