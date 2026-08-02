@@ -28,5 +28,14 @@ setLogHandler([&log_file](LogLevel level, const char* msg){
 });
 ```
 
-**Crash**
+#### Crash
 use lldb, gdb, visual studio to show the call stack.
+
+<details>
+<summary>Android crash log and upload `libmdk.so*`</summary>
+
+```
+PASTE CRASH LOG HERE. starts with(including)
+*** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ***
+```
+</details>
