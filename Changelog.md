@@ -1,5 +1,45 @@
 Change log:
 
+# 0.38.0
+
+- Support hevc frame size change in all decoders
+- Smooth playback, better A/V sync
+- AMediaCodec:
+    - Enable tunnel if surface property is a valid ptr, previously `image=0` is also required
+    - Enable dolby vision by default for tunnel mode
+    - Use java implementation for AMediaCodecStore for api < 37. https://github.com/wang-bin/mdk-sdk/issues/365
+    - Fix async mode buffer release dead lock
+    - Fix stale states when flushing
+- OHOS: add x86_64, improve ohaudio renderer
+- AAudio:
+    - Fix invalid state when flushing
+    - Improve timing
+- XAudio2: fix use after free when flushing
+- Improve subtitle rendering, requires libass from https://nightly.link/wang-bin/devpkgs/workflows/build/main/libmdk-dep.zip
+    - Apple: font face w/o font path to support new format not supported by freetype
+    - OHOS: supports system fonts
+- Compile time pixel formats description
+- Implement gpu timer for d3d12, metal and vulkan renderer
+- Fix audio frame samples per channel
+- Android: fix ANR if accurate seek
+- Metal: fix constant buffer layout, e.g. dovi profile8 mmr
+- Disable tone mapping if in & out signal peak are close, also fix bt2390 shader
+- Parse rpu even if dolby vision profile is unknown
+- EGL: Choose 8bit color format for SDR because rgb10a2 may be not well supported on some devices
+- Muxer: detect DTS decrease
+- Fix `onXXX(nullptr)` null callback clearing, fix dead lock in `onSync(null)` when playing
+- Fix subsample size for odd size
+- Global option `log.codec_list=0` can disable enumerating supported codecs(once) for AMediaCodec and OH decoder
+- FFmpeg:
+    - Improve v9 ABI support
+    - Fix HEVC alpha decode with recent FFmpeg
+    - Encoder keeps input frame size by default, support size change
+    - Support complex filter graph, multiple input tracks as input via `setActiveTracks()`
+    - Support hw filters for sw frames via `hwupload`, optionally hw devices can be set by `video.avfilter.hwdevice`. FFmpeg 6.0+ is required. see wiki for more details
+    - More pixel formats
+- Linux sdk is built with clang-24
+
+
 # 0.37.0
 
 - Support ProRes Raw color parameters parsing and rendering for all decoders and renderers.
