@@ -853,6 +853,7 @@ jobs:
         tar Jcvf mdk-sdk-${TARGET_OS}.tar.xz mdk-sdk
         rm -rf mdk-sdk/{bin,lib}/arm*
         tar Jcvf mdk-sdk-${TARGET_OS}-x64.tar.xz mdk-sdk
+        find mdk-sdk -name libmdk.so -exec file {} \;
     - name: Archive SDK
       uses: actions/upload-artifact@v7
       with:
@@ -978,6 +979,7 @@ jobs:
         7z x -aoa mdk-sdk-${TARGET_OS}-x86.7z
         7z x -aoa mdk-sdk-${TARGET_OS}-arm64-v8a.7z
         7z a -ssc -m0=lzma2 -mx=9 -ms=on -mf=off mdk-sdk-${TARGET_OS}.7z mdk-sdk
+        find mdk-sdk -name libmdk.so -exec file {} \;
     - name: Archive SDK
       uses: actions/upload-artifact@v7
       with:
@@ -1080,6 +1082,7 @@ jobs:
         7z x -aoa mdk-sdk-${{ env.TARGET_OS }}-x86_64.7z
         7z x -aoa mdk-sdk-${{ env.TARGET_OS }}-arm64-v8a.7z
         7z a -ssc -m0=lzma2 -mx=9 -ms=on -mf=off mdk-sdk-${{ env.TARGET_OS }}.7z mdk-sdk
+        find mdk-sdk -name libmdk.so -exec file {} \;
     - name: Archive SDK
       uses: actions/upload-artifact@v7
       with:
