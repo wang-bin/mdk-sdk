@@ -1,7 +1,62 @@
 Change log:
 
+# 0.39.0
+
+- API:
+    - Add  `VideoLayers`, and `setLayers()` (`setVideoLayers()` in C) for rendering the base layer, enhancement layer or all layers.
+- Dolby Vision Profile 7 FEL support:
+    - Decode FEL from single-track and separate base/enhancement tracks
+    - Render FEL residuals with Metal, OpenGL/ES, Vulkan, D3D11 and D3D12.
+    - FFmpeg 9.0+ is required for separated bl/el tracks or if no in-band parameter sets
+- HDR Gain Map support:
+    - Parse gain map in jpeg, support ISO 21496-1, adobe, google and apple xmp
+    - Apply decoded maps for HDR presentation with Metal, D3D11, D3D12, OpenGL/GLES and Vulkan if hdr is supported, or you can use global option `gpu.gainmap.sdr=1` to apply for sdr display too.
+- GPU renderers:
+    - Simplify dolby vision reshape.
+    - Improve enhancement layer rendering. Now alpha layer, gain map and dolby vision fel are treated as enhancement layer.
+    - Unify base layer and enhancement layer rendering. Both can be produced from hardware decoders and support 0-copy.
+- Enhancement layer options:
+    - Decoder property: `el.$prop`(except el.decoder) will apply `$prop` for el decoder only.
+    - el decoders run on a worker thread by default (`el_worker=1`) to avoid blocking base-layer decoding. Set `el_worker=0` for synchronous decoding.
+    - Player property `demux.el.attach` and `demux.el.pass` control multi-track packet pairing and passthrough.
+- MFT: default JPEG decode output to NV12 and reject unsupported output-format mismatches. This can exclude jpeg 444, it's expected because the result can be wrong for high resolution images. MFT bug?
+- VT:
+    - "verbose" property to print session and frame details. value can be 0, 1, 2
+    - Preserve complete parameter sets across seek
+    - Preserve NAL framing across reactive restart
+    - Support single-track FEL w/o el hvcC
+- OH video decoder: stop decoder when no buffer lives to fix single frame jpeg image can not be rendered
+- Decoder option change: `el`, `alpha`, `raw` int value can be -1(default): prefer backend, 0: disable, 1: backend only, 2: built-in parser or dual decoder only.
+- Extract base layer extra data if an el decoder is required.
+- GL:
+    - Fix EGL platform apis attribute type in EGL 1.4~1.5, broken since 7 years ago.
+    - Fix drm external oes target binding
+- Fix invalid timestamp duration and full-file buffering
+- Video encoders(no api yet):
+    - Add VT encoder
+    - Support input resolution changes for h264/5, including coded-stream framing and parameter-set updates.
+- Android:
+    - Retain native windows across surface changes, fix UAF in gl context
+    - Improve JNI thread safety, performance etc
+- WGL:
+    - scRGB output support, must explicitly call Player.set(ColorSpaceSCRGB)
+    - Fix shared/offscreen WGL context creation.
+- AudioQueue: support multichannel formats negotiated with the output device.
+- Fix snapshot failed to encode jpeg
+- FFmpeg:
+    - Fix AVPacket pts broken since previous version
+    - Support AVStreamGroup, used by dolby vision fel
+    - Guess color space, fix scale error
+
+
 # 0.38.0
 
+- JPEG HDR gain-map phase 1: parse ISO 21496-1, Adobe/Google XMP, and Apple old/new XMP
+  compatibility metadata, decode the base and gain-map JPEGs with the existing dual-decoder path,
+  and expose `VideoFrame::Layer::GainMap` plus typed `GainMapMetadata`; `el`/`gainmap`/`mpf`
+  properties follow assignment order: `el` updates all EL bits, while `alpha`/`gainmap`/`mpf`
+  update their individual bits. HDR composition/rendering and auxiliary hardware
+  decoding are not included.
 - Support hevc frame size change in all decoders
 - Smooth playback, better A/V sync
 - AMediaCodec:
