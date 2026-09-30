@@ -1246,12 +1246,45 @@ jobs:
           path: _mdk-abi-sdk
           skip-decompress: true
       - run: mv _mdk-abi-sdk/* mdk-abi-sdk.zip && ls -lh
+      - name: Extract release notes from Changelog.md
+        run: |
+          ver="${GITHUB_REF_NAME#v}"
+          awk -v ver="$ver" '
+            $0 == "# " ver { found=1; next }
+            found && /^# / { exit }
+            found {
+              if (!started) {
+                if ($0 ~ /^[[:space:]]*$/) next
+                started=1
+              }
+              lines[++n]=$0
+            }
+            END {
+              while (n > 0 && lines[n] ~ /^[[:space:]]*$/) n--
+              for (i = 1; i <= n; i++) print lines[i]
+            }
+          ' Changelog.md > release-notes.md
+          if [[ ! -s release-notes.md ]]; then
+            echo "::warning::No Changelog section for $ver; using first section"
+            awk '/^# /{ if (n++) exit; found=1; next }
+                 found {
+                   if (!started) {
+                     if ($0 ~ /^[[:space:]]*$/) next
+                     started=1
+                   }
+                   lines[++m]=$0
+                 }
+                 END {
+                   while (m > 0 && lines[m] ~ /^[[:space:]]*$/) m--
+                   for (i = 1; i <= m; i++) print lines[i]
+                 }' Changelog.md > release-notes.md
+          fi
+          cat release-notes.md
       - name: Release
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3
         with:
           draft: true
-          body: "Changelog.md"
-          #body_path: Changelog.md
+          body_path: release-notes.md
           files: |
             *.7z
             *.xz
