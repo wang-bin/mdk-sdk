@@ -1179,7 +1179,7 @@ jobs:
   Release:
     runs-on: ubuntu-latest
     if: startsWith(github.ref, 'refs/tags/')
-    needs: [Apple, NuGet, Linux_SDK, Android_SDK, ClangCL_SDK]
+    needs: [Apple, NuGet, Linux_SDK, Android_SDK, ClangCL_SDK, abi]
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -1239,7 +1239,13 @@ jobs:
         uses: actions/download-artifact@v8
         with:
           name: mdk-sdk-ohos-MinSizeRel
-      - run: ls -lh
+      - name: Download abi sdk
+        uses: actions/download-artifact@v8
+        with:
+          name: mdk-abi-sdk
+          path: _mdk-abi-sdk
+          skip-decompress: true
+      - run: mv _mdk-abi-sdk/* mdk-abi-sdk.zip && ls -lh
       - name: Release
         uses: softprops/action-gh-release@v2
         with:
@@ -1250,3 +1256,4 @@ jobs:
             *.7z
             *.xz
             mdk-sdk-apple.zip
+            mdk-abi-sdk.zip
