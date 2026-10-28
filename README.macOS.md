@@ -35,7 +35,7 @@ SDK is built by Xcode 26 with
 - ffmpeg: https://sourceforge.net/projects/avbuild/files/macOS/ffmpeg-master-macOS-lite-lto.tar.xz/download
 
 ### macOS 10.15+
-Executables download from internet are not able to run. Try to run `./mdk-sdk/catalina.sh`
+Executables download from internet are not able to run. Try to run `xattr -cr mdk-sdk`
 
 ### [Runtime Requirements](https://github.com/wang-bin/mdk-sdk/wiki/System-Requirements#macos)
 Optional:

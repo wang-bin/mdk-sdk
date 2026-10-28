@@ -245,7 +245,6 @@ jobs:
         # xcrun bitcode_strip -r $libffmpeg -o $libffmpeg
         # xcrun bitcode_strip -r macCatalyst/mdk-sdk/lib/mdk.framework/mdk -o macCatalyst/mdk-sdk/lib/mdk.framework/Versions/Current/mdk
 
-        cp -af macOS/mdk-sdk/{bin,doc,*.sh} mdk-sdk
         cp -af macOS/mdk-sdk/README.md mdk-sdk/README-macOS.md
         cp -af macOS/mdk-sdk/lib/cmake mdk-sdk/lib/
         cp -af iOS/mdk-sdk/README.md mdk-sdk/README-iOS.md
