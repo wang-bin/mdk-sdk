@@ -25,7 +25,7 @@ if [ `which dpkg` ]; then # TODO: multi arch
     #wget https://apt.llvm.org/llvm.sh
     if [[ "$TARGET_OS" != android && "$TARGET_OS" != ohos ]]; then
         #bash -c "$(wget -O - https://apt.llvm.org/llvm.sh)"
-        wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | sudo apt-key add -
+        wget -qO- https://apt.llvm.org/llvm-snapshot.gpg.key | sudo tee /etc/apt/trusted.gpg.d/apt.llvm.org.asc
         source /etc/os-release
         sudo add-apt-repository -y "deb http://apt.llvm.org/${VERSION_CODENAME}/ llvm-toolchain-${VERSION_CODENAME} main"
         sudo apt update
@@ -70,30 +70,39 @@ mkdir -p external/{bin,lib}/$OS
 
 if [[ "$EXTERNAL_DEP_CACHE_HIT" != "true" ]]; then
   FFPKG=ffmpeg-${FF_VER}-${TARGET_OS}${FF_EXTRA}-lite${LTO_SUFFIX}
-  curl -kL -o ffmpeg-${TARGET_OS}.${FFPKG_EXT} https://sourceforge.net/projects/avbuild/files/${TARGET_OS}/${FFPKG}.${FFPKG_EXT}/download
+  FFURL=https://sourceforge.net/projects/avbuild/files/${TARGET_OS}/${FFPKG}.${FFPKG_EXT}/download
+  echo "downloading ${FFURL}"
+  curl -kL -o ffmpeg-${TARGET_OS}.${FFPKG_EXT} ${FFURL}
+  ls -l ffmpeg-${TARGET_OS}.${FFPKG_EXT}
   if [[ "${FFPKG_EXT}" == 7z ]]; then
     7z x ffmpeg-${TARGET_OS}.${FFPKG_EXT}
   else
-    tar Jxf ffmpeg-${TARGET_OS}.${FFPKG_EXT}
+    tar Jxvf ffmpeg-${TARGET_OS}.${FFPKG_EXT}
   fi
+  mkdir -p external/{bin,lib}/$OS
   #find ${FFPKG}/lib -name "libav*.so*" -o  -name "libsw*.so*" -delete
   find ${FFPKG}/lib -name "libffmpeg.a" -delete # FIXME: linking to libffmpeg.a(relocatable obj) by ci results in larger binary size
   cp -af ${FFPKG}/lib/* external/lib/$OS
   cp -af ${FFPKG}/include external/
   cp -af ${FFPKG}/bin/* external/bin/$OS # ffmpeg dll
+  find external/lib
+  pwd
 
   if [ "$TARGET_OS" == "sunxi" ]; then
       mkdir -p external/lib/sunxi/armv7
       cp -af ${FFPKG}/lib/* external/lib/sunxi/armv7 #single arch package
   elif [[ "$TARGET_OS" == "win"* ]]; then
       # TODO: download in cmake(if check_include_files failed)
-      curl -kL -o vk.zip https://github.com/KhronosGroup/Vulkan-Headers/archive/main.zip
+      VKURL=https://github.com/KhronosGroup/Vulkan-Headers/archive/main.zip
+      echo "downloading ${VKURL}"
+      curl -kL -o vk.zip ${VKURL}
       7z x vk.zip
       cp -af Vulkan-Headers-main/include/* external/include/
   fi
-
   if [[ "$TARGET_OS" == "win"* || "$TARGET_OS" == macOS || "$TARGET_OS" == "linux" ]]; then
-    curl -kL -o R3DSDK.7z https://sourceforge.net/projects/mdk-sdk/files/deps/r3d/R3DSDK.7z/download
+    R3DURL=https://sourceforge.net/projects/mdk-sdk/files/deps/r3d/R3DSDK.7z/download
+    echo "downloading ${R3DURL}"
+    curl -kL -o R3DSDK.7z ${R3DURL}
     7z x R3DSDK.7z -oexternal
   fi
 fi
