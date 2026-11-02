@@ -801,7 +801,6 @@ jobs:
         EXTERNAL_DEP_CACHE_HIT: ${{ steps.external-dep-cache.outputs.cache-hit }}
       working-directory: mdk
       run: |
-        sudo apt remove -y libc++1-14 libc++abi1-14 libunwind-14 python3-lldb-14 # conflict with latest llvm
         ../ci-before-build.sh
     - name: Configure
       shell: bash
