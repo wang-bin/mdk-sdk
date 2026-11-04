@@ -1,5 +1,43 @@
 Change log:
 
+# 0.40.0
+
+- Subtitle:
+    - Add global option `subtitle.seek_on_switch` for embedded subtitles, default 1
+    - Add `subtitle.delay` property, value is a floating point string, unit is second
+    - Fix pending style changes being discarded, styles not applied before play
+    - Improve bitmap lookup
+- GPU:
+    - Support `VideoEffect` for dolby vision profile 5
+    - Fix hgl linearization
+    - Adapt hlg peak to hdr target
+    - Fix dolby vision color if previous video is uyvy format
+    - Fix Hap uncompressed data rendering
+- BRAW:
+    - Build with 6.0 SDK, not compatible with old versions
+    - Support windows arm64
+- MFT:
+    - Add `buffers` property for sample output
+    - Add `verbose` property to show more logs, can be 0, 1(default), 2
+- Improve video decoder enhancement layer decoding & dovi/gainmap/raw meta data
+- OpenGL:
+    - Enable yuv sampler by default
+    - Fix yuv sampler wrong shader code
+    - Fix gl yuv sampler selection for rgb hardware buffers, e.g. some av1 decoded from AMediaCodec can not be rendered
+    - Fix crash when resizing a Cocoa window if context is created internally
+- AMediaCodec: output ASAP and fix sync mode stalls if a packet can not be consumed
+- OH video decoder: fix callback UAF, e.g. repeated seeks followed by stop.
+- Fix video freezing or persistent flicker after pausing playback, turning the screen off, unlocking, and resuming(android)
+- Fix metal drawable(if created internally) leaks
+- Fix dead loop if a packet is not consumed by decoder (fvp#410)
+- AAudio: fix state transition, fail to resume playback
+- Skip EOF waits for cached tracks without decoder threads to prevent hangs after late subtitle activation
+- Reduce cpu load when paused
+- FFmpeg:
+    - Choose the closest lowres if scale property is `${W}x${H}`
+    - Drain frames before resending a packet on EAGAIN
+
+
 # 0.39.0
 
 - API:
