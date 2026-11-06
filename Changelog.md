@@ -1,5 +1,17 @@
 Change log:
 
+# 0.40.1
+
+- AMediaCodec:
+    - Unify asynchronous output consumption and buffer release; remove release worker
+    - Consume synchronous output events within a total timeout
+    - Fix decoder EOS submission and output cleanup
+- DiskCache:
+    - Forward IO options before open
+    - Preserve timeout before opening the URL
+- cmake: RUNPATH fix for cmake 4.0+
+
+
 # 0.40.0
 
 - Subtitle:
